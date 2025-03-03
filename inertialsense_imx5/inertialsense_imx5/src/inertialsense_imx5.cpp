@@ -193,7 +193,7 @@ void InertialSenseROS::start_log()
 void InertialSenseROS::connect()
 {
     /// Connect to the uINS
-    RCLCPP_INFO(get_logger(), "ICARUS Connecting to serial port \"%s\", at %d baud", port_.c_str(), baudrate_);
+    RCLCPP_INFO(get_logger(), "Connecting to serial port \"%s\", at %d baud", port_.c_str(), baudrate_);
     if (!IS_.Open(port_.c_str(), baudrate_))
     {
         RCLCPP_FATAL(get_logger(),"inertialsense: Unable to open serial port \"%s\", at %d baud", port_.c_str(), baudrate_);

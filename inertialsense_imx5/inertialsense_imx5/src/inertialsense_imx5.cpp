@@ -50,7 +50,7 @@ void InertialSenseROS::load_params_srv()
 
     // Inertialsense Sensor Config 
     port_ = declare_parameter<std::string>("port","/dev/ttyACM0");
-    baudrate_ = declare_parameter<int>("baudrate",921600);
+    baudrate_ = declare_parameter<int>("baudrate",115200);
     ins_nav_dt_ms_ = declare_parameter<int>("navigation_dt_ms",10); //Navigation Sampling Period, used for PIMU and IMU
     imu_dt_ms_ = declare_parameter<int>("imu_dt_ms",1); //IMU Sampling Period, used for IMU_RAW and IMU_RAW3. Set imu_dt_ms to 1 if using IMU or PIMU
     magDeclination_ = declare_parameter<float>("declination", 0.0f); 

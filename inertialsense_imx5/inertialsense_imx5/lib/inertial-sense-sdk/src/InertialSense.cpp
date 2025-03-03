@@ -570,6 +570,9 @@ bool InertialSense::Open(const char* port, int baudRate, bool disableBroadcastsO
 	{
 		return true;
 	}
+	else {
+		printf("Not null com port, procedding.");
+	}
 
 	m_disableBroadcastsOnClose = false;
 	if (OpenSerialPorts(port, baudRate))
@@ -577,6 +580,11 @@ bool InertialSense::Open(const char* port, int baudRate, bool disableBroadcastsO
 		m_disableBroadcastsOnClose = disableBroadcastsOnClose;
 		return true;
 	}
+	else {
+		printf("Open serial port failed for port %c.", port);
+	}
+
+	printf("Open inertial sense function failure.");
 	return false;
 }
 

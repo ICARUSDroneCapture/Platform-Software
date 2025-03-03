@@ -28,8 +28,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #include "ISTcpClient.h"
 #include "ISUtilities.h"
 
-#include "inertialsense_imx5.h"
-
 using namespace std;
 
 #if PLATFORM_IS_WINDOWS
@@ -256,7 +254,6 @@ int cISTcpClient::Open(const string& host, int port, int timeoutMilliseconds)
 	if (status != 0)
 	{
         // no info, fail
-		RCLCPP_FATAL(get_logger(),"inertialsense: Unable to get address info for host \"%s\", on port %i.", host.c_str(), port);
 		Close();
 		return status;
 	}
@@ -266,7 +263,6 @@ int cISTcpClient::Open(const string& host, int port, int timeoutMilliseconds)
 	if (m_socket == 0)
 	{
         // no socket, fail
-		RCLCPP_FATAL(get_logger(),"inertialsense: Unable to create socket.");
 		freeaddrinfo(result);
 		Close();
 		return -1;
@@ -290,8 +286,6 @@ int cISTcpClient::Open(const string& host, int port, int timeoutMilliseconds)
     }
 
     #else
-
-	RCLCPP_INFO(get_logger(),"Address info retrieved and socket created. Checking socket options... \n");
 
     // check sock_opt_err in order to confirm socket is actually connected
     int sock_opt_err;

@@ -571,7 +571,7 @@ bool InertialSense::Open(const char* port, int baudRate, bool disableBroadcastsO
 		return true;
 	}
 	else {
-		printf("Not null com port, procedding.\n");
+		printf("Not null com port, proceeding.\n");
 	}
 
 	m_disableBroadcastsOnClose = false;
@@ -583,7 +583,7 @@ bool InertialSense::Open(const char* port, int baudRate, bool disableBroadcastsO
 	else {
 		printf("Open serial port failed for port %c.\n", &port);
 	}
-	
+
 	return false;
 }
 
@@ -1051,6 +1051,7 @@ bool InertialSense::OpenSerialPorts(const char* port, int baudRate)
 	m_cmInit.ensuredPackets = new ensured_pkt_t[NUM_ENSURED_PKTS];
 	if (comManagerInit((int)m_comManagerState.devices.size(), NUM_ENSURED_PKTS, 10, 10, staticReadPacket, staticSendPacket, 0, staticProcessRxData, 0, 0, &m_cmInit, m_cmPorts) == -1)
 	{	// Error
+		printf("com Manager failed to init.\n");
 		return false;
 	}
 
@@ -1075,12 +1076,14 @@ bool InertialSense::OpenSerialPorts(const char* port, int baudRate)
 			SLEEP_MS(13);
 			comManagerStep();
 		}
+		printf("No valid packet received.\n");
 
 		bool removedSerials = false;
 
 		// remove each failed device where communications were not received
 		for (int i = ((int)m_comManagerState.devices.size() - 1); i >= 0; i--)
 		{
+			printf("Removing failed device.\n");
 			if (!HasReceivedResponseFromDevice(i))
 			{
 				RemoveDevice(i);

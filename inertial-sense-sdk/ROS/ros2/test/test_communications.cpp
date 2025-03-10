@@ -6,7 +6,7 @@
 #include "gtest_helpers.h"
 #include "inertial_sense_ros.h"
 
-#define PARAM_YAML_FILE "../../../src/Platform-Software/inertial-sense-sdk/ros/launch/test_config.yaml"
+#define PARAM_YAML_FILE "../../../src/inertial-sense-sdk/ros/launch/test_config.yaml"
 
 class gpsTestNode: public rclcpp::Node
 {

@@ -116,7 +116,7 @@ target_link_libraries(test_${PROJECT_NAME} "${cpp_typesupport_target}")
 ament_target_dependencies(test_${PROJECT_NAME} rclcpp std_msgs geometry_msgs nav_msgs diagnostic_msgs sensor_msgs std_srvs)
 target_link_libraries(test_${PROJECT_NAME} InertialSenseSDK ${YAML_CPP_LIBRARIES} pthread)
 
-#link_directories(/home/s/Inertial_Sense/imx/ros2_ws/src/inertial-sense-sdk)
+#link_directories(/home/s/Inertial_Sense/imx/ros2_ws/src/Platform-Software/inertial-sense-sdk)
 install(TARGETS test_${PROJECT_NAME}
         DESTINATION lib/${PROJECT_NAME})
 

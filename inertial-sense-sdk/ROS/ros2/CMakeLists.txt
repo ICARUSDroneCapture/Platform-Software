@@ -21,7 +21,7 @@ add_definitions(-DROS2)
 get_filename_component(RESOLVED_ROS_DIR ${CMAKE_SOURCE_DIR} REALPATH) # Symlink hell
 message(RESOLVED_ROS_DIR="${RESOLVED_ROS_DIR}")
 
-set(RELATIVE_SCRIPT_PATH "${CMAKE_CURRENT_LIST_DIR}/../inertial-sense-sdk/scripts/build_is_sdk.sh")
+set(RELATIVE_SCRIPT_PATH "${CMAKE_CURRENT_LIST_DIR}/../Platform-Software/inertial-sense-sdk/scripts/build_is_sdk.sh")
 get_filename_component(ABSOLUTE_SCRIPT_PATH ${RELATIVE_SCRIPT_PATH} ABSOLUTE BASE_DIR ${CMAKE_SOURCE_DIR})
 message(ABSOLUTE_SCRIPT_PATH="${ABSOLUTE_SCRIPT_PATH}")
 

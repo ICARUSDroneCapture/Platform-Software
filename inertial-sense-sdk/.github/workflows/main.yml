@@ -201,7 +201,7 @@ jobs:
       - name: Install libboost
         run: |
           /ros_entrypoint.sh /bin/bash -e -c "
-          rm -rf ../../inertial-sense-sdk/* log/ build/ install/ &>/dev/null || true
+          rm -rf ../../Platform-Software/inertial-sense-sdk/* log/ build/ install/ &>/dev/null || true
           apt-get update && apt-get -y install libboost-all-dev
           "
 

@@ -29,7 +29,7 @@ OUT OF OR IN ANY WAY CONNECTED WITH THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 ---
 
 ## Setup
-Use `colcon build` from the `ros2_ws` directory to build the ros2 package, then use `ros2 run inertial_sense_ros2 test_new_target` to run the tests locally. Otherwise, these tests will run in GitHub actions everytime a commit is made
+Use `colcon build` from the `ros2_ws` directory to build the ros2 package, then use `ros2 run arm_control test_inertial_sense_imu` to run the tests locally. Otherwise, these tests will run in GitHub actions everytime a commit is made
 to the `imx` repository.
 
 ## Files

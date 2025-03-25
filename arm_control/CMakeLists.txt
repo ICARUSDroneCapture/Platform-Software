@@ -63,7 +63,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
     DEPENDENCIES std_msgs geometry_msgs diagnostic_msgs builtin_interfaces
 )
 ament_export_include_directories(shared/include)
-ament_export_libraries(inertial_sense_ros2)
+ament_export_libraries(arm_control)
 ament_export_dependencies(rclcpp sensor_msgs geometry_msgs std_msgs diagnostic_msgs)
 
 # We don't need the example projects
@@ -77,7 +77,7 @@ include_directories(
     ../../src/libusb/libusb
     ../../src/libusb/linux
     ../../src/yaml-cpp
-    ../ros2/build/inertial_sense_ros2/rosidl_generator_cpp/
+    ../ros2/build/arm_control/rosidl_generator_cpp/
     /opt/ros/jazzy/include
     /opt/ros/jazzy/include/sensor_msgs
 )
@@ -109,7 +109,7 @@ ament_target_dependencies(${PROJECT_NAME}_node rclcpp std_msgs geometry_msgs nav
 target_link_libraries(${PROJECT_NAME}_node InertialSenseSDK ${YAML_CPP_LIBRARIES} pthread)
 
 
-ament_add_gtest(test_${PROJECT_NAME}
+ament_add_gtest(test_inertial_sense_imu
     src/inertial_sense_ros2.cpp
     shared/src/ParamHelper.cpp
     shared/src/RtkRover.cpp
@@ -123,14 +123,14 @@ ament_add_gtest(test_${PROJECT_NAME}
 )
 
 rosidl_get_typesupport_target(cpp_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_cpp")
-target_link_libraries(test_${PROJECT_NAME} "${cpp_typesupport_target}")
-ament_target_dependencies(test_${PROJECT_NAME} rclcpp std_msgs geometry_msgs nav_msgs diagnostic_msgs sensor_msgs std_srvs)
-target_link_libraries(test_${PROJECT_NAME} InertialSenseSDK ${YAML_CPP_LIBRARIES} pthread)
+target_link_libraries(test_inertial_sense_imu "${cpp_typesupport_target}")
+ament_target_dependencies(test_inertial_sense_imu rclcpp std_msgs geometry_msgs nav_msgs diagnostic_msgs sensor_msgs std_srvs)
+target_link_libraries(test_inertial_sense_imu InertialSenseSDK ${YAML_CPP_LIBRARIES} pthread)
 
 install(TARGETS
   imu_talker
   imu_listener
-  test_${PROJECT_NAME}
+  test_inertial_sense_imu
   DESTINATION lib/${PROJECT_NAME})
 
 # uncomment the following section in order to fill in

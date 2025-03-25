@@ -14,9 +14,17 @@ A ROS 2 wrapper node implementation of the 3DOF control law for the ICARUS Drone
 
 ## Execution
 
+For general publisher and listener example, run the following:
 ```bash
-ros2 run inertial_sense_ros2 imu_talker
-ros2 run inertial_sense_ros2 imu_listener
+ros2 run arm_control imu_talker
+ros2 run arm_control imu_listener
+```
+
+or for communicating with the IMU, run the following:
+```bash
+ros2 run arm_control test_arm_control
+rqt_graph
+ros2 topic echo /imu
 ```
 
 fill in...

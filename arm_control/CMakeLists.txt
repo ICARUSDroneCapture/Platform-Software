@@ -73,7 +73,7 @@ include_directories(
     ../../src/libusb/libusb
     ../../src/libusb/linux
     ../../src/yaml-cpp
-    ../ros2/build/inertial_sense_ros2/rosidl_generator_cpp/
+    ../arm_control/build/inertial_sense_ros2/rosidl_generator_cpp/
     /opt/ros/jazzy/include
     /opt/ros/jazzy/include/sensor_msgs
 )

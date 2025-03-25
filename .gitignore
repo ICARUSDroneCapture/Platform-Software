@@ -4,3 +4,4 @@ ODrive
 test-scripts/output-csv-data
 ros_odrive/COLCON_IGNORE
 motor_venv
+.vscode/

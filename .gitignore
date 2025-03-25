@@ -1,2 +1,4 @@
 .DS_Store
 inertial-sense-sdk
+ODrive
+test-scrpts/output-csv-data/*

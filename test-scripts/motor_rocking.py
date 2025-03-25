@@ -11,7 +11,7 @@ duration = 12          # Seconds
 zero_offset = (7.427) / 360 # IMU reading, will adjust for gearbox
 
 # Setup CSV file
-csv_filename = "encoder_data.csv"
+csv_filename = "output-csv-data/encoder_data.csv"
 with open(csv_filename, mode='w', newline='') as file:
     writer = csv.writer(file)
     writer.writerow(['Time (s)', 'Setpoint (turns)', 'Encoder Position (turns)'])

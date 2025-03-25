@@ -5,6 +5,6 @@ int main(int argc, char ** argv)
   (void) argc;
   (void) argv;
 
-  printf("hello world arm_control package\n");
+  printf("This can be the gravity correction wrapper file.\n");
   return 0;
 }

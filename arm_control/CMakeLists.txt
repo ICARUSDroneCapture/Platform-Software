@@ -77,7 +77,8 @@ include_directories(
     lib/libusb/libusb
     lib/libusb/linux
     lib/yaml-cpp
-    ../arm_control/build/arm_control/rosidl_generator_cpp/
+    # ../arm_control/build/arm_control/rosidl_generator_cpp/
+    ../build/arm_control/rosidl_generator_cpp/
     /opt/ros/jazzy/include
     /opt/ros/jazzy/include/sensor_msgs
 )

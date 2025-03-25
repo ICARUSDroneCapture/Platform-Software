@@ -1,6 +1,6 @@
 .DS_Store
 inertial-sense-sdk
 ODrive
-test-scrpts/output-csv-data
+test-scripts/output-csv-data
 ros_odrive/COLCON_IGNORE
 motor_venv

@@ -16,7 +16,7 @@ char cwd_buff[256];
 
 TEST(BasicTestSuite, test_config_params)
 {
-    // typical runtime location is <repo-root>/catkin_ws/build/inertial-sense-sdk/ros
+    // typical runtime location is <repo-root>/catkin_ws/build/icarus-arm-control/ros
     std::ifstream yaml(PARAM_YAML_FILE);
     ASSERT_FALSE(yaml.fail()) << "Unable to locate or access " << PARAM_YAML_FILE << ".  CWD is " << getcwd(cwd_buff, sizeof(cwd_buff)) << ", errno=" << errno;
 
@@ -39,7 +39,7 @@ TEST(BasicTestSuite, test_config_params)
 
 TEST(BasicTestSuite, test_rtk_rover)
 {
-    // typical runtime location is <repo-root>/catkin_ws/build/inertial-sense-sdk/ros
+    // typical runtime location is <repo-root>/catkin_ws/build/icarus-arm-control/ros
     std::ifstream yaml(PARAM_YAML_FILE);
     ASSERT_FALSE(yaml.fail()) << "Unable to locate or access " << PARAM_YAML_FILE << ".  CWD is " << getcwd(cwd_buff, sizeof(cwd_buff)) << ", errno=" << errno;
 
@@ -196,7 +196,7 @@ TEST(BasicTestSuite, test_rtk_rover_evb)
 
 TEST(BasicTestSuite, test_rtk_base)
 {
-    // typical runtime location is <repo-root>/catkin_ws/build/inertial-sense-sdk/ros
+    // typical runtime location is <repo-root>/catkin_ws/build/icarus-arm-control/ros
     std::ifstream yaml(PARAM_YAML_FILE);
     ASSERT_FALSE(yaml.fail()) << "Unable to locate or access " << PARAM_YAML_FILE << ".  CWD is " << getcwd(cwd_buff, sizeof(cwd_buff)) << ", errno=" << errno;
 

@@ -201,7 +201,7 @@ jobs:
       - name: Install libboost
         run: |
           /ros_entrypoint.sh /bin/bash -e -c "
-          rm -rf ../../Platform-Software/inertial-sense-sdk/* log/ build/ install/ &>/dev/null || true
+          rm -rf ../../Platform-Software/icarus-arm-control/* log/ build/ install/ &>/dev/null || true
           apt-get update && apt-get -y install libboost-all-dev
           "
 
@@ -213,13 +213,13 @@ jobs:
       # - name: Install dependencies
       #   run: |
       #     /ros_entrypoint.sh /bin/bash -e -c "
-      #     ../../inertial-sense-sdk/scripts/install_python_dependencies.sh
+      #     ../../icarus-arm-control/scripts/install_python_dependencies.sh
       #     "
 
       - name: Build IS SDK library
         run: |
           /ros_entrypoint.sh /bin/bash -e -c "
-          ../../Platform-Software/inertial-sense-sdk/scripts/build_is_sdk.sh
+          ../../Platform-Software/icarus-arm-control/scripts/build_is_sdk.sh
           "
 
       - name: Build ROS2 bridge

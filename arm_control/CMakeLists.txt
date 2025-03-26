@@ -73,11 +73,11 @@ include_directories(
     # ../../src/libusb/libusb
     # ../../src/libusb/linux
     # ../../src/yaml-cpp
-    lib #This line of CMakeList.txt stays in .external file to reference submodule
-    lib/libusb/libusb
-    lib/libusb/linux
-    lib/yaml-cpp
-    ../arm_control/build/inertial_sense_ros2/rosidl_generator_cpp/
+    ext_lib #This line of CMakeList.txt stays in .external file to reference submodule
+    ext_lib/libusb/libusb
+    ext_lib/libusb/linux
+    ext_lib/yaml-cpp
+    ../arm_control/build/arm_control/rosidl_generator_cpp/
     /opt/ros/jazzy/include
     /opt/ros/jazzy/include/sensor_msgs
 )

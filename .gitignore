@@ -4,7 +4,6 @@ ODrive
 test-scripts/output-csv-data
 ros_odrive/COLCON_IGNORE
 inertial-sense-sdk/ROS/ros2/COLCON_IGNORE
-inrtial-sense-sdk/COLCON_IGNORE
 arm_control/COLCON_IGNORE
 motor_venv
 .vscode/

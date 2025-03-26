@@ -1,6 +1,11 @@
 set(CMAKE_CXX_STANDARD 17)
 cmake_minimum_required(VERSION 3.10.0)
 project(icarus_arm_control)
+
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
+
 #find_package(rosidl_typesupport_c REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(std_srvs REQUIRED)

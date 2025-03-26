@@ -2,10 +2,10 @@
 #define ODRIVE_CAN_NODE_HPP
 
 #include <rclcpp/rclcpp.hpp>
-#include "odrive_can/msg/o_drive_status.hpp"
-#include "odrive_can/msg/controller_status.hpp"
-#include "odrive_can/msg/control_message.hpp"
-#include "odrive_can/srv/axis_state.hpp"
+#include "icarus_arm_control/msg/o_drive_status.hpp"
+#include "icarus_arm_control/msg/controller_status.hpp"
+#include "icarus_arm_control/msg/control_message.hpp"
+#include "icarus_arm_control/srv/axis_state.hpp"
 #include "std_srvs/srv/empty.hpp"
 #include "socket_can.hpp"
 
@@ -19,11 +19,11 @@
 using std::placeholders::_1;
 using std::placeholders::_2;
 
-using ODriveStatus = odrive_can::msg::ODriveStatus;
-using ControllerStatus = odrive_can::msg::ControllerStatus;
-using ControlMessage = odrive_can::msg::ControlMessage;
+using ODriveStatus = icarus_arm_control::msg::ODriveStatus;
+using ControllerStatus = icarus_arm_control::msg::ControllerStatus;
+using ControlMessage = icarus_arm_control::msg::ControlMessage;
 
-using AxisState = odrive_can::srv::AxisState;
+using AxisState = icarus_arm_control::srv::AxisState;
 using Empty = std_srvs::srv::Empty;
 
 class ODriveCanNode : public rclcpp::Node {

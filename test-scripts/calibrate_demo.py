@@ -202,37 +202,37 @@ CONTROL_MODE = ControlMode.VELOCITY_CONTROL
 MOTOR_TYPE = MotorType.HIGH_CURRENT
 INPUT_MODE = InputMode.VEL_RAMP
 
-# # CONTROL_MODE = 2
-# # MOTOR_TYPE = 0
-# # INPUT_MODE = 2
+# CONTROL_MODE = 2
+# MOTOR_TYPE = 0
+# INPUT_MODE = 2
 
 # # Voltage and current trip levels
-# odrv.config.dc_bus_overvoltage_trip_level = 38
-# odrv.config.dc_bus_undervoltage_trip_level = 10.5
-# odrv.config.dc_max_positive_current = math.inf
-# odrv.config.dc_max_negative_current = -math.inf
-# odrv.config.brake_resistor0.enable = False
+odrv.config.dc_bus_overvoltage_trip_level = 38
+odrv.config.dc_bus_undervoltage_trip_level = 10.5
+odrv.config.dc_max_positive_current = math.inf
+odrv.config.dc_max_negative_current = -math.inf
+odrv.config.brake_resistor0.enable = False
 axis.config.motor.motor_type = MOTOR_TYPE
-# axis.config.motor.pole_pairs = 4
-# axis.config.motor.torque_constant = 0.09505747126436781
-# axis.config.motor.current_soft_max = 30
-# axis.config.motor.current_hard_max = 49
-# axis.config.motor.calibration_current = 10
-# axis.config.motor.resistance_calib_max_voltage = 2
-# axis.config.calibration_lockin.current = 10
-# axis.motor.motor_thermistor.config.enabled = True
-# axis.motor.motor_thermistor.config.r_ref = 10000
-# axis.motor.motor_thermistor.config.beta = 3950
-# axis.motor.motor_thermistor.config.temp_limit_lower = 120
-# axis.motor.motor_thermistor.config.temp_limit_upper = 140
+axis.config.motor.pole_pairs = 4
+axis.config.motor.torque_constant = 0.09505747126436781
+axis.config.motor.current_soft_max = 30
+axis.config.motor.current_hard_max = 49
+axis.config.motor.calibration_current = 10
+axis.config.motor.resistance_calib_max_voltage = 2
+axis.config.calibration_lockin.current = 10
+axis.motor.motor_thermistor.config.enabled = True
+axis.motor.motor_thermistor.config.r_ref = 10000
+axis.motor.motor_thermistor.config.beta = 3950
+axis.motor.motor_thermistor.config.temp_limit_lower = 120
+axis.motor.motor_thermistor.config.temp_limit_upper = 140
 # axis.controller.config.control_mode = CONTROL_MODE
-axis.controller.config.input_mode = INPUT_MODE
-# axis.controller.config.vel_limit = 10
-# axis.controller.config.vel_limit_tolerance = 1.2
-# axis.config.torque_soft_min = -math.inf
-# axis.config.torque_soft_max = math.inf
-# axis.trap_traj.config.accel_limit = 10
-# axis.controller.config.vel_ramp_rate = 10
+# axis.controller.config.input_mode = INPUT_MODE
+axis.controller.config.vel_limit = 10
+axis.controller.config.vel_limit_tolerance = 1.2
+axis.config.torque_soft_min = -math.inf
+axis.config.torque_soft_max = math.inf
+axis.trap_traj.config.accel_limit = 10
+axis.controller.config.vel_ramp_rate = 10
 
 # Protocol.SIMPLE     -> 1
 

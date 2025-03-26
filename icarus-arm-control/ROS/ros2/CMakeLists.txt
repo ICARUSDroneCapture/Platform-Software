@@ -89,6 +89,7 @@ include_directories(
 
 include_directories(include)
 include_directories(../odrive_base/include)
+include_directories(../odrive_base/src)
 include_directories(odrive_base/include)
 
 # Build using C11 and CXX20

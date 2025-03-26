@@ -1,5 +1,5 @@
 <package format="3">
-  <name>icarus_arm_control</name>
+  <name>inertial_sense_ros2</name>
   <version>1.1.1</version>
   <description>
   This package provides a ROS interface to the InertialSense GPS-INS sensor

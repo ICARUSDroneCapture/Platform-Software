@@ -24,25 +24,25 @@
 #include "InertialSense.h"
 #ifdef ROS2
 #include "rclcpp/rclcpp/rclcpp.hpp"
-#include <inertial_sense_ros2/msg/didins1.hpp>
-#include <inertial_sense_ros2/msg/didins2.hpp>
-#include <inertial_sense_ros2/msg/didins4.hpp>
-#include <inertial_sense_ros2/msg/gps_info.hpp>
-#include <inertial_sense_ros2/msg/gps.hpp>
-#include <inertial_sense_ros2/msg/inl2_states.hpp>
-#include <inertial_sense_ros2/msg/pimu.hpp>
+#include <icarus_arm_control/msg/didins1.hpp>
+#include <icarus_arm_control/msg/didins2.hpp>
+#include <icarus_arm_control/msg/didins4.hpp>
+#include <icarus_arm_control/msg/gps_info.hpp>
+#include <icarus_arm_control/msg/gps.hpp>
+#include <icarus_arm_control/msg/inl2_states.hpp>
+#include <icarus_arm_control/msg/pimu.hpp>
 #include <nav_msgs/msg/odometry.hpp>
 #include <sensor_msgs/msg/detail/fluid_pressure__traits.hpp>
 #include <sensor_msgs/msg/imu.hpp>
 #include <sensor_msgs/msg/magnetic_field.hpp>
 #include <sensor_msgs/msg/nav_sat_fix.hpp>
 #include "diagnostic_msgs/diagnostic_msgs/msg/diagnostic_array.hpp"
-#include "inertial_sense_ros2/msg/rtk_rel.hpp"
-#include "inertial_sense_ros2/msg/rtk_info.hpp"
-#include "inertial_sense_ros2/msg/glonass_ephemeris.hpp"
-#include "inertial_sense_ros2/msg/gnss_ephemeris.hpp"
-#include "inertial_sense_ros2/msg/gnss_observation.hpp"
-#include "inertial_sense_ros2/msg/gnss_obs_vec.hpp"
+#include "icarus_arm_control/msg/rtk_rel.hpp"
+#include "icarus_arm_control/msg/rtk_info.hpp"
+#include "icarus_arm_control/msg/glonass_ephemeris.hpp"
+#include "icarus_arm_control/msg/gnss_ephemeris.hpp"
+#include "icarus_arm_control/msg/gnss_observation.hpp"
+#include "icarus_arm_control/msg/gnss_obs_vec.hpp"
 #endif
 
 #ifdef ROS1
@@ -78,19 +78,19 @@ public:
     int period = 1;             // Period multiple (data rate divisor)
 #ifdef ROS2
     rclcpp::Publisher<diagnostic_msgs::msg::DiagnosticArray>::SharedPtr pub_diagnostics;
-    rclcpp::Publisher<inertial_sense_ros2::msg::DIDINS1>::SharedPtr pub_didins1;
-    rclcpp::Publisher<inertial_sense_ros2::msg::DIDINS2>::SharedPtr pub_didins2;
-    rclcpp::Publisher<inertial_sense_ros2::msg::DIDINS4>::SharedPtr pub_didins4;
+    rclcpp::Publisher<icarus_arm_control::msg::DIDINS1>::SharedPtr pub_didins1;
+    rclcpp::Publisher<icarus_arm_control::msg::DIDINS2>::SharedPtr pub_didins2;
+    rclcpp::Publisher<icarus_arm_control::msg::DIDINS4>::SharedPtr pub_didins4;
     rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr pub_odometry;
-    rclcpp::Publisher<inertial_sense_ros2::msg::INL2States>::SharedPtr pub_inl2;
-    rclcpp::Publisher<inertial_sense_ros2::msg::PIMU>::SharedPtr pub_pimu;
+    rclcpp::Publisher<icarus_arm_control::msg::INL2States>::SharedPtr pub_inl2;
+    rclcpp::Publisher<icarus_arm_control::msg::PIMU>::SharedPtr pub_pimu;
     rclcpp::Publisher<sensor_msgs::msg::Imu>::SharedPtr pub_imu;
     rclcpp::Publisher<sensor_msgs::msg::MagneticField>::SharedPtr pub_bfield;
     rclcpp::Publisher<sensor_msgs::msg::FluidPressure>::SharedPtr pub_fpres;
-    rclcpp::Publisher<inertial_sense_ros2::msg::GPS>::SharedPtr pub_gps;
+    rclcpp::Publisher<icarus_arm_control::msg::GPS>::SharedPtr pub_gps;
     rclcpp::Publisher<sensor_msgs::msg::NavSatFix>::SharedPtr pub_nsf;
-    rclcpp::Publisher<inertial_sense_ros2::msg::GPSInfo>::SharedPtr pub_gpsinfo1;
-    rclcpp::Publisher<inertial_sense_ros2::msg::GPSInfo>::SharedPtr pub_gpsinfo2;
+    rclcpp::Publisher<icarus_arm_control::msg::GPSInfo>::SharedPtr pub_gpsinfo1;
+    rclcpp::Publisher<icarus_arm_control::msg::GPSInfo>::SharedPtr pub_gpsinfo2;
 #endif
 #ifdef ROS1
     ros::Publisher pub;
@@ -112,8 +112,8 @@ public:
     bool streamingMisc = false;
     bool streamingRel = false;
 #ifdef ROS2
-    rclcpp::Publisher<inertial_sense_ros2::msg::RTKInfo>::SharedPtr pubInfo;
-    rclcpp::Publisher<inertial_sense_ros2::msg::RTKRel>::SharedPtr pubRel;
+    rclcpp::Publisher<icarus_arm_control::msg::RTKInfo>::SharedPtr pubInfo;
+    rclcpp::Publisher<icarus_arm_control::msg::RTKRel>::SharedPtr pubRel;
 #endif
 #ifdef ROS1
     ros::Publisher pubInfo;
@@ -128,9 +128,9 @@ public:
     std::string topicEph;
     std::string topicGEp;
 #ifdef ROS2
-    rclcpp::Publisher<inertial_sense_ros2::msg::GNSSObsVec>::SharedPtr pubObs;
-    rclcpp::Publisher<inertial_sense_ros2::msg::GNSSEphemeris>::SharedPtr pubEph;
-    rclcpp::Publisher<inertial_sense_ros2::msg::GlonassEphemeris>::SharedPtr pubGEp;
+    rclcpp::Publisher<icarus_arm_control::msg::GNSSObsVec>::SharedPtr pubObs;
+    rclcpp::Publisher<icarus_arm_control::msg::GNSSEphemeris>::SharedPtr pubEph;
+    rclcpp::Publisher<icarus_arm_control::msg::GlonassEphemeris>::SharedPtr pubGEp;
     rclcpp::TimerBase::SharedPtr obs_bundle_timer;
     rclcpp::Time last_obs_time;
 #endif

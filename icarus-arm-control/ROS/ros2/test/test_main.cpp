@@ -155,10 +155,10 @@ void cTestNode::init()
 
     //auto nh = std::make_shared<rclcpp::Node>("nh");
     sub_wheel_encoder_      = this->create_subscription<sensor_msgs::msg::JointState>("msg_wheel_encoder", 1, std::bind(&cTestNode::cbWheelEncoder, this, std::placeholders::_1));
-    sub_pimu_               = this->create_subscription<inertial_sense_ros2::msg::PIMU>("pimu", 1, std::bind(&cTestNode::cbPIMU, this, std::placeholders::_1));
+    sub_pimu_               = this->create_subscription<icarus_arm_control::msg::PIMU>("pimu", 1, std::bind(&cTestNode::cbPIMU, this, std::placeholders::_1));
     sub_imu_                = this->create_subscription<sensor_msgs::msg::Imu>("imu", 1, std::bind(&cTestNode::cbIMU, this, std::placeholders::_1));
     sub_ins_                = this->create_subscription<nav_msgs::msg::Odometry>("odom_ins_enu", 1, std::bind(&cTestNode::cbINS, this, std::placeholders::_1));
-    sub_gps1_               = this->create_subscription<inertial_sense_ros2::msg::GPS>("gps1/pos_vel", 1, std::bind(&cTestNode::cbGPS, this, std::placeholders::_1));
+    sub_gps1_               = this->create_subscription<icarus_arm_control::msg::GPS>("gps1/pos_vel", 1, std::bind(&cTestNode::cbGPS, this, std::placeholders::_1));
 }
 
 bool cTestNode::step()
@@ -187,7 +187,7 @@ void cTestNode::cbWheelEncoder(const sensor_msgs::msg::JointState &msg)
         TEST_COUT << "Rx wheel encoder : " << std::fixed << std::setw(11) << std::setprecision(6) << msg.header.stamp.sec << std::endl;
 }
 
-void cTestNode::cbPIMU(const inertial_sense_ros2::msg::PIMU::SharedPtr pimu)
+void cTestNode::cbPIMU(const icarus_arm_control::msg::PIMU::SharedPtr pimu)
 {
     if (!quiet)
         TEST_COUT << "Rx PIMU : " << std::fixed << std::setw(11) << std::setprecision(6) << pimu->header.stamp.sec << std::endl;
@@ -212,7 +212,7 @@ void cTestNode::cbINS(const nav_msgs::msg::Odometry &ins)
         ins_ts.push_back(ins.header.stamp.sec);
 }
 
-void cTestNode::cbGPS(const inertial_sense_ros2::msg::GPS &gps)
+void cTestNode::cbGPS(const icarus_arm_control::msg::GPS &gps)
 {
     if (!quiet)
         TEST_COUT << "Rx GPS : " << std::fixed << std::setw(11) << std::setprecision(6) << gps.header.stamp.sec << std::endl;

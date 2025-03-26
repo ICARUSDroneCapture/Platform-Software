@@ -59,23 +59,23 @@ You will need to run this command on every new shell you open to have access to 
 ## Execution
 
 ```bash
-ros2 run inertial_sense_ros2 new_target
+ros2 run icarus_arm_control new_target
 ```
 
 For instructions on changing parameter values and topic remapping from the command line while using `ros2 run` refer to [Node Arguments](https://docs.ros.org/en/jazzy/How-To-Guides/Node-arguments.html). For proper operation, all parameters should be set before execution.
 
 ```bash
 
-ros2 run inertial_sense_ros2 new_target --ros-args -r __node:=nh_ -p [parameter_name]:=[parameter_value] #one parameter
+ros2 run icarus_arm_control new_target --ros-args -r __node:=nh_ -p [parameter_name]:=[parameter_value] #one parameter
 
-ros2 run inertial_sense_ros2 new_target --ros-args -r __node:=nh_ -p [parameter_name1]:=[parameter_value1] -p [parameter_name2]:=[parameter_value2] -p [parameter_name3]:=[parameter_value3] #Multiple parameters
+ros2 run icarus_arm_control new_target --ros-args -r __node:=nh_ -p [parameter_name1]:=[parameter_value1] -p [parameter_name2]:=[parameter_value2] -p [parameter_name3]:=[parameter_value3] #Multiple parameters
 
 ```
 
 To set parameters and topic remapping from a YAML file, refer to the [Node Arguments](https://docs.ros.org/en/jazzy/How-To-Guides/Node-arguments.html) page, or use one of the sample YAML files in this repository, `src/ros2/launch/example_params.yaml` or  `src/ros2/launch/test_config.yaml`:
 
 ```bash
-ros2 run inertial_sense_ros2 new_target "[path to YAML parameter file]"
+ros2 run icarus_arm_control new_target "[path to YAML parameter file]"
 
 ```
 
@@ -97,18 +97,18 @@ Topics are enabled and disabled using parameters.  By default, only the `ins` to
    -  full 12-DOF measurements from onboard estimator in ENU frame.
 - `odom_ins_ecef`(nav_msgs/msg/Odometry)
    -  full 12-DOF measurements from onboard estimator in ECEF frame.
-- `did_ins1` (inertial_sense_ros2/msg/did_ins1)
+- `did_ins1` (icarus_arm_control/msg/did_ins1)
    -  Standard Inertial Sense [DID_INS_1](https://docs.inertialsense.com/user-manual/com-protocol/DID-descriptions/#did_ins1) Definition
-- `did_ins2` (inertial_sense_ros2/msg/did_ins2)
+- `did_ins2` (icarus_arm_control/msg/did_ins2)
    -  Standard Inertial Sense [DID_INS_2](https://docs.inertialsense.com/user-manual/com-protocol/DID-descriptions/#did_ins2) Definition
 - `did_ins4` (inertial_sense_ros/msg/did_ins4)
    -  Standard Inertial Sense [DID_INS_4](https://docs.inertialsense.com/user-manual/com-protocol/DID-descriptions/#did_ins_4) Definition
-- `inl2_states` (inertial_sense_ros2/msg/INL2States)
+- `inl2_states` (icarus_arm_control/msg/INL2States)
    -  INS Extended Kalman Filter (EKF) states [DID_INL2_STATES](https://docs.inertialsense.com/user-manual/com-protocol/DID-descriptions/#did_inl2_states) Definition
 
 - `imu`(sensor_msgs/msg/Imu)
    -  Raw Imu measurements from IMU1 (NED frame)
-- `pimu` (inertial_sense_ros2/msg/pimu)
+- `pimu` (icarus_arm_control/msg/pimu)
    -  preintegrated coning and sculling integrals of IMU measurements
 - `mag` (sensor_msgs/msg/MagneticField)
    -  Raw magnetic field measurement from magnetometer 1
@@ -117,21 +117,21 @@ Topics are enabled and disabled using parameters.  By default, only the `ins` to
 
 - `NavSatFix`(sensor_msgs/msg/NavSatFix)
    -  Standard ROS sensor_msgs/NavSatFix data
-- `gps1`(inertial_sense_ros2/msg/gps1)
+- `gps1`(icarus_arm_control/msg/gps1)
    -  GPS measurements from GPS1 receiver
-- `gps2`(inertial_sense_ros2/msg/gps2)
+- `gps2`(icarus_arm_control/msg/gps2)
    -  GPS measurements from GPS2 receiver
-- `gps1/info`(inertial_sense_ros2/msg/gps1/info)
+- `gps1/info`(icarus_arm_control/msg/gps1/info)
    -  satelite information and carrier noise ratio array for each satelite
-- `gps2/info`(inertial_sense_ros2/msg/gps2/info)
+- `gps2/info`(icarus_arm_control/msg/gps2/info)
    -  satelite information and carrier noise ratio array for each satelite
-- `RTK_pos/info` (inertial_sense_ros2/msg/RTKInfo)
+- `RTK_pos/info` (icarus_arm_control/msg/RTKInfo)
    -  information about RTK positioning status
-- `RTK_pos/rel` (inertial_sense_ros2/msg/RTKRel)
+- `RTK_pos/rel` (icarus_arm_control/msg/RTKRel)
    -  Relative measurement between RTK positioning base and rover
-- `RTK_cmp/info` (inertial_sense_ros2/msg/RTKInfo)
+- `RTK_cmp/info` (icarus_arm_control/msg/RTKInfo)
    -  information about RTK compassing status
-- `RTK_cmp/rel` (inertial_sense_ros2/msg/RTKRel)
+- `RTK_cmp/rel` (icarus_arm_control/msg/RTKRel)
    -  Relative measurement between RTK compassing moving base and rover
 
 - `strobe_in` (std_msgs/msg/Header)
@@ -141,9 +141,9 @@ Topics are enabled and disabled using parameters.  By default, only the `ins` to
 
 
 __*Note: RTK positioning or RTK compassing mode must be enabled to stream any raw GPS data. Raw data can only be streamed from the onboard m8 receiver. To enable the onboard receiver change `gps1_type` to m8.__
-- `<gps1_topic>/obs` (inertial_sense_ros2/GNSSObservation)
+- `<gps1_topic>/obs` (icarus_arm_control/GNSSObservation)
     * Raw satellite observation (psuedorange and carrier phase)
-- `<gps1_topic>/eph` (inertial_sense_ros2/GNSSEphemeris)
+- `<gps1_topic>/eph` (icarus_arm_control/GNSSEphemeris)
     * Satellite Ephemeris for GPS and Galileo GNSS constellations
 - `<gps1_topic>/geph`
     * Satellite Ephemeris for Glonass GNSS constellation

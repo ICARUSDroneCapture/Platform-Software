@@ -1,6 +1,6 @@
 set(CMAKE_CXX_STANDARD 17)
 cmake_minimum_required(VERSION 3.10.0)
-project(inertial_sense_ros2)
+project(icarus_arm_control)
 #find_package(rosidl_typesupport_c REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
@@ -58,7 +58,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
     DEPENDENCIES std_msgs geometry_msgs diagnostic_msgs builtin_interfaces
 )
 ament_export_include_directories(shared/include)
-ament_export_libraries(inertial_sense_ros2)
+ament_export_libraries(icarus_arm_control)
 ament_export_dependencies(rclcpp sensor_msgs geometry_msgs std_msgs diagnostic_msgs)
 
 # We don't need the example projects
@@ -72,7 +72,7 @@ include_directories(
     ../../src/libusb/libusb
     ../../src/libusb/linux
     ../../src/yaml-cpp
-    ../ros2/build/inertial_sense_ros2/rosidl_generator_cpp/
+    ../ros2/build/icarus_arm_control/rosidl_generator_cpp/
     /opt/ros/jazzy/include
     /opt/ros/jazzy/include/sensor_msgs
 )

@@ -15,10 +15,10 @@ public:
     void init();
     bool step();
     void cbWheelEncoder(const sensor_msgs::msg::JointState &msg);
-    void cbPIMU(const inertial_sense_ros2::msg::PIMU::SharedPtr pimu);
+    void cbPIMU(const icarus_arm_control::msg::PIMU::SharedPtr pimu);
     void cbIMU(const  sensor_msgs::msg::Imu &imu);
     void cbINS(const nav_msgs::msg::Odometry &ins);
-    void cbGPS(const inertial_sense_ros2::msg::GPS &gps);
+    void cbGPS(const icarus_arm_control::msg::GPS &gps);
 
     int get_deviations(std::vector<double> &a, std::vector<double> &b, std::vector<double> &out);
     double get_avg_deviation(std::vector<double> &a, std::vector<double> &b);
@@ -37,9 +37,9 @@ public:
 private:
 
     rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr sub_wheel_encoder_;
-    rclcpp::Subscription<inertial_sense_ros2::msg::PIMU>::SharedPtr sub_pimu_;
+    rclcpp::Subscription<icarus_arm_control::msg::PIMU>::SharedPtr sub_pimu_;
     rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr sub_imu_;
-    rclcpp::Subscription<inertial_sense_ros2::msg::GPS>::SharedPtr sub_gps1_;
+    rclcpp::Subscription<icarus_arm_control::msg::GPS>::SharedPtr sub_gps1_;
     rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr sub_ins_;
 
 

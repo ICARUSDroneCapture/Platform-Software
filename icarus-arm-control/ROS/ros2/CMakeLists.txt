@@ -92,6 +92,9 @@ add_executable(${PROJECT_NAME}_node
     shared/src/RtkBase.cpp
 )
 
+add_executable(controller_listener src/controller_listener.cpp)
+ament_target_dependencies(controller_listener rclcpp std_msgs)
+
 rosidl_get_typesupport_target(cpp_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_cpp")
 target_link_libraries(${PROJECT_NAME}_node "${cpp_typesupport_target}")
 ament_target_dependencies(${PROJECT_NAME}_node rclcpp std_msgs geometry_msgs nav_msgs diagnostic_msgs sensor_msgs std_srvs)
@@ -117,7 +120,9 @@ ament_target_dependencies(test_inertial_sense_imu rclcpp std_msgs geometry_msgs 
 target_link_libraries(test_inertial_sense_imu InertialSenseSDK ${YAML_CPP_LIBRARIES} pthread)
 
 #link_directories(/home/s/Inertial_Sense/imx/ros2_ws/src/Platform-Software/icarus-arm-control)
-install(TARGETS test_inertial_sense_imu
-        DESTINATION lib/${PROJECT_NAME})
+install(TARGETS
+    test_inertial_sense_imu
+    controller_listener
+    DESTINATION lib/${PROJECT_NAME})
 
 ament_package()

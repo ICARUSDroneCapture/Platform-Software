@@ -73,17 +73,113 @@ while axis.current_state in [3, 7]:
 
 # Check if calibration was successful
 if axis.current_state != 1:  # Should return to IDLE after calibration
-    print(f"{RED}❌ Error: Basic Calibration failed!{RESET}")
+    print(f"{RED}❌ Error: Calibration failed!{RESET}")
     exit()
 
-print(f"{GREEN} Basic Calibration complete.{RESET}")
+print(f"{GREEN}✅ Calibration complete.{RESET}")
 
+# Set control mode to Position Control
+print("⚙️ Setting control mode to Position Control...")
+axis.controller.config.control_mode = 3  # 3 = Position Control
+
+# Enable Closed-Loop Control
+print("🔄 Enabling Closed-Loop Control...")
+axis.requested_state = 8  # 8 = Closed-Loop Control
+time.sleep(1)
+
+# Verify Closed-Loop Control
+if axis.current_state != 8:
+    print(f"{RED}❌ Error: Motor did not enter Closed-Loop Control!{RESET}")
+    exit()
+
+# Apply the zero position offset
+print(f"🎯 Setting motor 0 position to {USER_OFFSET_DEGREES}° offset...")
+axis.controller.input_pos = USER_OFFSET_TURNS
+
+print(f"{GREEN}🚀 ODrive setup complete! The motor zero position has been offset by {USER_OFFSET_DEGREES}°.{RESET}")
+
+
+## ----------------------------------- BASIC CALIBRATION -----------------------------------
 # Setup CSV file
 csv_filename = "output-csv-data/encoder_data.csv"
 with open(csv_filename, mode='w', newline='') as file:
     writer = csv.writer(file)
     writer.writerow(['Time (s)', 'Setpoint (turns)', 'Encoder Position (turns)'])
 
+print("Finding ODrive...")  
+odrv = odrive.find_any()
+if not odrv:
+    print("Error: ODrive not found!")
+    exit()
+
+# Check if calibration is needed
+if axis.current_state == 8:
+    print("Motor is already calibrated.")
+else:
+    print("Starting motor calibration...")
+    axis.requested_state = 3                # 3 = Motor Calibration
+
+    timeout = 30
+    start_time = time.time()
+    while axis.current_state == 3:
+        if time.time() - start_time > timeout:
+            print("Error: Calibration timed out!")
+            exit()
+        time.sleep(1)
+
+    if axis.current_state != 1:
+        print("Calibration failed or incomplete!")
+        exit()
+
+    print("Calibration complete.")
+
+# Enable Closed Loop Control
+print("Enabling Closed Loop Control...")
+axis.requested_state = 8        # 8 = Closed Loop Control
+time.sleep(2)
+
+# Ensure position control is active
+axis.controller.config.control_mode = 3     # 3 = Position Control
+axis.controller.config.input_mode = 1       # 1 = Pos Filtered
+
+axis.controller.input_pos = zero_offset
+
+# Create scheduler
+scheduler = sched.scheduler(time.time, time.sleep)
+
+# Tracking time and scheduling interval
+start_time = time.time()
+interval = 0.014  # 14ms interval
+end_time = start_time + duration
+
+def update_position():
+    current_time = time.time() - start_time
+    if current_time >= duration:
+        print("Motion complete.")
+        return
+    
+    # Generate sinusoidal setpoint
+    setpoint = zero_offset + amplitude * math.sin(2 * math.pi * frequency * current_time)
+    axis.controller.input_pos = setpoint * 50
+
+    # Read encoder position
+    encoder_position = axis.pos_estimate * 50
+
+    # Write to CSV
+    with open(csv_filename, mode='a', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow([current_time, setpoint*50, encoder_position/50])
+
+    # Schedule next update
+    scheduler.enter(interval, 1, update_position)
+
+# Start sinusoidal motion
+print("Starting sinusoidal motion...")
+scheduler.enter(0, 1, update_position)
+scheduler.run()
+
+
+## ------------------------------------ BASIC ROCKING TEST DONE ------------------------------------
 
 ## Control Modes
 
@@ -216,11 +312,11 @@ odrv.config.enable_uart_a = False
 
 # Check if calibration was successful
 if axis.current_state != 8:  # Should return to IDLE after calibration
-    print(f"{RED}❌ Error: Calibration failed!{RESET}")
+    print(f"{RED}❌ Error: CUSTOM Calibration failed!{RESET}")
     print(f"Current state: {axis.current_state}")
     exit()
 
-print(f"{GREEN}✅ Calibration complete. Using Closed Loop Control{RESET}")
+print(f"{GREEN}✅ CUSTOM Calibration complete. Using Closed Loop Control{RESET}")
 
 # Enable Closed Loop Control
 print("Enabling Closed Loop Control...")
@@ -271,6 +367,15 @@ scheduler.run()
 print('BASIC ROCKING QUICK TEST COMPLETE, NOW PERFORMING CONTINUOUS')
 
 ## ---------------------------------------------------------------------------------------------------------
+
+
+# Calibrate motor and wait for it to finish
+print("starting calibration...")
+axis.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
+while axis.current_state != AXIS_STATE_IDLE:
+    time.sleep(0.1)
+
+axis.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
 
 # To read a value, simply read the property
 print("Bus voltage is " + str(odrv.vbus_voltage) + "V")

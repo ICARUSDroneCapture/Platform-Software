@@ -1,4 +1,28 @@
+import odrive
+import time
+import math
+import csv
+import sched
+
+# ANSI escape codes for colors
+RED = "\033[91m"
+GREEN = "\033[92m"
+YELLOW = "\033[93m"
+RESET = "\033[0m"
+
+# Define the first (and for now only) as our main odrv object
+print("Connecting to ODrive...")
 odrv = odrv0
+
+print("Clearing ODrive errors...")
+if odrv:
+    odrv.clear_errors()
+    print(f"{GREEN}✅ ODrive errors cleared.{RESET}")
+else:
+    print(f"{RED}❌ Error: ODrive not found!{RESET}")
+    exit()
+
+# Voltage and current trip levels
 odrv.config.dc_bus_overvoltage_trip_level = 38
 odrv.config.dc_bus_undervoltage_trip_level = 10.5
 odrv.config.dc_max_positive_current = math.inf
@@ -25,6 +49,8 @@ odrv.axis0.config.torque_soft_min = -math.inf
 odrv.axis0.config.torque_soft_max = math.inf
 odrv.axis0.trap_traj.config.accel_limit = 10
 odrv.axis0.controller.config.vel_ramp_rate = 10
+
+# Enable and define CAN configuration parameters
 odrv.can.config.protocol = Protocol.SIMPLE
 odrv.can.config.baud_rate = 250000
 odrv.axis0.config.can.node_id = 63
@@ -39,4 +65,14 @@ odrv.axis0.config.enable_watchdog = False
 odrv.axis0.config.load_encoder = EncoderId.RS485_ENCODER0
 odrv.axis0.config.commutation_encoder = EncoderId.RS485_ENCODER0
 odrv.rs485_encoder_group0.config.mode = Rs485EncoderMode.AMT21_EVENT_DRIVEN
+
+# Don't use uart
 odrv.config.enable_uart_a = False
+
+# Check if calibration was successful
+if odrv.axis0.current_state != 1:  # Should return to IDLE after calibration
+    print(f"{RED}❌ Error: Calibration failed!{RESET}")
+    print(f"Current state: {odrv.axis0.current_state}")
+    exit()
+
+print(f"{GREEN}✅ Calibration complete.{RESET}")

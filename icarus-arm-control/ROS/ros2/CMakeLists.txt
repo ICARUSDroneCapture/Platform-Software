@@ -20,11 +20,11 @@ rosidl_generate_interfaces(${PROJECT_NAME}
 ament_export_dependencies(rosidl_default_runtime)
 
 include_directories(include)
-include_directories(../odrive_base/include)
+include_directories(shared/include)
 
 add_executable(odrive_can_node 
-  ../odrive_base/src/epoll_event_loop.cpp
-  ../odrive_base/src/socket_can.cpp
+  shared/src/epoll_event_loop.cpp
+  shared/src/socket_can.cpp
   src/odrive_can_node.cpp
   src/main.cpp
   include/odrive_can_node.hpp)

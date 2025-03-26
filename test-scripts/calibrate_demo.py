@@ -198,9 +198,13 @@ print('------ Basic Calibration and Rocking Test Complete, Now Custom Calibratio
 # InputMode.TORQUE_RAMP         -> 6
 # InputMode.MIRROR              -> 7
 
-CONTROL_MODE = ControlMode.VELOCITY_CONTROL
 MOTOR_TYPE = MotorType.HIGH_CURRENT
-INPUT_MODE = InputMode.VEL_RAMP
+
+CONTROL_MODE = ControlMode.POSITION_CONTROL
+INPUT_MODE = InputMode.POS_FILTER
+
+# CONTROL_MODE = ControlMode.VELOCITY_CONTROL
+# INPUT_MODE = InputMode.VEL_RAMP
 
 # CONTROL_MODE = 2
 # MOTOR_TYPE = 0
@@ -225,8 +229,8 @@ axis.motor.motor_thermistor.config.r_ref = 10000
 axis.motor.motor_thermistor.config.beta = 3950
 axis.motor.motor_thermistor.config.temp_limit_lower = 120
 axis.motor.motor_thermistor.config.temp_limit_upper = 140
-# axis.controller.config.control_mode = CONTROL_MODE
-# axis.controller.config.input_mode = INPUT_MODE
+axis.controller.config.control_mode = CONTROL_MODE
+axis.controller.config.input_mode = INPUT_MODE
 axis.controller.config.vel_limit = 10
 axis.controller.config.vel_limit_tolerance = 1.2
 axis.config.torque_soft_min = -math.inf

@@ -12,7 +12,8 @@ RESET = "\033[0m"
 
 # Define the first (and for now only) as our main odrv object
 print("Connecting to ODrive...")
-odrv = odrv0
+# odrv = odrv0
+odrv = odrive.find_any()
 
 print("Clearing ODrive errors...")
 if odrv:

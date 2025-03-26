@@ -91,6 +91,7 @@ include_directories(include)
 include_directories(../odrive_base/include)
 include_directories(../odrive_base/src)
 include_directories(odrive_base/include)
+include_directories(odrive_base/src)
 
 # Build using C11 and CXX20
 set_property(TARGET ${PROJECT_NAME} PROPERTY C_STANDARD 11)

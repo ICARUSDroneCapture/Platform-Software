@@ -69,10 +69,14 @@ include_directories(
     shared/include
     ${XMLRPC_INCLUDE_DIRS}
     ${YAML_CPP_INCLUDE_DIR}
-    ../../src #This line of CMakeList.txt stays in .external file to reference submodule
-    ../../src/libusb/libusb
-    ../../src/libusb/linux
-    ../../src/yaml-cpp
+    # ../../src #This line of CMakeList.txt stays in .external file to reference submodule
+    # ../../src/libusb/libusb
+    # ../../src/libusb/linux
+    # ../../src/yaml-cpp
+    lib #This line of CMakeList.txt stays in .external file to reference submodule
+    lib/libusb/libusb
+    lib/libusb/linux
+    lib/yaml-cpp
     ../arm_control/build/inertial_sense_ros2/rosidl_generator_cpp/
     /opt/ros/jazzy/include
     /opt/ros/jazzy/include/sensor_msgs

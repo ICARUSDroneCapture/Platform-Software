@@ -47,7 +47,7 @@ print("🛠  Clearing errors...")
 odrv.clear_errors()
 
 # Set motor to IDLE before calibration
-print("🛑 Setting motor to IDLE before calibration...")
+print("🛑 Setting motor to IDLE before basic calibration...")
 axis.requested_state = 1  # IDLE
 time.sleep(1)
 
@@ -60,12 +60,12 @@ start_time = time.time()
 timeout = 10  # Maximum wait time for calibration to start
 while axis.current_state not in [3, 7]:  # 3 = Calibration, 7 = Encoder Index Search
     if time.time() - start_time > timeout:
-        print(f"{RED}❌ Error: Calibration did not start!{RESET}")
+        print(f"{RED}❌ Error: Basic Calibration did not start!{RESET}")
         exit()
     print(f"⏳ Current state: {axis.current_state}")
     time.sleep(1)
 
-print("⚙️ Calibration in progress...")
+print("⚙️ Basic Calibration in progress...")
 
 # Wait for calibration to complete
 while axis.current_state in [3, 7]:
@@ -73,10 +73,10 @@ while axis.current_state in [3, 7]:
 
 # Check if calibration was successful
 if axis.current_state != 1:  # Should return to IDLE after calibration
-    print(f"{RED}❌ Error: Calibration failed!{RESET}")
+    print(f"{RED}❌ Error: Basic Calibration failed!{RESET}")
     exit()
 
-print(f"{GREEN}✅ Calibration complete.{RESET}")
+print(f"{GREEN}✅ Basic Calibration complete.{RESET}")
 
 # Set control mode to Position Control
 print("⚙️ Setting control mode to Position Control...")
@@ -100,17 +100,12 @@ print(f"{GREEN}🚀 ODrive setup complete! The motor zero position has been offs
 
 
 ## ----------------------------------- BASIC CALIBRATION -----------------------------------
+
 # Setup CSV file
 csv_filename = "output-csv-data/encoder_data.csv"
 with open(csv_filename, mode='w', newline='') as file:
     writer = csv.writer(file)
     writer.writerow(['Time (s)', 'Setpoint (turns)', 'Encoder Position (turns)'])
-
-print("Finding ODrive...")  
-odrv = odrive.find_any()
-if not odrv:
-    print("Error: ODrive not found!")
-    exit()
 
 # Check if calibration is needed
 if axis.current_state == 8:
@@ -178,8 +173,9 @@ print("Starting sinusoidal motion...")
 scheduler.enter(0, 1, update_position)
 scheduler.run()
 
+print('------ Basic Calibration and Rocking Test Complete, Now Custom Calibration ------')
 
-## ------------------------------------ BASIC ROCKING TEST DONE ------------------------------------
+## ----------------------------------- CUSTOM CALIBRATION -----------------------------------
 
 ## Control Modes
 
@@ -318,56 +314,7 @@ if axis.current_state != 8:  # Should return to IDLE after calibration
 
 print(f"{GREEN}✅ CUSTOM Calibration complete. Using Closed Loop Control{RESET}")
 
-# Enable Closed Loop Control
-print("Enabling Closed Loop Control...")
-axis.requested_state = 8        # 8 = Closed Loop Control
-time.sleep(2)
-
-# Ensure position control is active
-axis.controller.config.control_mode = 3     # 3 = Position Control
-axis.controller.config.input_mode = 1       # 1 = Pos Filtered
-
-axis.controller.input_pos = zero_offset
-
-# Create scheduler
-scheduler = sched.scheduler(time.time, time.sleep)
-
-# Tracking time and scheduling interval
-start_time = time.time()
-interval = 0.014  # 14ms interval
-end_time = start_time + duration
-
-def update_position():
-    current_time = time.time() - start_time
-    if current_time >= duration:
-        print("Motion complete.")
-        return
-    
-    # Generate sinusoidal setpoint
-    setpoint = zero_offset + amplitude * math.sin(2 * math.pi * frequency * current_time)
-    axis.controller.input_pos = setpoint * 50
-
-    # Read encoder position
-    encoder_position = axis.pos_estimate * 50
-
-    # Write to CSV
-    with open(csv_filename, mode='a', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow([current_time, setpoint*50, encoder_position/50])
-
-    # Schedule next update
-    scheduler.enter(interval, 1, update_position)
-
-# Start sinusoidal motion
-print("Starting sinusoidal motion...")
-scheduler.enter(0, 1, update_position)
-scheduler.run()
-
-# BASIC ROCKING INIT FINISH
-print('BASIC ROCKING QUICK TEST COMPLETE, NOW PERFORMING CONTINUOUS')
-
-## ---------------------------------------------------------------------------------------------------------
-
+## --------------------------------- BASIC ROCKING TEST DONE, NOW CONTINUOUS ---------------------------------
 
 # Calibrate motor and wait for it to finish
 print("starting calibration...")

@@ -1,7 +1,7 @@
 .DS_Store
 inertial-sense-sdk
 ODrive
-test-scripts/output-csv-data/*
+test-scripts/output-csv-data/*.csv
 # ros_odrive/COLCON_IGNORE
 # inertial-sense-sdk/ROS/ros2/COLCON_IGNORE
 # icarus-arm-control/ROS/ros2/COLCON_IGNORE

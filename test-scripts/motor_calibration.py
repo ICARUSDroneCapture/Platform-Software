@@ -1,4 +1,5 @@
 import odrive
+from odrive.enums import *
 import time
 import math
 import csv
@@ -44,9 +45,13 @@ else:
 # InputMode.TORQUE_RAMP         -> 6
 # InputMode.MIRROR              -> 7
 
-CONTROL_MODE = 2
-MOTOR_TYPE = 0
-INPUT_MODE = 2
+CONTROL_MODE = ControlMode.VELOCITY_CONTROL
+MOTOR_TYPE = MotorType.HIGH_CURRENT
+INPUT_MODE = InputMode.VEL_RAMP
+
+# CONTROL_MODE = 2
+# MOTOR_TYPE = 0
+# INPUT_MODE = 2
 
 # Voltage and current trip levels
 odrv.config.dc_bus_overvoltage_trip_level = 38
@@ -98,11 +103,17 @@ odrv.axis0.controller.config.vel_ramp_rate = 10
 # Rs485EncoderMode.AMT21_POLLING        -> 1
 # Rs485EncoderMode.AMT21_EVENT_DRIVEN   -> 2
 
-CAN_PROTOCOL = 1
-ENCODER_ID = 10
-RS485_ENCODER_MODE = 2
+
+CAN_PROTOCOL = Protocol.SIMPLE
+ENCODER_ID = EncoderId.RS485_ENCODER0
+RS485_ENCODER_MODE = Rs485EncoderMode.AMT21_EVENT_DRIVEN
+
+# CAN_PROTOCOL = 1
+# ENCODER_ID = 10
+# RS485_ENCODER_MODE = 2
 
 # Enable and define CAN configuration parameters
+# odrv.can.config.protocol = CAN_PROTOCOL
 odrv.can.config.protocol = CAN_PROTOCOL
 odrv.can.config.baud_rate = 250000
 odrv.axis0.config.can.node_id = 63

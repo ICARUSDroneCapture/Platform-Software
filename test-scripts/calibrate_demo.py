@@ -198,9 +198,9 @@ print('------ Basic Calibration and Rocking Test Complete, Now Custom Calibratio
 # InputMode.TORQUE_RAMP         -> 6
 # InputMode.MIRROR              -> 7
 
-# CONTROL_MODE = ControlMode.VELOCITY_CONTROL
-# MOTOR_TYPE = MotorType.HIGH_CURRENT
-# INPUT_MODE = InputMode.VEL_RAMP
+CONTROL_MODE = ControlMode.VELOCITY_CONTROL
+MOTOR_TYPE = MotorType.HIGH_CURRENT
+INPUT_MODE = InputMode.VEL_RAMP
 
 # # CONTROL_MODE = 2
 # # MOTOR_TYPE = 0
@@ -212,7 +212,7 @@ print('------ Basic Calibration and Rocking Test Complete, Now Custom Calibratio
 # odrv.config.dc_max_positive_current = math.inf
 # odrv.config.dc_max_negative_current = -math.inf
 # odrv.config.brake_resistor0.enable = False
-# axis.config.motor.motor_type = MOTOR_TYPE
+axis.config.motor.motor_type = MOTOR_TYPE
 # axis.config.motor.pole_pairs = 4
 # axis.config.motor.torque_constant = 0.09505747126436781
 # axis.config.motor.current_soft_max = 30
@@ -225,8 +225,8 @@ print('------ Basic Calibration and Rocking Test Complete, Now Custom Calibratio
 # axis.motor.motor_thermistor.config.beta = 3950
 # axis.motor.motor_thermistor.config.temp_limit_lower = 120
 # axis.motor.motor_thermistor.config.temp_limit_upper = 140
-# axis.controller.config.control_mode = CONTROL_MODE
-# axis.controller.config.input_mode = INPUT_MODE
+axis.controller.config.control_mode = CONTROL_MODE
+axis.controller.config.input_mode = INPUT_MODE
 # axis.controller.config.vel_limit = 10
 # axis.controller.config.vel_limit_tolerance = 1.2
 # axis.config.torque_soft_min = -math.inf

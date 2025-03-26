@@ -85,7 +85,7 @@ SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fms-extensions -Wl,--no-as-needed -DPLATFOR
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fms-extensions -Wl,--no-as-needed -DPLATFORM_IS_LINUX")
 
 add_executable(${PROJECT_NAME}_node
-    src/inertial_sense_ros2.cpp
+    src/imu_publisher.cpp
     shared/src/inertial_sense_node.cpp
     shared/src/ParamHelper.cpp
     shared/src/RtkRover.cpp
@@ -99,7 +99,7 @@ target_link_libraries(${PROJECT_NAME}_node InertialSenseSDK ${YAML_CPP_LIBRARIES
 
 
 ament_add_gtest(test_${PROJECT_NAME}
-    src/inertial_sense_ros2.cpp
+    src/imu_publisher.cpp
     shared/src/ParamHelper.cpp
     shared/src/RtkRover.cpp
     shared/src/RtkBase.cpp

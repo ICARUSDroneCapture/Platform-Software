@@ -1,6 +1,6 @@
 set(CMAKE_CXX_STANDARD 17)
 cmake_minimum_required(VERSION 3.10.0)
-project(inertial_sense_ros2)
+project(icarus_arm_control)
 #find_package(rosidl_typesupport_c REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
@@ -98,7 +98,7 @@ ament_target_dependencies(${PROJECT_NAME}_node rclcpp std_msgs geometry_msgs nav
 target_link_libraries(${PROJECT_NAME}_node InertialSenseSDK ${YAML_CPP_LIBRARIES} pthread)
 
 
-ament_add_gtest(test_${PROJECT_NAME}
+ament_add_gtest(test_inertial_sense_imu
     src/imu_publisher.cpp
     shared/src/ParamHelper.cpp
     shared/src/RtkRover.cpp
@@ -112,12 +112,12 @@ ament_add_gtest(test_${PROJECT_NAME}
 )
 
 rosidl_get_typesupport_target(cpp_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_cpp")
-target_link_libraries(test_${PROJECT_NAME} "${cpp_typesupport_target}")
-ament_target_dependencies(test_${PROJECT_NAME} rclcpp std_msgs geometry_msgs nav_msgs diagnostic_msgs sensor_msgs std_srvs)
-target_link_libraries(test_${PROJECT_NAME} InertialSenseSDK ${YAML_CPP_LIBRARIES} pthread)
+target_link_libraries(test_inertial_sense_imu "${cpp_typesupport_target}")
+ament_target_dependencies(test_inertial_sense_imu rclcpp std_msgs geometry_msgs nav_msgs diagnostic_msgs sensor_msgs std_srvs)
+target_link_libraries(test_inertial_sense_imu InertialSenseSDK ${YAML_CPP_LIBRARIES} pthread)
 
 #link_directories(/home/s/Inertial_Sense/imx/ros2_ws/src/Platform-Software/icarus-arm-control)
-install(TARGETS test_${PROJECT_NAME}
+install(TARGETS test_inertial_sense_imu
         DESTINATION lib/${PROJECT_NAME})
 
 ament_package()

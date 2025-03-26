@@ -18,6 +18,17 @@ GREEN = "\033[92m"
 YELLOW = "\033[93m"
 RESET = "\033[0m"
 
+# Motion parameters
+amplitude = 10 / 360  # Turns
+frequency = .25         # Hz
+duration = 12          # Seconds
+zero_offset = (7.427) / 360 # IMU reading, will adjust for gearbox
+
+# Setup CSV file
+csv_filename = "output-csv-data/encoder_data.csv"
+with open(csv_filename, mode='w', newline='') as file:
+    writer = csv.writer(file)
+    writer.writerow(['Time (s)', 'Setpoint (turns)', 'Encoder Position (turns)'])
 
 # Define the first (and for now only) as our main odrv object
 print("Connecting to ODrive...")

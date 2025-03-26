@@ -24,6 +24,10 @@ print("Connecting to ODrive...")
 # odrv = odrv0
 odrv = odrive.find_any()
 
+if not odrv:
+    print("Error: ODrive not found!")
+    exit()
+
 print("Clearing ODrive errors...")
 if odrv:
     odrv.clear_errors()
@@ -31,6 +35,9 @@ if odrv:
 else:
     print(f"{RED}❌ Error: ODrive not found!{RESET}")
     exit()
+
+
+axis = odrv.axis0
 
 ## Control Modes
 
@@ -67,27 +74,27 @@ odrv.config.dc_bus_undervoltage_trip_level = 10.5
 odrv.config.dc_max_positive_current = math.inf
 odrv.config.dc_max_negative_current = -math.inf
 odrv.config.brake_resistor0.enable = False
-odrv.axis0.config.motor.motor_type = MOTOR_TYPE
-odrv.axis0.config.motor.pole_pairs = 4
-odrv.axis0.config.motor.torque_constant = 0.09505747126436781
-odrv.axis0.config.motor.current_soft_max = 30
-odrv.axis0.config.motor.current_hard_max = 49
-odrv.axis0.config.motor.calibration_current = 10
-odrv.axis0.config.motor.resistance_calib_max_voltage = 2
-odrv.axis0.config.calibration_lockin.current = 10
-odrv.axis0.motor.motor_thermistor.config.enabled = True
-odrv.axis0.motor.motor_thermistor.config.r_ref = 10000
-odrv.axis0.motor.motor_thermistor.config.beta = 3950
-odrv.axis0.motor.motor_thermistor.config.temp_limit_lower = 120
-odrv.axis0.motor.motor_thermistor.config.temp_limit_upper = 140
-odrv.axis0.controller.config.control_mode = CONTROL_MODE
-odrv.axis0.controller.config.input_mode = INPUT_MODE
-odrv.axis0.controller.config.vel_limit = 10
-odrv.axis0.controller.config.vel_limit_tolerance = 1.2
-odrv.axis0.config.torque_soft_min = -math.inf
-odrv.axis0.config.torque_soft_max = math.inf
-odrv.axis0.trap_traj.config.accel_limit = 10
-odrv.axis0.controller.config.vel_ramp_rate = 10
+axis.config.motor.motor_type = MOTOR_TYPE
+axis.config.motor.pole_pairs = 4
+axis.config.motor.torque_constant = 0.09505747126436781
+axis.config.motor.current_soft_max = 30
+axis.config.motor.current_hard_max = 49
+axis.config.motor.calibration_current = 10
+axis.config.motor.resistance_calib_max_voltage = 2
+axis.config.calibration_lockin.current = 10
+axis.motor.motor_thermistor.config.enabled = True
+axis.motor.motor_thermistor.config.r_ref = 10000
+axis.motor.motor_thermistor.config.beta = 3950
+axis.motor.motor_thermistor.config.temp_limit_lower = 120
+axis.motor.motor_thermistor.config.temp_limit_upper = 140
+axis.controller.config.control_mode = CONTROL_MODE
+axis.controller.config.input_mode = INPUT_MODE
+axis.controller.config.vel_limit = 10
+axis.controller.config.vel_limit_tolerance = 1.2
+axis.config.torque_soft_min = -math.inf
+axis.config.torque_soft_max = math.inf
+axis.trap_traj.config.accel_limit = 10
+axis.controller.config.vel_ramp_rate = 10
 
 # Protocol.SIMPLE     -> 1
 
@@ -124,17 +131,17 @@ RS485_ENCODER_MODE = Rs485EncoderMode.AMT21_EVENT_DRIVEN
 # odrv.can.config.protocol = CAN_PROTOCOL
 odrv.can.config.protocol = CAN_PROTOCOL
 odrv.can.config.baud_rate = 250000
-odrv.axis0.config.can.node_id = 63
-odrv.axis0.config.can.heartbeat_msg_rate_ms = 100
-odrv.axis0.config.can.encoder_msg_rate_ms = 0
-odrv.axis0.config.can.iq_msg_rate_ms = 0
-odrv.axis0.config.can.torques_msg_rate_ms = 0
-odrv.axis0.config.can.error_msg_rate_ms = 0
-odrv.axis0.config.can.temperature_msg_rate_ms = 0
-odrv.axis0.config.can.bus_voltage_msg_rate_ms = 0
-odrv.axis0.config.enable_watchdog = False
-odrv.axis0.config.load_encoder = ENCODER_ID
-odrv.axis0.config.commutation_encoder = ENCODER_ID
+axis.config.can.node_id = 63
+axis.config.can.heartbeat_msg_rate_ms = 100
+axis.config.can.encoder_msg_rate_ms = 0
+axis.config.can.iq_msg_rate_ms = 0
+axis.config.can.torques_msg_rate_ms = 0
+axis.config.can.error_msg_rate_ms = 0
+axis.config.can.temperature_msg_rate_ms = 0
+axis.config.can.bus_voltage_msg_rate_ms = 0
+axis.config.enable_watchdog = False
+axis.config.load_encoder = ENCODER_ID
+axis.config.commutation_encoder = ENCODER_ID
 odrv.rs485_encoder_group0.config.mode = RS485_ENCODER_MODE
 
 # Don't use uart
@@ -162,19 +169,69 @@ odrv.config.enable_uart_a = False
 # AxisState.ANTICOGGING_CALIBRATION             -> 14
 
 # Check if calibration was successful
-if odrv.axis0.current_state != 8:  # Should return to IDLE after calibration
+if axis.current_state != 8:  # Should return to IDLE after calibration
     print(f"{RED}❌ Error: Calibration failed!{RESET}")
-    print(f"Current state: {odrv.axis0.current_state}")
+    print(f"Current state: {axis.current_state}")
     exit()
 
-print(f"{GREEN}✅ Calibration complete.{RESET}")
+print(f"{GREEN}✅ Calibration complete. Using Closed Loop Control{RESET}")
+
+# Enable Closed Loop Control
+print("Enabling Closed Loop Control...")
+axis.requested_state = 8        # 8 = Closed Loop Control
+time.sleep(2)
+
+# Ensure position control is active
+axis.controller.config.control_mode = 3     # 3 = Position Control
+axis.controller.config.input_mode = 1       # 1 = Pos Filtered
+
+axis.controller.input_pos = zero_offset
+
+# Create scheduler
+scheduler = sched.scheduler(time.time, time.sleep)
+
+# Tracking time and scheduling interval
+start_time = time.time()
+interval = 0.014  # 14ms interval
+end_time = start_time + duration
+
+def update_position():
+    current_time = time.time() - start_time
+    if current_time >= duration:
+        print("Motion complete.")
+        return
+    
+    # Generate sinusoidal setpoint
+    setpoint = zero_offset + amplitude * math.sin(2 * math.pi * frequency * current_time)
+    axis.controller.input_pos = setpoint * 50
+
+    # Read encoder position
+    encoder_position = axis.pos_estimate * 50
+
+    # Write to CSV
+    with open(csv_filename, mode='a', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow([current_time, setpoint*50, encoder_position/50])
+
+    # Schedule next update
+    scheduler.enter(interval, 1, update_position)
+
+# Start sinusoidal motion
+print("Starting sinusoidal motion...")
+scheduler.enter(0, 1, update_position)
+scheduler.run()
+
+# BASIC ROCKING INIT FINISH
+print('BASIC ROCKING QUICK TEST COMPLETE, NOW PERFORMING CONTINUOUS')
+
+## ---------------------------------------------------------------------------------------------------------
 
 # To read a value, simply read the property
 print("Bus voltage is " + str(odrv.vbus_voltage) + "V")
 
 # Or to change a value, just assign to the property
-odrv.axis0.controller.input_pos = 3.14
-print("Position setpoint is " + str(odrv.axis0.controller.pos_setpoint))
+axis.controller.input_pos = 3.14
+print("Position setpoint is " + str(axis.controller.pos_setpoint))
 
 # And this is how function calls are done:
 for i in [1,2,3,4]:
@@ -185,7 +242,7 @@ t0 = time.monotonic()
 while True:
     setpoint = 4.0 * math.sin((time.monotonic() - t0)*2)
     print("goto " + str(int(setpoint)))
-    odrv.axis0.controller.input_pos = setpoint
+    axis.controller.input_pos = setpoint
     time.sleep(0.01)
 
 # Some more things you can try:

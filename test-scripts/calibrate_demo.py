@@ -18,28 +18,21 @@ GREEN = "\033[92m"
 YELLOW = "\033[93m"
 RESET = "\033[0m"
 
+# Set your desired offset in degrees
+USER_OFFSET_DEGREES = 0  # Change this as needed
+USER_OFFSET_TURNS = USER_OFFSET_DEGREES / 360  # Convert to turns
+
 # Motion parameters
 amplitude = 10 / 360  # Turns
 frequency = .25         # Hz
 duration = 12          # Seconds
 zero_offset = (7.427) / 360 # IMU reading, will adjust for gearbox
 
-# Setup CSV file
-csv_filename = "output-csv-data/encoder_data.csv"
-with open(csv_filename, mode='w', newline='') as file:
-    writer = csv.writer(file)
-    writer.writerow(['Time (s)', 'Setpoint (turns)', 'Encoder Position (turns)'])
-
-# Define the first (and for now only) as our main odrv object
-print("Connecting to ODrive...")
-# odrv = odrv0
+# Connect to ODrive
+print("🔌 Connecting to ODrive...")
 odrv = odrive.find_any()
 
-if not odrv:
-    print("Error: ODrive not found!")
-    exit()
-
-print("Clearing ODrive errors...")
+print("🛠  Clearing ODrive errors...")
 if odrv:
     odrv.clear_errors()
     print(f"{GREEN}✅ ODrive errors cleared.{RESET}")
@@ -47,8 +40,50 @@ else:
     print(f"{RED}❌ Error: ODrive not found!{RESET}")
     exit()
 
+axis = odrv.axis0  # Change to `axis1` if needed
 
-axis = odrv.axis0
+# Clear any existing errors
+print("🛠  Clearing errors...")
+odrv.clear_errors()
+
+# Set motor to IDLE before calibration
+print("🛑 Setting motor to IDLE before calibration...")
+axis.requested_state = 1  # IDLE
+time.sleep(1)
+
+# Request calibration
+print("🔄 Recalibrating motor...")
+axis.requested_state = 3  # Calibration
+
+# Wait for calibration to start
+start_time = time.time()
+timeout = 10  # Maximum wait time for calibration to start
+while axis.current_state not in [3, 7]:  # 3 = Calibration, 7 = Encoder Index Search
+    if time.time() - start_time > timeout:
+        print(f"{RED}❌ Error: Calibration did not start!{RESET}")
+        exit()
+    print(f"⏳ Current state: {axis.current_state}")
+    time.sleep(1)
+
+print("⚙️ Calibration in progress...")
+
+# Wait for calibration to complete
+while axis.current_state in [3, 7]:
+    time.sleep(1)
+
+# Check if calibration was successful
+if axis.current_state != 1:  # Should return to IDLE after calibration
+    print(f"{RED}❌ Error: Basic Calibration failed!{RESET}")
+    exit()
+
+print(f"{GREEN} Basic Calibration complete.{RESET}")
+
+# Setup CSV file
+csv_filename = "output-csv-data/encoder_data.csv"
+with open(csv_filename, mode='w', newline='') as file:
+    writer = csv.writer(file)
+    writer.writerow(['Time (s)', 'Setpoint (turns)', 'Encoder Position (turns)'])
+
 
 ## Control Modes
 

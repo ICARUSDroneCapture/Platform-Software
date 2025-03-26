@@ -234,56 +234,56 @@ print('------ Basic Calibration and Rocking Test Complete, Now Custom Calibratio
 # axis.trap_traj.config.accel_limit = 10
 # axis.controller.config.vel_ramp_rate = 10
 
-# # Protocol.SIMPLE     -> 1
+# Protocol.SIMPLE     -> 1
 
-# # EncoderId.NONE                    -> 0
-# # EncoderId.INC_ENCODER0            -> 1
-# # EncoderId.INC_ENCODER1            -> 2
-# # EncoderId.INC_ENCODER2            -> 3
-# # EncoderId.SENSORLESS_ESTIMATOR    -> 4
-# # EncoderId.SPI_ENCODER0            -> 5
-# # EncoderId.SPI_ENCODER1            -> 6
-# # EncoderId.SPI_ENCODER2            -> 7
-# # EncoderId.HALL_ENCODER0           -> 8
-# # EncoderId.HALL_ENCODER1           -> 9
-# # EncoderId.RS485_ENCODER0          -> 10
-# # EncoderId.RS485_ENCODER1          -> 11
-# # EncoderId.RS485_ENCODER2          -> 12
-# # EncoderId.ONBOARD_ENCODER0        -> 13
-# # EncoderId.ONBOARD_ENCODER1        -> 14
+# EncoderId.NONE                    -> 0
+# EncoderId.INC_ENCODER0            -> 1
+# EncoderId.INC_ENCODER1            -> 2
+# EncoderId.INC_ENCODER2            -> 3
+# EncoderId.SENSORLESS_ESTIMATOR    -> 4
+# EncoderId.SPI_ENCODER0            -> 5
+# EncoderId.SPI_ENCODER1            -> 6
+# EncoderId.SPI_ENCODER2            -> 7
+# EncoderId.HALL_ENCODER0           -> 8
+# EncoderId.HALL_ENCODER1           -> 9
+# EncoderId.RS485_ENCODER0          -> 10
+# EncoderId.RS485_ENCODER1          -> 11
+# EncoderId.RS485_ENCODER2          -> 12
+# EncoderId.ONBOARD_ENCODER0        -> 13
+# EncoderId.ONBOARD_ENCODER1        -> 14
 
-# # Rs485EncoderMode.DISABLED             -> 0
-# # Rs485EncoderMode.AMT21_POLLING        -> 1
-# # Rs485EncoderMode.AMT21_EVENT_DRIVEN   -> 2
+# Rs485EncoderMode.DISABLED             -> 0
+# Rs485EncoderMode.AMT21_POLLING        -> 1
+# Rs485EncoderMode.AMT21_EVENT_DRIVEN   -> 2
 
 
-# CAN_PROTOCOL = Protocol.SIMPLE
-# ENCODER_ID = EncoderId.RS485_ENCODER0
-# RS485_ENCODER_MODE = Rs485EncoderMode.AMT21_EVENT_DRIVEN
+CAN_PROTOCOL = Protocol.SIMPLE
+ENCODER_ID = EncoderId.RS485_ENCODER0
+RS485_ENCODER_MODE = Rs485EncoderMode.AMT21_EVENT_DRIVEN
 
-# # CAN_PROTOCOL = 1
-# # ENCODER_ID = 10
-# # RS485_ENCODER_MODE = 2
+# CAN_PROTOCOL = 1
+# ENCODER_ID = 10
+# RS485_ENCODER_MODE = 2
 
-# # Enable and define CAN configuration parameters
-# # odrv.can.config.protocol = CAN_PROTOCOL
+# Enable and define CAN configuration parameters
 # odrv.can.config.protocol = CAN_PROTOCOL
-# odrv.can.config.baud_rate = 250000
-# axis.config.can.node_id = 63
-# axis.config.can.heartbeat_msg_rate_ms = 100
-# axis.config.can.encoder_msg_rate_ms = 0
-# axis.config.can.iq_msg_rate_ms = 0
-# axis.config.can.torques_msg_rate_ms = 0
-# axis.config.can.error_msg_rate_ms = 0
-# axis.config.can.temperature_msg_rate_ms = 0
-# axis.config.can.bus_voltage_msg_rate_ms = 0
-# axis.config.enable_watchdog = False
-# axis.config.load_encoder = ENCODER_ID
-# axis.config.commutation_encoder = ENCODER_ID
-# odrv.rs485_encoder_group0.config.mode = RS485_ENCODER_MODE
+odrv.can.config.protocol = CAN_PROTOCOL
+odrv.can.config.baud_rate = 250000
+axis.config.can.node_id = 63
+axis.config.can.heartbeat_msg_rate_ms = 100
+axis.config.can.encoder_msg_rate_ms = 0
+axis.config.can.iq_msg_rate_ms = 0
+axis.config.can.torques_msg_rate_ms = 0
+axis.config.can.error_msg_rate_ms = 0
+axis.config.can.temperature_msg_rate_ms = 0
+axis.config.can.bus_voltage_msg_rate_ms = 0
+axis.config.enable_watchdog = False
+axis.config.load_encoder = ENCODER_ID
+axis.config.commutation_encoder = ENCODER_ID
+odrv.rs485_encoder_group0.config.mode = RS485_ENCODER_MODE
 
-# # Don't use uart
-# odrv.config.enable_uart_a = False
+# Don't use uart
+odrv.config.enable_uart_a = False
 
 # --------------------------------------------------------------------------------
 # Axis States

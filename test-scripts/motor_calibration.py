@@ -132,8 +132,29 @@ odrv.rs485_encoder_group0.config.mode = RS485_ENCODER_MODE
 # Don't use uart
 odrv.config.enable_uart_a = False
 
+# --------------------------------------------------------------------------------
+# Axis States
+# --------------------------------------------------------------------------------
+
+# Again, not a type, number 5 is skipped
+
+# AxisState.UNDEFINED                           -> 0
+# AxisState.IDLE                                -> 1
+# AxisState.STARTUP_SEQUENCE                    -> 2
+# AxisState.FULL_CALIBRATION_SEQUENCE           -> 3
+# AxisState.MOTOR_CALIBRATION                   -> 4
+# AxisState.ENCODER_INDEX_SEARCH                -> 6
+# AxisState.ENCODER_OFFSET_CALIBRATION          -> 7
+# AxisState.CLOSED_LOOP_CONTROL                 -> 8
+# AxisState.LOCKIN_SPIN                         -> 9
+# AxisState.ENCODER_DIR_FIND                    -> 10
+# AxisState.HOMING                              -> 11
+# AxisState.ENCODER_HALL_POLARITY_CALIBRATION   -> 12
+# AxisState.ENCODER_HALL_PHASE_CALIBRATION      -> 13
+# AxisState.ANTICOGGING_CALIBRATION             -> 14
+
 # Check if calibration was successful
-if odrv.axis0.current_state != 1:  # Should return to IDLE after calibration
+if odrv.axis0.current_state != 8:  # Should return to IDLE after calibration
     print(f"{RED}❌ Error: Calibration failed!{RESET}")
     print(f"Current state: {odrv.axis0.current_state}")
     exit()

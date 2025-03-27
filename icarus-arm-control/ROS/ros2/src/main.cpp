@@ -4,6 +4,18 @@
 #include <thread>
 
 int main(int argc, char* argv[]) {
+
+    // (void) argc;
+    // (void) argv;
+
+    // printf("Here will be the controller listener.\nThis node will do integration, gravity correction and control law calculations.\n");
+    // return 0;
+
+    // rclcpp::init(argc, argv);
+    // rclcpp::spin(std::make_shared<Controller>());
+    // rclcpp::shutdown();
+    // return 0;
+
     rclcpp::init(argc, argv);
     EpollEventLoop event_loop;
     auto can_node = std::make_shared<ODriveCanNode>("ODriveCanNode");

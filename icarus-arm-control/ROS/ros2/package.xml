@@ -2,9 +2,9 @@
   <name>icarus_arm_control</name>
   <version>0.0.1</version>
   <description>
-  This package provides a ROS interface to the InertialSense GPS-INS sensor
+  This package reads IMU data and motor encoder data to perform inertial stabilization of a robotic armm.
   </description>
-  <maintainer email="devteam@inertialsense.com">IS Dev Team</maintainer>
+  <maintainer email="Winnifred.Regan@colorado.edu">CU Boulder Student</maintainer>
   <license>MIT</license>
 
   <buildtool_depend>rosidl_default_generators</buildtool_depend>

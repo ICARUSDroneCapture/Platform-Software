@@ -4,8 +4,6 @@
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
 
-// imu publisher: nh_->create_publisher<sensor_msgs::msg::Imu>(rs_.imu.topic, 1); }
-
 // class Controller : public rclcpp::Node
 // {
 // public:
@@ -26,5 +24,5 @@
 
 void placeholder()
 {
-    printf("Just a placeholder, test out setup.\n")
+    printf("Just a placeholder, test out setup.\n");
 }

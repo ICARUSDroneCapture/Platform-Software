@@ -97,7 +97,7 @@ set_property(TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fms-extensions -Wl,--no-as-needed -DPLATFORM_IS_LINUX" )
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fms-extensions -Wl,--no-as-needed -DPLATFORM_IS_LINUX")
 
-add_executable(${PROJECT_NAME}_node
+add_executable(inertial_sense_imu_node
     src/imu_publisher.cpp
     shared/src/inertial_sense_node.cpp
     shared/src/ParamHelper.cpp
@@ -123,9 +123,9 @@ ament_target_dependencies(odrive_can_node
 target_compile_features(odrive_can_node PRIVATE cxx_std_20)
 
 rosidl_get_typesupport_target(cpp_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_cpp")
-target_link_libraries(${PROJECT_NAME}_node "${cpp_typesupport_target}")
-ament_target_dependencies(${PROJECT_NAME}_node rclcpp std_msgs geometry_msgs nav_msgs diagnostic_msgs sensor_msgs std_srvs)
-target_link_libraries(${PROJECT_NAME}_node InertialSenseSDK ${YAML_CPP_LIBRARIES} pthread)
+target_link_libraries(inertial_sense_imu_node "${cpp_typesupport_target}")
+ament_target_dependencies(inertial_sense_imu_node rclcpp std_msgs geometry_msgs nav_msgs diagnostic_msgs sensor_msgs std_srvs)
+target_link_libraries(inertial_sense_imu_node InertialSenseSDK ${YAML_CPP_LIBRARIES} pthread)
 
 
 ament_add_gtest(test_inertial_sense_imu

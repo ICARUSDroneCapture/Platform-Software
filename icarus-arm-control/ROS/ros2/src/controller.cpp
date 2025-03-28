@@ -11,6 +11,7 @@ Controller::Controller()
 {
   // Should always be enabled by default
   // cl_.imu.grav_correction = true;
+  RCLCPP_INFO(rclcpp::get_logger("start"),"init");
 
 };
 

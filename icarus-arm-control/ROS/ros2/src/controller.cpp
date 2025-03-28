@@ -35,7 +35,7 @@ void Controller::initializeROS()
   //   cl_->create_publisher<std_msgs::msg::String>("topic", 10, topic_callback);
 
   subscription_ = 
-  cl_->create_publisher<std_msgs::msg::String>("topic", 10);
+    cl_->create_publisher<std_msgs::msg::String>("topic", 10);
 
   RCLCPP_INFO(rclcpp::get_logger("controller"),"Insert constructor placeholder...");
 };

@@ -16,9 +16,9 @@
 
 void Controller::step()
 {
-  linear_acceleration_S_x = imu.linear_acceleration.x;
-  linear_acceleration_S_y = imu.linear_acceleration.y;
-  linear_acceleration_S_z = imu.linear_acceleration.z;
+  linear_acceleration_S_x = imu->linear_acceleration->x;
+  linear_acceleration_S_y = imu->linear_acceleration->y;
+  linear_acceleration_S_z = imu->linear_acceleration->z;
 
   RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tLinear Velocity: [%f; %f; %f]\n", linear_velocity_S_x, linear_velocity_S_y, linear_velocity_S_z);
   

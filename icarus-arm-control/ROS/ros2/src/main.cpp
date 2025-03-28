@@ -45,7 +45,7 @@
                        "      period: 1\n";
 
     YAML::Node config = YAML::Load(yaml);
-    ASSERT_EX(config.IsDefined(), std::cerr << "Unable to parse YAML file. Is the file valid?\n");
+    ASSERT_EX(config.IsDefined(), std::out << "Unable to parse YAML file. Is the file valid?\n");
 
     bool success = false;
     unsigned int startTimeMs = current_timeMs(), prevTimeMs = 0, nowTimeMs;
@@ -65,6 +65,8 @@
         }
     }
 
+    ASSERT_EX(success, std::out << "IMU RX fail.\n");
+
     while (ok())
     {
         rclcpp::spin_some(controller_node);
@@ -76,8 +78,6 @@
             prevTimeMs = nowTimeMs;
         }
     }
-
-    ASSERT_EX(success, std::cerr << "IMU RX fail.\n");
 
     rclcpp::shutdown();
     

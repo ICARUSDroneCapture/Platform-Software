@@ -7,6 +7,7 @@
  */
 
  #include "controller.hpp"
+ #include "inertial_sense_ros.h"
 
  #define NDEBUG
 

@@ -2,8 +2,10 @@
 #include "odrive_enums.h"
 #include "epoll_event_loop.hpp"
 #include "byte_swap.hpp"
+#include "socket_can.hpp"
 #include <sys/eventfd.h>
 #include <chrono>
+#include <thread>
 
 enum CmdId : uint32_t {
     kHeartbeat = 0x001,            // ControllerStatus  - publisher
@@ -296,4 +298,18 @@ inline bool ODriveCanNode::verify_length(const std::string&name, uint8_t expecte
     RCLCPP_DEBUG(rclcpp::Node::get_logger(), "received %s", name.c_str());
     if (!valid) RCLCPP_WARN(rclcpp::Node::get_logger(), "Incorrect %s frame length: %d != %d", name.c_str(), length, expected);
     return valid;
+}
+
+int main(int argc, char* argv[]) {
+    rclcpp::init(argc, argv);
+    EpollEventLoop event_loop;
+    auto can_node = std::make_shared<ODriveCanNode>("ODriveCanNode");
+
+    if (!can_node->init(&event_loop)) return -1;
+
+    std::thread can_event_loop([&event_loop]() { event_loop.run_until_empty(); });
+    rclcpp::spin(can_node);
+    can_node->deinit();
+    rclcpp::shutdown();
+    return 0;
 }

@@ -112,7 +112,6 @@ add_executable(odrive_can_node
   shared/src/epoll_event_loop.cpp
   shared/src/socket_can.cpp
   src/odrive_can_node.cpp
-  src/main.cpp
   include/odrive_can_node.hpp)
 
 ament_target_dependencies(odrive_can_node
@@ -149,6 +148,7 @@ target_link_libraries(test_inertial_sense_imu InertialSenseSDK ${YAML_CPP_LIBRAR
 #link_directories(/home/s/Inertial_Sense/imx/ros2_ws/src/Platform-Software/icarus-arm-control)
 install(TARGETS
     test_inertial_sense_imu
+    inertial_sense_imu_node
     controller_listener_node
     odrive_can_node
     DESTINATION lib/${PROJECT_NAME})

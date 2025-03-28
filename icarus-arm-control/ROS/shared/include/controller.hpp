@@ -88,12 +88,6 @@ using namespace std::chrono_literals;
     std::vector<double> gps_ts;
     std::vector<double> imu_ts;
     std::vector<double> pimu_ts;
-    std::vector<double> ins_ts;
-
-    std::vector<double> gps_ts;
-    std::vector<double> imu_ts;
-    std::vector<double> pimu_ts;
-    std::vector<double> ins_ts;
  
 private:
 

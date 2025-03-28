@@ -106,8 +106,14 @@ add_executable(inertial_sense_imu_node
 
 add_executable(controller_listener_node 
     src/controller.cpp
-    src/main.cpp)
-ament_target_dependencies(controller_listener_node rclcpp std_msgs std_srvs sensor_msgs)
+    src/main.cpp
+    shared/src/ParamHelper.cpp
+)
+
+rosidl_get_typesupport_target(cpp_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_cpp")
+target_link_libraries(controller_listener_node "${cpp_typesupport_target}")
+ament_target_dependencies(controller_listener_node rclcpp std_msgs geometry_msgs nav_msgs diagnostic_msgs sensor_msgs std_srvs)
+target_link_libraries(controller_listener_node InertialSenseSDK ${YAML_CPP_LIBRARIES} pthread)
 
 add_executable(talker src/test_publisher.cpp)
 ament_target_dependencies(talker rclcpp std_msgs)

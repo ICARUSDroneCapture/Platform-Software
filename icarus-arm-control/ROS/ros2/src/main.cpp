@@ -34,7 +34,7 @@
                        "      period: 1\n";
 
     YAML::Node config = YAML::Load(yaml);
-    ASSERT_TRUE(config.IsDefined()) << "Unable to parse YAML file. Is the file valid?";
+    assert(config.IsDefined()) << "Unable to parse YAML file. Is the file valid?";
 
     bool success = false;
     unsigned int startTimeMs = current_timeMs(), prevTimeMs = 0, nowTimeMs;
@@ -54,7 +54,7 @@
         }
     }
 
-    ASSERT_TRUE( success );
+    assert( success );
 
     rclcpp::shutdown();
     

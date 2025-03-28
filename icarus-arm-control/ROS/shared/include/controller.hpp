@@ -22,6 +22,7 @@
 
 #include <chrono>
 #include <memory>
+#include <cassert>
 #include "rclcpp/rclcpp/rclcpp.hpp"
 #include "rclcpp/rclcpp/timer.hpp"
 #include "rclcpp/rclcpp/time.hpp"

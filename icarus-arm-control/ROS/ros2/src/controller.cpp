@@ -21,7 +21,7 @@ void Controller::step()
 
   // cbPIMU(&pimu);
 
-  // cbIMU(imu);
+  cbIMU(imu);
 
   // cbIMU(&imu);
 

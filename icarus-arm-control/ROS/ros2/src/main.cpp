@@ -27,7 +27,7 @@
     while (ok())
     {
         printf("Entered while loop.\n");
-        spin_some(thing->nh_);
+        spin_some(thing->cl_);
         printf("Spin call worked.\n");
         thing->update();
         printf("Controller update worked.\n");

@@ -37,8 +37,8 @@ public:
     void update();
 
     // Node handler for spin
-    Node::SharedPtr nh_;
-    Node::SharedPtr nh_private_;
+    Node::SharedPtr cl_;
+    Node::SharedPtr cl_private_;
 
     // struct
     // {

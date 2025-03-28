@@ -74,6 +74,7 @@ using namespace std::chrono_literals;
  public:
     Controller() : Node("controller_listener_node"){}
     void init();
+    void step();
     void cbWheelEncoder(const sensor_msgs::msg::JointState &msg);
     void cbPIMU(const icarus_arm_control::msg::PIMU::SharedPtr pimu);
     void cbIMU(const  sensor_msgs::msg::Imu &imu);
@@ -86,6 +87,24 @@ using namespace std::chrono_literals;
     bool quiet = true;
     bool got_gps_tow = false;
     bool did_rx_pimu_ = false;
+
+    // IMU Integrated Values
+    float linear_velocity_S_x = 0.0;
+    float linear_velocity_S_y = 0.0;
+    float linear_velocity_S_z = 0.0;
+
+    float theta = 0.0;
+    float phi = 0.0;
+    float psi = 0.0;
+
+    // IMU Values
+    float linear_acceleration_S_x = 0.0;
+    float linear_acceleration_S_y = 0.0;
+    float linear_acceleration_S_z = 0.0;
+
+    float angular_velocity_x = 0.0;
+    float angular_velocity_y = 0.0;
+    float angular_velocity_z = 0.0;
 
     std::vector<double> gps_ts;
     std::vector<double> imu_ts;

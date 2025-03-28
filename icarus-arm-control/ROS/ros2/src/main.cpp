@@ -74,6 +74,7 @@
 
     while (ok())
     {
+        controller_node->step();
         rclcpp::spin_some(controller_node);
 
         // periodic print, add update function

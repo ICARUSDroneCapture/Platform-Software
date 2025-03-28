@@ -13,7 +13,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
 
-// using namespace rclcpp;
+using namespace rclcpp;
 
 /**
  * Implementation of ICARUS arm stabilizing control law
@@ -36,9 +36,9 @@ public:
 
     void update();
 
-    // // Node handler for spin
-    // Node::SharedPtr nh_;
-    // Node::SharedPtr nh_private_;
+    // Node handler for spin
+    Node::SharedPtr nh_;
+    Node::SharedPtr nh_private_;
 
     // struct
     // {

@@ -15,7 +15,7 @@ Controller::Controller()
 
 };
 
-void Controller::initializeROS()
+void Controller::initializeROS(): cl_(rclcpp::Node::make_shared("cl_"))
 {
   // auto topic_callback =
   //   [this](std_msgs::msg::String::UniquePtr msg) -> void {

@@ -58,7 +58,7 @@
 
     // while (ok())
     // {
-    //     spin_some(thing->nh_);
+    //     spin_some(thing->cl_);
     //     thing->update();
     // }
 

@@ -10,32 +10,26 @@
 
  using namespace rclcpp;
 
-//  int main(int argc, char**argv)
-//  {
-//     Controller* thing;
+ int main(int argc, char**argv)
+ {
+    Controller* thing;
 
-//     // Universal rclcpp init
-//     init(argc, argv);
+    // Universal rclcpp init
+    init(argc, argv);
 
-//     printf("Here will be the controller listener.\nThis node will do gravity correction and control law calculations.\n");
+    printf("Here will be the controller listener.\nThis node will do gravity correction and control law calculations.\n");
 
-//     // Initialize our controller object
-//     // thing->initialize();
+    Initialize our controller object
+    thing->initialize();
 
-//     // while (ok())
-//     // {
-//     //     spin_some(thing->nh_);
-//     //     thing->update();
-//     // }
+    // while (ok())
+    // {
+    //     spin_some(thing->nh_);
+    //     thing->update();
+    // }
+
+    rclcpp::shutdown();
     
-//     return 0;
-//  }
+    return 0;
+ }
  
-int main(int argc, char ** argv)
-{
-  (void) argc;
-  (void) argv;
-
-  printf("Here will be the controller listener.\nThis node will do gravity correction and control law calculations.\n");
-  return 0;
-}

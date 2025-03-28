@@ -1,26 +1,57 @@
-#include <cstdio>
-#include <memory>
+/**
+ * @file controller_listener.hpp
+ *
+ * @brief This file contains the controller class code
+ *
+ */
 
-#include "rclcpp/rclcpp.hpp"
-#include "std_msgs/msg/string.hpp"
+ #include "controller.hpp"
 
-// class Controller : public rclcpp::Node
-// {
-// public:
-//   Controller()
-//   : Node("controller_listener_node")
-//   {
-//     auto topic_callback =
-//       [this](std_msgs::msg::String::UniquePtr msg) -> void {
-//         RCLCPP_INFO(this->get_logger(), "Sent IMU Data: '%s'", msg->data.c_str());
-//       };
-//     subscription_ =
-//       this->create_subscription<sensor_msgs::msg::Imu>(rs_.imu.topic, 1, topic_callback);
-//   }
+Controller::Controller()
+{
+  // Should always be enabled by default
+  // cl_.imu.grav_correction = true;
 
-// private:
-//   rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr subscription_;
-// };
+};
+
+void Controller::initializeROS()
+{
+  // auto topic_callback =
+  //   [this](std_msgs::msg::String::UniquePtr msg) -> void {
+  //     RCLCPP_INFO(this->get_logger(), "Sent IMU Data: '%s'", msg->data.c_str());
+  //   };
+  // subscription_ =
+  //   this->create_subscription<sensor_msgs::msg::Imu>(rs_.imu.topic, 1, topic_callback);
+
+  // subscription_ =
+  //   this->create_subscription<sensor_msgs::msg::Imu>(rs_.imu.topic, 1);
+
+  RCLCPP_INFO(rclcpp::get_logger("controller"),"Insert constructor placeholder...");
+};
+
+void Controller::initialize()
+{
+  RCLCPP_INFO(rclcpp::get_logger("start"),"======  STARTING CONTROLLER  ======");
+
+  initializeROS();
+}
+
+
+void Controller::terminate()
+{
+  RCLCPP_INFO(rclcpp::get_logger("controller"),"======  SHUTTING DOWN CONTROLLER  ======");
+
+  rclcpp::shutdown();
+};
+
+
+void Controller::update()
+{
+  // Calcs
+  RCLCPP_INFO(rclcpp::get_logger("controller"),"Insert calculation placeholder...");
+
+};
+
 
 int main(int argc, char ** argv)
 {

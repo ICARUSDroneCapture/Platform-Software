@@ -48,13 +48,17 @@ using namespace rclcpp;
 
 // };
 
-class Controller : public rclcpp::Node
-{
-public:
-    Controller(const std::string& node_name);
-private:
-    rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_;
-};
+
+
+
+
+// class Controller : public rclcpp::Node
+// {
+// public:
+//     Controller(const std::string& node_name);
+// private:
+//     rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_;
+// };
 
 
 #endif // CONTROLLER_HPP

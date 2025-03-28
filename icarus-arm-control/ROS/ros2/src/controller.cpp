@@ -5,7 +5,7 @@
  *
  */
 
-//  #include "controller.hpp"
+ #include "controller.hpp"
 
 // Controller::Controller() : rclcpp::Node()
 // {
@@ -67,10 +67,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <memory>
-
-#include "rclcpp/rclcpp.hpp"
-#include "std_msgs/msg/string.hpp"
 
 class MinimalSubscriber : public rclcpp::Node
 {

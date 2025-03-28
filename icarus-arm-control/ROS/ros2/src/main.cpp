@@ -6,9 +6,7 @@
  *
  */
 
-//  #include "controller.hpp"
-
-//  using namespace rclcpp;
+ #include "controller.hpp"
 
 //  int main(int argc, char**argv)
 //  {
@@ -35,8 +33,8 @@
 
 int main(int argc, char * argv[])
 {
-  rclcpp::init(argc, argv);
-  rclcpp::spin(std::make_shared<MinimalSubscriber>());
-  rclcpp::shutdown();
+  init(argc, argv);
+  spin(std::make_shared<MinimalSubscriber>());
+  shutdown();
   return 0;
 }

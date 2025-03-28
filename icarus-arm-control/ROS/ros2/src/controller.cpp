@@ -41,13 +41,13 @@ bool Controller::update()
 void Controller::cbWheelEncoder(const sensor_msgs::msg::JointState &msg)
 {
     if (!quiet)
-        TEST_COUT << "Rx wheel encoder : " << std::fixed << std::setw(11) << std::setprecision(6) << msg.header.stamp.sec << std::endl;
+        std::cout << "Rx wheel encoder : " << std::fixed << std::setw(11) << std::setprecision(6) << msg.header.stamp.sec << std::endl;
 }
 
 void Controller::cbPIMU(const icarus_arm_control::msg::PIMU::SharedPtr pimu)
 {
     if (!quiet)
-        TEST_COUT << "Rx PIMU : " << std::fixed << std::setw(11) << std::setprecision(6) << pimu->header.stamp.sec << std::endl;
+        std::cout << "Rx PIMU : " << std::fixed << std::setw(11) << std::setprecision(6) << pimu->header.stamp.sec << std::endl;
     if (got_gps_tow)
         pimu_ts.push_back(pimu->header.stamp.sec);
     this->did_rx_pimu_ = true;
@@ -56,7 +56,7 @@ void Controller::cbPIMU(const icarus_arm_control::msg::PIMU::SharedPtr pimu)
 void Controller::cbIMU(const  sensor_msgs::msg::Imu &imu)
 {
     if (!quiet)
-        TEST_COUT << "Rx IMU : " << std::fixed << std::setw(11) << std::setprecision(6) << imu.header.stamp.sec << std::endl;
+        std::cout << "Rx IMU : " << std::fixed << std::setw(11) << std::setprecision(6) << imu.header.stamp.sec << std::endl;
     if (got_gps_tow)
         imu_ts.push_back(imu.header.stamp.sec);
 }

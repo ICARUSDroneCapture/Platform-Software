@@ -52,7 +52,7 @@
             // check regularly, but don't print regularly..
             SLEEP_MS(200);
             if (prevTimeMs / 1000 != nowTimeMs / 1000) {
-                TEST_COUT << "waiting...  (time: " << nowTimeMs << ")" << std::endl;
+                RCLCPP_INFO(rclcpp::get_logger("controller"),"waiting...  (time: %u)\n", nowTimeMs);
                 prevTimeMs = nowTimeMs;
             }
         }

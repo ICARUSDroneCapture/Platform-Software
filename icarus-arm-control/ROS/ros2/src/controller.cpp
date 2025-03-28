@@ -44,14 +44,14 @@ void Controller::cbPIMU(const icarus_arm_control::msg::PIMU::SharedPtr pimu)
     this->did_rx_pimu_ = true;
 
     // Store (preintegrated) delta theta values into class members
-    theta = imu.dtheta.x;
-    phi = imu.dtheta.y;
-    psi = imu.dtheta.z;
+    theta = pimu->dtheta.x;
+    phi = pimu->dtheta.y;
+    psi = pimu->dtheta.z;
 
     // Store (preintegrated) delta theta values into class members
-    linear_velocity_S_x = imu.dvel.x;
-    linear_velocity_S_y = imu.dvel.y;
-    linear_velocity_S_z = imu.dvel.z;
+    linear_velocity_S_x = pimu->dvel.x;
+    linear_velocity_S_y = pimu->dvel.y;
+    linear_velocity_S_z = pimu->dvel.z;
 }
 
 void Controller::cbIMU(const  sensor_msgs::msg::Imu &imu)

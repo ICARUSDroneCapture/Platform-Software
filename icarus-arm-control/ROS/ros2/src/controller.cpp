@@ -20,13 +20,13 @@
 
 void Controller::step()
 {
-  RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tLinear Velocity: [%f; %f; %f]  (time: %u)\n", linear_velocity_S_x, linear_velocity_S_y, linear_velocity_S_z, nowTimeMs);
+  RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tLinear Velocity: [%f; %f; %f]\n", linear_velocity_S_x, linear_velocity_S_y, linear_velocity_S_z);
   
-  RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tAngle: [%f; %f; %f]  (time: %u)\n", theta, phi, psi, nowTimeMs);
+  RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tAngle: [%f; %f; %f]\n", theta, phi, psi);
 
-  RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tLinear Accelertion: [%f; %f; %f]  (time: %u)\n", linear_acceleration_S_x, linear_acceleration_S_y, linear_acceleration_S_z, nowTimeMs);
+  RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tLinear Accelertion: [%f; %f; %f]\n", linear_acceleration_S_x, linear_acceleration_S_y, linear_acceleration_S_z);
   
-  RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tAngular Velocity: [%f; %f; %f]  (time: %u)\n", angular_velocity_x, angular_velocity_y, angular_velocity_z, nowTimeMs);
+  RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tAngular Velocity: [%f; %f; %f]\n", angular_velocity_x, angular_velocity_y, angular_velocity_z);
 }
 
 void Controller::cbWheelEncoder(const sensor_msgs::msg::JointState &msg)

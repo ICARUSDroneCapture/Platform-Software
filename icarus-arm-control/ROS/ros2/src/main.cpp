@@ -19,7 +19,7 @@
 
     printf("Here will be the controller listener.\nThis node will do gravity correction and control law calculations.\n");
 
-    Initialize our controller object
+    // Initialize our controller object
     thing->initialize();
 
     // while (ok())

@@ -48,7 +48,7 @@
     YAML::Node config = YAML::Load(yaml);
     ASSERT_EX(config.IsDefined(), std::out << "Unable to parse YAML file. Is the file valid?\n");
 
-    InertialSenseROS isROS(config);
+    // InertialSenseROS isROS(config);
     // isROS.initialize();
 
     bool success = false;

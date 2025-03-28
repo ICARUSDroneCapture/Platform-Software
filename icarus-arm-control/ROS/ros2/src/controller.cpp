@@ -7,7 +7,7 @@
 
  #include "controller.hpp"
 
-Controller::Controller()
+Controller::Controller(): cl_(rclcpp::Node::make_shared("cl_"))
 {
   // Should always be enabled by default
   // cl_.imu.grav_correction = true;
@@ -15,7 +15,7 @@ Controller::Controller()
 
 };
 
-void Controller::initializeROS(): cl_(rclcpp::Node::make_shared("cl_"))
+void Controller::initializeROS()
 {
   // auto topic_callback =
   //   [this](std_msgs::msg::String::UniquePtr msg) -> void {

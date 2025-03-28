@@ -82,7 +82,7 @@
             RCLCPP_INFO(rclcpp::get_logger("controller"),"running...  (time: %u)\n", nowTimeMs);
             prevTimeMs = nowTimeMs;
         }
-        nowTimeMs = current_timeMs()
+        nowTimeMs = current_timeMs();
     }
 
     rclcpp::shutdown();

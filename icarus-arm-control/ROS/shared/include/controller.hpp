@@ -90,7 +90,7 @@ using namespace std::chrono_literals;
     bool did_rx_pimu_ = false;
 
     icarus_arm_control::msg::PIMU::SharedPtr pimu;
-    sensor_msgs::msg::Imu msg_imu;
+    sensor_msgs::msg::Imu * msg_imu;
 
     // IMU Integrated Values
     float linear_velocity_S_x = 0.0;

@@ -56,11 +56,11 @@
     // Initialize our controller object
     thing->initialize();
 
-    // while (ok())
-    // {
-    //     spin_some(thing->cl_);
-    //     thing->update();
-    // }
+    while (ok())
+    {
+        spin_some(thing->cl_);
+        thing->update();
+    }
 
     rclcpp::shutdown();
     

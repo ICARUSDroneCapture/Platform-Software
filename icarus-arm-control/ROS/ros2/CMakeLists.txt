@@ -98,20 +98,20 @@ SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fms-extensions -Wl,--no-as-needed -DPLATFOR
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fms-extensions -Wl,--no-as-needed -DPLATFORM_IS_LINUX")
 
 add_executable(inertial_sense_imu_node
-    src/imu_publisher.cpp
+    src/inertial_sense_imu.cpp
     shared/src/inertial_sense_node.cpp
     shared/src/ParamHelper.cpp
     shared/src/RtkRover.cpp
     shared/src/RtkBase.cpp
 )
 
-add_executable(controller_listener_node src/controller_listener.cpp)
+add_executable(controller_listener_node src/controller.cpp)
 ament_target_dependencies(controller_listener_node rclcpp std_msgs std_srvs sensor_msgs)
 
 add_executable(odrive_can_node 
   shared/src/epoll_event_loop.cpp
   shared/src/socket_can.cpp
-  src/odrive_can_node.cpp
+  src/odrive_motor.cpp
   include/odrive_can_node.hpp)
 
 ament_target_dependencies(odrive_can_node
@@ -128,7 +128,7 @@ target_link_libraries(inertial_sense_imu_node InertialSenseSDK ${YAML_CPP_LIBRAR
 
 
 ament_add_gtest(test_inertial_sense_imu
-    src/imu_publisher.cpp
+    src/inertial_sense_imu.cpp
     shared/src/ParamHelper.cpp
     shared/src/RtkRover.cpp
     shared/src/RtkBase.cpp

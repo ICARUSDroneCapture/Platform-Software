@@ -5,7 +5,7 @@
  *
  */
 
- #include "controller.hpp"
+//  #include "controller.hpp"
 
 // Controller::Controller() : rclcpp::Node()
 // {
@@ -68,20 +68,20 @@
 // limitations under the License.
 
 
-class MinimalSubscriber : public rclcpp::Node
-{
-public:
-  MinimalSubscriber()
-  : Node("minimal_subscriber")
-  {
-    auto topic_callback =
-      [this](std_msgs::msg::String::UniquePtr msg) -> void {
-        RCLCPP_INFO(this->get_logger(), "I heard: '%s'", msg->data.c_str());
-      };
-    subscription_ =
-      this->create_subscription<std_msgs::msg::String>("topic", 10, topic_callback);
-  }
+// class MinimalSubscriber : public rclcpp::Node
+// {
+// public:
+//   MinimalSubscriber()
+//   : Node("minimal_subscriber")
+//   {
+//     auto topic_callback =
+//       [this](std_msgs::msg::String::UniquePtr msg) -> void {
+//         RCLCPP_INFO(this->get_logger(), "I heard: '%s'", msg->data.c_str());
+//       };
+//     subscription_ =
+//       this->create_subscription<std_msgs::msg::String>("topic", 10, topic_callback);
+//   }
 
-private:
-  rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_;
-};
+// private:
+//   rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_;
+// };

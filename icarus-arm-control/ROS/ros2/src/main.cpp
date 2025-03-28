@@ -22,6 +22,8 @@
     // Initialize our controller object
     thing->initialize();
 
+    printf("Initialization finished??.\n");
+
     while (ok())
     {
         printf("Entered while loop.\n");

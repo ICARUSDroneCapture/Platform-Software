@@ -87,7 +87,6 @@ include_directories(
     /opt/ros/jazzy/include/sensor_msgs
 )
 
-include_directories(include)
 include_directories(shared/include)
 
 # Build using C11 and CXX20
@@ -111,8 +110,8 @@ ament_target_dependencies(controller_listener_node rclcpp std_msgs std_srvs sens
 add_executable(odrive_can_node 
   shared/src/epoll_event_loop.cpp
   shared/src/socket_can.cpp
-  src/odrive_motor.cpp
-  include/odrive_can_node.hpp)
+  shared/include/odrive_can_node.hpp
+  src/odrive_motor.cpp)
 
 ament_target_dependencies(odrive_can_node
   rclcpp

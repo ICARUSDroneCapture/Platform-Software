@@ -22,11 +22,11 @@
     // Initialize our controller object
     thing->initialize();
 
-    // while (ok())
-    // {
-    //     spin_some(thing->nh_);
-    //     thing->update();
-    // }
+    while (ok())
+    {
+        spin_some(thing->nh_);
+        thing->update();
+    }
 
     rclcpp::shutdown();
     

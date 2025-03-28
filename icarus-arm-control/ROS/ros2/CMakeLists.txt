@@ -104,7 +104,9 @@ add_executable(inertial_sense_imu_node
     shared/src/RtkBase.cpp
 )
 
-add_executable(controller_listener_node src/controller.cpp)
+add_executable(controller_listener_node 
+    src/controller.cpp
+    src/main.cpp)
 ament_target_dependencies(controller_listener_node rclcpp std_msgs std_srvs sensor_msgs)
 
 add_executable(odrive_can_node 

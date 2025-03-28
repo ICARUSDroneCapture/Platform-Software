@@ -54,11 +54,11 @@ void Controller::update()
 };
 
 
-int main(int argc, char ** argv)
-{
-  (void) argc;
-  (void) argv;
+// int main(int argc, char ** argv)
+// {
+//   (void) argc;
+//   (void) argv;
 
-  printf("Here will be the controller listener.\nThis node will do gravity correction and control law calculations.\n");
-  return 0;
-}
+//   printf("Here will be the controller listener.\nThis node will do gravity correction and control law calculations.\n");
+//   return 0;
+// }

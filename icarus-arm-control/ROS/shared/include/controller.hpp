@@ -26,25 +26,34 @@ using namespace rclcpp;
  * Sends stabilizing commands to motors.
  *
  */
-class Controller : public rclcpp::Node // Listener
+// class Controller : public rclcpp::Node // Listener
+// {
+// public:
+//     Controller();
+//     ~Controller() { terminate(); }
+
+//     void initializeROS();
+//     void initialize();
+//     void terminate();
+
+// private:
+
+//     void update();
+
+//     // struct
+//     // {
+//     //     DataHelper imu;
+//     //     DataHelper motor;
+//     // } cl_;
+
+// };
+
+class Controller : public rclcpp::Node
 {
 public:
-    Controller();
-    ~Controller() { terminate(); }
-
+    Controller(const std::string& node_name);
 private:
-    void initializeROS();
-    void initialize();
-    void terminate();
-
-    void update();
-
-    // struct
-    // {
-    //     DataHelper imu;
-    //     DataHelper motor;
-    // } cl_;
-
+    rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_;
 };
 
 

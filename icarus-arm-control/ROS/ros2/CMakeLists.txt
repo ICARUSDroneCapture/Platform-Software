@@ -109,6 +109,9 @@ add_executable(controller_listener_node
     src/main.cpp)
 ament_target_dependencies(controller_listener_node rclcpp std_msgs std_srvs sensor_msgs)
 
+add_executable(talker src/test_publisher.cpp)
+ament_target_dependencies(talker rclcpp std_msgs)
+
 add_executable(odrive_can_node 
   shared/src/epoll_event_loop.cpp
   shared/src/socket_can.cpp
@@ -148,6 +151,7 @@ target_link_libraries(test_inertial_sense_imu InertialSenseSDK ${YAML_CPP_LIBRAR
 
 #link_directories(/home/s/Inertial_Sense/imx/ros2_ws/src/Platform-Software/icarus-arm-control)
 install(TARGETS
+    talker
     test_inertial_sense_imu
     inertial_sense_imu_node
     controller_listener_node

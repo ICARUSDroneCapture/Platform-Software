@@ -10,26 +10,34 @@
 
  using namespace rclcpp;
 
- int main(int argc, char**argv)
- {
-    // Universal rclcpp init
-    init(argc, argv);
+//  int main(int argc, char**argv)
+//  {
+//     // Universal rclcpp init
+//     init(argc, argv);
 
-    printf("Here will be the controller listener.\nThis node will do gravity correction and control law calculations.\n");
+//     printf("Here will be the controller listener.\nThis node will do gravity correction and control law calculations.\n");
 
-    auto controller_node = std::make_shared<Controller>();
+//     auto controller_node = std::make_shared<Controller>();
 
-    // Initialize our controller object
-    if (!controller_node->initialize()) return -1;
+//     // Initialize our controller object
+//     if (!controller_node->initialize()) return -1;
 
-    printf("Controller initialization finished.\n");
+//     printf("Controller initialization finished.\n");
 
-    // ROS spin our object
-    spin(controller_node);
+//     // ROS spin our object
+//     spin(controller_node);
 
-    printf("Spin done, shutdown to be called on deconstructor.\n");
+//     printf("Spin done, shutdown to be called on deconstructor.\n");
     
-    return 0;
+//     return 0;
 
- }
+//  }
+
+int main(int argc, char * argv[])
+{
+  rclcpp::init(argc, argv);
+  rclcpp::spin(std::make_shared<Controller>("Controller"));
+  rclcpp::shutdown();
+  return 0;
+}
  

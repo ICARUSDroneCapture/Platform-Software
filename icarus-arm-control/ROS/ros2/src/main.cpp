@@ -59,13 +59,25 @@
             // check regularly, but don't print regularly..
             SLEEP_MS(200);
             if (prevTimeMs / 1000 != nowTimeMs / 1000) {
-                RCLCPP_INFO(rclcpp::get_logger("controller"),"waiting...  (time: %u)\n", nowTimeMs);
+                RCLCPP_INFO(rclcpp::get_logger("init"),"waiting...  (time: %u)\n", nowTimeMs);
                 prevTimeMs = nowTimeMs;
             }
         }
     }
 
-    ASSERT_EX(success, std::cerr << "Unable to parse YAML file. Is the file valid?\n");
+    while (ok())
+    {
+        rclcpp::spin_some(controller_node);
+
+        // periodic print, add update function
+        SLEEP_MS(200);
+        if (prevTimeMs / 1000 != nowTimeMs / 1000) {
+            RCLCPP_INFO(rclcpp::get_logger("controller"),"running...  (time: %u)\n", nowTimeMs);
+            prevTimeMs = nowTimeMs;
+        }
+    }
+
+    ASSERT_EX(success, std::cerr << "IMU RX fail.\n");
 
     rclcpp::shutdown();
     

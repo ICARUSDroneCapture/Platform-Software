@@ -8,8 +8,8 @@ controller.hpp
  *
  */
 
-#ifndef CONTROLLER_H
-#define CONTROLLER_H
+#ifndef CONTROLLER_HPP
+#define CONTROLLER_HPP
 
 #include <memory>
 
@@ -26,22 +26,18 @@ using namespace rclcpp;
  * Sends stabilizing commands to motors.
  *
  */
-class Controller // Listener
+class Controller : public rclcpp::Node // Listener
 {
 public:
     Controller();
-
     ~Controller() { terminate(); }
 
+private:
     void initializeROS();
     void initialize();
     void terminate();
 
     void update();
-
-    // Node handler for spin
-    Node::SharedPtr cl_;
-    Node::SharedPtr cl_private_;
 
     // struct
     // {
@@ -52,5 +48,5 @@ public:
 };
 
 
-#endif
+#endif // CONTROLLER_HPP
 

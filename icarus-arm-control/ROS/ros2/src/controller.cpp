@@ -7,7 +7,7 @@
 
  #include "controller.hpp"
 
-Controller::Controller(): cl_(rclcpp::Node::make_shared("cl_"))
+Controller::Controller() : rclcpp::Node()
 {
   // Should always be enabled by default
   // cl_.imu.grav_correction = true;

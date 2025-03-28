@@ -12,40 +12,24 @@
 
  int main(int argc, char**argv)
  {
-    Controller* thing;
-
     // Universal rclcpp init
     init(argc, argv);
 
     printf("Here will be the controller listener.\nThis node will do gravity correction and control law calculations.\n");
 
+    auto controller_node = std::make_shared<Controller>();
+
     // Initialize our controller object
-    thing->initialize();
+    if (!controller_node->initialize()) return -1;
 
-    printf("Initialization finished.\n");
+    printf("Controller initialization finished.\n");
 
-
-    while (ok())
-    {
-        printf("Entered while loop.\n");
-        spin_some(thing->cl_);
-        printf("Spin call worked.\n");
-        thing->update();
-        printf("Controller update worked.\n");
-    }
+    // ROS spin our object
+    spin(controller_node);
 
     printf("Spin done, shutdown to be called on deconstructor.\n");
     
     return 0;
 
-    // auto controller_node = std::make_shared<Controller>();
-
-    // if (!controller_node->initialize()) return -1;
-
-    // std::thread can_event_loop([&event_loop]() { event_loop.run_until_empty(); });
-    // rclcpp::spin(can_node);
-    // can_node->deinit();
-    // rclcpp::shutdown();
-    // return 0;
  }
  

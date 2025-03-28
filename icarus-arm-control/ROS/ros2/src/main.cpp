@@ -49,13 +49,13 @@
     ASSERT_EX(config.IsDefined(), std::out << "Unable to parse YAML file. Is the file valid?\n");
 
     InertialSenseROS isROS(config);
-    // isROS.initialize();
+    isROS.initialize();
 
     bool success = false;
     unsigned int startTimeMs = current_timeMs(), prevTimeMs = 0, nowTimeMs;
 	while((nowTimeMs = current_timeMs()) - startTimeMs < 5000)
 	{
-        // isROS.update();
+        isROS.update();
 	    rclcpp::spin_some(controller_node);
         if (controller_node->did_rx_pimu_) {
             success = true;
@@ -82,6 +82,7 @@
             RCLCPP_INFO(rclcpp::get_logger("controller"),"running...  (time: %u)\n", nowTimeMs);
             prevTimeMs = nowTimeMs;
         }
+        nowTimeMs = current_timeMs()
     }
 
     rclcpp::shutdown();

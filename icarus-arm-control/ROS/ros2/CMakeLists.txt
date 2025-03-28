@@ -107,9 +107,12 @@ add_executable(inertial_sense_imu_node
 add_executable(controller_listener_node 
     src/controller.cpp
     src/main.cpp
-    shared/src/ParamHelper.cpp
     shared/src/ControlHelper.cpp
     src/inertial_sense_imu.cpp
+    shared/src/inertial_sense_node.cpp
+    shared/src/ParamHelper.cpp
+    shared/src/RtkRover.cpp
+    shared/src/RtkBase.cpp
 )
 
 rosidl_get_typesupport_target(cpp_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_cpp")

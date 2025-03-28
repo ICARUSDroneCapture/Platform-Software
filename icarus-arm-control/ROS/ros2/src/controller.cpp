@@ -24,15 +24,18 @@ void Controller::initializeROS()
   // subscription_ =
   //   this->create_subscription<sensor_msgs::msg::Imu>(rs_.imu.topic, 1, topic_callback);
   
-  auto topic_callback =
-    [cl_](std_msgs::msg::String::UniquePtr msg) -> void {
-      RCLCPP_INFO(rclcpp::get_logger(), "I heard: '%s'", msg->data.c_str());
-    };
+  // auto topic_callback =
+  //   [cl_](std_msgs::msg::String::UniquePtr msg) -> void {
+  //     RCLCPP_INFO(rclcpp::get_logger("test_subscriber"), "I heard: '%s'", msg->data.c_str());
+  //   };
   // subscription_ =
   //   this->create_subscription<std_msgs::msg::String>("topic", 10, topic_callback);
    
+  // subscription_ = 
+  //   cl_->create_publisher<std_msgs::msg::String>("topic", 10, topic_callback);
+
   subscription_ = 
-    cl_->create_publisher<std_msgs::msg::String>("topic", 10, topic_callback);
+  cl_->create_publisher<std_msgs::msg::String>("topic", 10);
 
   RCLCPP_INFO(rclcpp::get_logger("controller"),"Insert constructor placeholder...");
 };

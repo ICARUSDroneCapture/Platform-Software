@@ -23,8 +23,6 @@
 #include <chrono>
 #include <memory>
 #include <cassert>
-
-#include "std_msgs/std_msgs/msg/string.hpp"
  
 class ControlHelper
 {

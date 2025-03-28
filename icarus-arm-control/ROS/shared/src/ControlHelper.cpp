@@ -9,5 +9,5 @@
 
 void ControlHelper::someFunction()
 {
-    std::out << "Failed to get interface index" << std::endl;
+    printf("Controller debug placeholder.");
 }

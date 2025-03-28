@@ -6,10 +6,10 @@
  *
  */
 
- #include "controller.hpp"
- #include "inertial_sense_ros.h"
+#include "controller.hpp"
+#include "inertial_sense_ros.h"
 
- #define NDEBUG
+#define NDEBUG
 
 #ifndef NDEBUG
 #define ASSERT_EX(condition, statement) \

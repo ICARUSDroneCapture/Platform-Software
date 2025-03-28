@@ -8,6 +8,17 @@
 
  #include "controller.hpp"
 
+ #define NDEBUG
+
+#ifndef NDEBUG
+#define ASSERT_EX(condition, statement) \
+    do { \
+        if (!(condition)) { statement; assert(condition); } \
+    } while (false)
+#else
+#define ASSERT_EX(condition, statement) ((void)0)
+#endif
+
  int main(int argc, char**argv)
  {
     // Universal rclcpp init
@@ -34,7 +45,7 @@
                        "      period: 1\n";
 
     YAML::Node config = YAML::Load(yaml);
-    assert(config.IsDefined()) << "Unable to parse YAML file. Is the file valid?";
+    ASSERT_EX(config.IsDefined(), std::cerr << "Unable to parse YAML file. Is the file valid?\n");
 
     bool success = false;
     unsigned int startTimeMs = current_timeMs(), prevTimeMs = 0, nowTimeMs;
@@ -54,7 +65,7 @@
         }
     }
 
-    assert( success );
+    ASSERT_EX(success, std::cerr << "Unable to parse YAML file. Is the file valid?\n");
 
     rclcpp::shutdown();
     

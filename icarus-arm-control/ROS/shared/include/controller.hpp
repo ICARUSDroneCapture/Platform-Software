@@ -39,6 +39,8 @@
      // Node handler for spin
      Node::SharedPtr cl_;
      Node::SharedPtr cl_private_;
+
+    Subscription<std_msgs::msg::String>::SharedPtr subscription_;
  
      // struct
      // {

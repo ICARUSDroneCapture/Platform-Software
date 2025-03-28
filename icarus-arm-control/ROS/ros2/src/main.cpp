@@ -22,18 +22,17 @@
     // Initialize our controller object
     thing->initialize();
 
-    printf("Initialization finished??.\n");
+    printf("Initialization finished.\n");
 
-    spin(thing)
 
-    // while (ok())
-    // {
-    //     printf("Entered while loop.\n");
-    //     spin_some(thing->cl_);
-    //     printf("Spin call worked.\n");
-    //     thing->update();
-    //     printf("Controller update worked.\n");
-    // }
+    while (ok())
+    {
+        printf("Entered while loop.\n");
+        spin_some(thing->cl_);
+        printf("Spin call worked.\n");
+        thing->update();
+        printf("Controller update worked.\n");
+    }
 
     printf("Spin done, shutdown to be called on deconstructor.\n");
     

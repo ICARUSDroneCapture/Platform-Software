@@ -8,8 +8,23 @@
 #ifndef CONTROLHELPER_HPP
 #define CONTROLHELPER_HPP
 
+#include <stdio.h>
 #include <iostream>
+#include <algorithm>
+#include <string>
+#include <cstdlib>
+#include <yaml-cpp/yaml.h>
+
+#include "data_sets.h"
+#include "InertialSense.h"
+
 #include "TopicHelper.h"
+
+#include <chrono>
+#include <memory>
+#include <cassert>
+
+#include "std_msgs/std_msgs/msg/string.hpp"
  
 class ControlHelper
 {

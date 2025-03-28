@@ -18,26 +18,6 @@
      sub_imu_                = this->create_subscription<sensor_msgs::msg::Imu>("imu", 1, std::bind(&Controller::cbIMU, this, std::placeholders::_1));
 }
 
-bool Controller::update()
-{
-    // static double last_time = 0;
-    // if( ros::ok() )
-    // {
-    //     double current_time = ros::Time::now().toSec();
-    //     double dt = current_time - last_time;
-    //     last_time = current_time;
-    //     ros::spinOnce();
-    //     current_time = ros::Time::now().toSec();
-    //     ros::Rate rate(50);     // 50 ms
-    //     rate.sleep();
-    //     dt = ros::Time::now().toSec() - current_time;
-
-    //     return true;
-    // }
-
-    return false;
-}
-
 void Controller::cbWheelEncoder(const sensor_msgs::msg::JointState &msg)
 {
     if (!quiet)

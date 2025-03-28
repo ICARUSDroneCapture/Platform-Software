@@ -71,7 +71,6 @@ using namespace std::chrono_literals;
  public:
     Controller() : Node("controller_listener_node"){}
     void init();
-    void update();
     void cbWheelEncoder(const sensor_msgs::msg::JointState &msg);
     void cbPIMU(const icarus_arm_control::msg::PIMU::SharedPtr pimu);
     void cbIMU(const  sensor_msgs::msg::Imu &imu);

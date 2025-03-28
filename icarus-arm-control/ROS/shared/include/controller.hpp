@@ -14,6 +14,8 @@
 #include <string>
 #include <cstdlib>
 #include <yaml-cpp/yaml.h>
+#include <termios.h>
+#include <unistd.h>
 
 #include "data_sets.h"
 #include "InertialSense.h"

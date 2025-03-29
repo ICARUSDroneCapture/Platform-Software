@@ -120,7 +120,7 @@ using namespace std::chrono_literals;
     float angular_velocity_z = 0.0;
 
     // Array list for angular velocity values at 4 different timesteps
-    const int timestep_store = 4;
+    static const int timestep_store = 4;
 
     float ang_vel_x_ts_l[timestep_store] = { };
     float ang_vel_y_ts_q[timestep_store] = { };

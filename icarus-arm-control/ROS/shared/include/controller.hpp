@@ -85,7 +85,7 @@ using namespace std::chrono_literals;
     double get_min_deviation(std::vector<double> &a, std::vector<double> &b);
     double get_max_deviation(std::vector<double> &a, std::vector<double> &b);
 
-    bool quiet = false;
+    bool quiet = true;
     bool got_gps_tow = false;
     bool did_rx_pimu_ = false;
 

@@ -34,10 +34,10 @@ void Controller::plot()
   double a_S_y = static_cast<double>(linear_acceleration_S_y);
   double a_S_z = static_cast<double>(linear_acceleration_S_z);
 
-  auto t_p = linspace(0, t_now, 1);
-  auto ax_p = linspace(0, a_S_x, 1);
-  auto ay_p = linspace(0, a_S_y, 1);
-  auto az_p = linspace(0, a_S_z, 1);
+  auto t_p = matplot::linspace(t_now, t_now, 1);
+  auto ax_p = matplot::linspace(a_S_x, a_S_x, 1);
+  auto ay_p = matplot::linspace(a_S_x, a_S_y, 1);
+  auto az_p = matplot::linspace(a_S_x, a_S_z, 1);
 
   auto ax1 = matplot::nexttile();
   auto ax2 = matplot::nexttile();

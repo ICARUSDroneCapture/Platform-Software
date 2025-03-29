@@ -126,7 +126,7 @@ void Controller::euler_integrate()
 
 
 //   integrated_theta = v_prev
-// }
+}
 
 void Controller::rk4_integrate()
 {

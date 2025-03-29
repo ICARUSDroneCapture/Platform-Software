@@ -135,7 +135,7 @@ using namespace std::chrono_literals;
     float integrated_v_y = 0;
     float integrated_v_z = 0;
 
-    ControlHelper ch_;
+    // ControlHelper ch_;
 
     // Array list for angular velocity values at 4 different timesteps
 

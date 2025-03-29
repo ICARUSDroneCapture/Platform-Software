@@ -75,7 +75,8 @@
     while (ok())
     {
         isROS.update();
-        controller_node->step();
+        // controller_node->step();
+        controller_node->plot();
         rclcpp::spin_some(controller_node);
 
         // periodic print, add update function

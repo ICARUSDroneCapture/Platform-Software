@@ -80,6 +80,7 @@ using namespace std::chrono_literals;
     }
     void init();
     void step();
+    void plot();
 
     void cbWheelEncoder(const sensor_msgs::msg::JointState &msg);
     void cbPIMU(const icarus_arm_control::msg::PIMU::SharedPtr pimu);

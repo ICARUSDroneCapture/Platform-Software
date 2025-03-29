@@ -95,6 +95,7 @@ using namespace std::chrono_literals;
     void rk4_integrate();
     void control_1dof();
     void control_3dof();
+    void insert_front(double *a, const int n, double val);
 
     void cbWheelEncoder(const sensor_msgs::msg::JointState &msg);
     void cbPIMU(const icarus_arm_control::msg::PIMU::SharedPtr pimu);
@@ -147,6 +148,9 @@ using namespace std::chrono_literals;
     #ifdef RK4_INTEGRATION
         static const int timestep_store = 4;
     #endif
+
+    double ts[timestep_store] = { };
+    double *ts_ptr = ts;
 
     double ang_vel_x_ts_l[timestep_store] = { };
     double ang_vel_y_ts_q[timestep_store] = { };

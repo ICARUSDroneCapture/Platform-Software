@@ -89,6 +89,7 @@ using namespace std::chrono_literals;
     void init();
     void step();
     void plot();
+    void debugPrint();
 
     void assign_data();
     void euler_integrate();

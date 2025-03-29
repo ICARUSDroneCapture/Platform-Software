@@ -125,8 +125,8 @@ void Controller::euler_integrate()
   // }
 
 
-  integrated_v_x = v_prev
-}
+//   integrated_theta = v_prev
+// }
 
 void Controller::rk4_integrate()
 {
@@ -168,8 +168,8 @@ void Controller::cbPIMU(const icarus_arm_control::msg::PIMU::SharedPtr pimu)
 {
     if (!quiet)
         std::cout << "Rx PIMU : " << std::fixed << std::setw(11) << std::setprecision(6) << pimu->header.stamp.sec << std::endl;
-    if (got_gps_tow)
-        pimu_ts.push_back(pimu->header.stamp.sec);
+    // if (got_gps_tow)
+    //     pimu_ts.push_back(pimu->header.stamp.sec);
     this->did_rx_pimu_ = true;
 }
 
@@ -177,8 +177,8 @@ void Controller::cbIMU(const  sensor_msgs::msg::Imu &imu)
 {
     if (!quiet)
         std::cout << "Rx IMU : " << std::fixed << std::setw(11) << std::setprecision(6) << imu.header.stamp.sec << std::endl;
-    if (got_gps_tow)
-        imu_ts.push_back(imu.header.stamp.sec);
+    // if (got_gps_tow)
+    //     imu_ts.push_back(imu.header.stamp.sec);
 }
 
 int Controller::get_deviations(std::vector<double> &a, std::vector<double> &b, std::vector<double> &out) 

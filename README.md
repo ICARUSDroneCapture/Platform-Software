@@ -56,6 +56,8 @@ alias colconClean="sudo rm -rf ~/ros2_ws/log; rm -rf ~/ros2_ws/build; rm -rf ~/r
 ```
 You may have already put the first two lines (the `source /opt/ros/jazzy/setup.bash` and `export ROS_DOMAIN_ID=0`) into the `.bashrc` file during the ROS2 installation process, in which case they can be ignored.
 
+Once this code has been added to your `~/.bashrc`, either close the terminal instance and start a new one, or run `source ~/.bashrc`.
+
 #### Building
 
 From the `~/ros2_ws` directory, run `colcon build`. It will throw many warnings, but the package should finish building:
@@ -70,6 +72,12 @@ colconClean
 colcon build
 ```
 Be careful that you're in the correct directory when you run `colconClean`. It runs a forced recursive directory remove command, which could delete something unwanted if in the wrong place. For that reason, it required sudo privileges.
+
+
+You should see the following at the bottom when the build finishes as an indicator that it finished successfully:
+```
+Finished <<< icarus_arm_control [<some_time>s]
+```
 
 #### Running
 

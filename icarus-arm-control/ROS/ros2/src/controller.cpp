@@ -30,6 +30,14 @@ void Controller::step()
     RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tAngular Velocity: [%f; %f; %f]\n", angular_velocity_x, angular_velocity_y, angular_velocity_z);
   }
 
+  #ifdef EULER_INTEGRATION
+    euler_integrate();
+  #endif
+
+  #ifdef RK4_INTEGRATION
+    rk4_integrate();
+  #endif
+
   #ifdef DOF1_CONTROL
     control_1dof();
   #endif
@@ -95,7 +103,7 @@ void Controller::assign_data()
   linear_acceleration_S_z = imu.linear_acceleration.z;
 }
 
-void Controller::integrate()
+void Controller::euler_integrate()
 {
   // timestep array usage: [now, now-dt, oldest + dt, oldest]
 
@@ -104,7 +112,9 @@ void Controller::integrate()
   arr_y_ptr = &imu.angular_velocity.y;
   arr_z_ptr = &imu.angular_velocity.z;
 
-  printf("Controller debug placeholder.");
+  arr_x_ptr++;
+  arr_y_ptr++;
+  arr_z_ptr++;
 
   // for(int i = 1; i < timestep_store; i++) {
 
@@ -113,6 +123,27 @@ void Controller::integrate()
   //     // all older values must be copied
   //     ptr++;  // Move pointer to next element
   // }
+
+
+  integrated_v_x = v_prev
+}
+
+void Controller::rk4_integrate()
+{
+  // timestep array usage: [now, now-dt, oldest + dt, oldest]
+
+  // only the front of the array can point to data (up-to-date), rest of the array needs to be shifted with copy
+  arr_x_ptr = &imu.angular_velocity.x;
+  arr_y_ptr = &imu.angular_velocity.y;
+  arr_z_ptr = &imu.angular_velocity.z;
+
+  for(int i = 1; i < timestep_store; i++) {
+
+      arr_x_ptr = &imu.angular_velocity.x;
+
+      // all older values must be copied
+      ptr++;  // Move pointer to next element
+  }
 }
 
 void Controller::control_1dof()

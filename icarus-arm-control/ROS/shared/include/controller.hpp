@@ -91,7 +91,8 @@ using namespace std::chrono_literals;
     void plot();
 
     void assign_data();
-    void integrate();
+    void euler_integrate();
+    void rk4_integrate();
     void control_1dof();
     void control_3dof();
 
@@ -131,9 +132,9 @@ using namespace std::chrono_literals;
     float angular_velocity_z = 0.0;
     
     // Integrated angle values from IMU Values
-    float integrated_v_x = 0;
-    float integrated_v_y = 0;
-    float integrated_v_z = 0;
+    float integrated_theta = 0;
+    float integrated_phi = 0;
+    float integrated_psi = 0;
 
     // ControlHelper ch_;
 

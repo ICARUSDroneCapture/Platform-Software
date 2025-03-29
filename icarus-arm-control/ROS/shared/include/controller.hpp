@@ -119,9 +119,9 @@ using namespace std::chrono_literals;
     std::vector<double> imu_ts;
     std::vector<double> pimu_ts;
 
-    auto ax1 = matplot::nexttile();
-    auto ax2 = matplot::nexttile();
-    auto ax3 = matplot::nexttile();
+    static auto ax1 = matplot::nexttile();
+    static auto ax2 = matplot::nexttile();
+    static auto ax3 = matplot::nexttile();
  
 private:
 

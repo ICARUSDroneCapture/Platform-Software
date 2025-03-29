@@ -147,13 +147,13 @@ using namespace std::chrono_literals;
         static const int timestep_store = 4;
     #endif
 
-    float ang_vel_x_ts_l[timestep_store] = { };
-    float ang_vel_y_ts_q[timestep_store] = { };
-    float ang_vel_z_ts_q[timestep_store] = { };
+    double ang_vel_x_ts_l[timestep_store] = { };
+    double ang_vel_y_ts_q[timestep_store] = { };
+    double ang_vel_z_ts_q[timestep_store] = { };
 
-    float *arr_x_ptr = ang_vel_x_ts_l;
-    float *arr_y_ptr = ang_vel_y_ts_q;
-    float *arr_z_ptr = ang_vel_z_ts_q;
+    double *arr_x_ptr = ang_vel_x_ts_l;
+    double *arr_y_ptr = ang_vel_y_ts_q;
+    double *arr_z_ptr = ang_vel_z_ts_q;
 
     std::vector<double> gps_ts;
     std::vector<double> imu_ts;

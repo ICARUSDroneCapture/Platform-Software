@@ -51,7 +51,7 @@ void Controller::plot()
   l2->marker_face(true);
   l3->marker_face(true);
 
-  matplot::hold({ax1, ax2, ax3}, on);
+  matplot::hold({ax1, ax2, ax3}, matplot::on);
 
   matplot::show();
 }

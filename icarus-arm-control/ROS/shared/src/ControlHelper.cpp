@@ -5,14 +5,9 @@
  *
  */
 
-#include "ControlHelper.hpp"
+ #include "ControlHelper.hpp"
 
-void ControlHelper::someFunction()
-{
-    printf("Controller debug placeholder.");
-}
-
-void ControlHelper::terminate()
-{
-    printf("Controller debug placeholder.");
-}
+ void ControlHelper::someFunction()
+ {
+     printf("Controller debug placeholder.");
+ }

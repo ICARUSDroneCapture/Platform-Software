@@ -115,6 +115,14 @@ using namespace std::chrono_literals;
     std::vector<double> gps_ts;
     std::vector<double> imu_ts;
     std::vector<double> pimu_ts;
+
+    // auto raw_data_f = matplot::figure()
+
+    tiledlayout(3, 1);
+
+    auto ax1 = nexttile();
+    auto ax2 = nexttile();
+    auto ax3 = nexttile();
  
 private:
 

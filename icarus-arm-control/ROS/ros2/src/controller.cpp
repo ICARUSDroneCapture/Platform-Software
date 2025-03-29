@@ -19,8 +19,8 @@ void Controller::step()
   // cbPIMU(pimu);
   // cbIMU(imu);
 
-  std::bind(&Controller::cbPIMU, this, std::placeholders::_1);
-  std::bind(&Controller::cbIMU, this, std::placeholders::_1);
+  // std::bind(&Controller::cbPIMU, this, std::placeholders::_1);
+  // std::bind(&Controller::cbIMU, this, std::placeholders::_1);
 
   RCLCPP_INFO(rclcpp::get_logger("data"),"\t\t----------------------------------\n");
 

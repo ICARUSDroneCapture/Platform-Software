@@ -16,6 +16,7 @@
 #include <yaml-cpp/yaml.h>
 #include <termios.h>
 #include <unistd.h>
+#include <queue>
 
 #include <matplot/matplot.h>
 
@@ -82,6 +83,8 @@ using namespace std::chrono_literals;
     void step();
     void plot();
 
+    void assign_data();
+
     void cbWheelEncoder(const sensor_msgs::msg::JointState &msg);
     void cbPIMU(const icarus_arm_control::msg::PIMU::SharedPtr pimu);
     void cbIMU(const sensor_msgs::msg::Imu &imu);
@@ -99,7 +102,7 @@ using namespace std::chrono_literals;
     icarus_arm_control::msg::PIMU::SharedPtr pimu;
     sensor_msgs::msg::Imu imu;
 
-    // IMU Integrated Values
+    // IMU Pre-integrated Values
     float linear_velocity_S_x = 0.0;
     float linear_velocity_S_y = 0.0;
     float linear_velocity_S_z = 0.0;
@@ -116,6 +119,11 @@ using namespace std::chrono_literals;
     float angular_velocity_x = 0.0;
     float angular_velocity_y = 0.0;
     float angular_velocity_z = 0.0;
+
+    // Queue for angular velocity values at 4 different timesteps
+    queue<int> ang_vel_x_ts_q;
+    queue<int> ang_vel_y_ts_q;
+    queue<int> ang_vel_z_ts_q;
 
     std::vector<double> gps_ts;
     std::vector<double> imu_ts;

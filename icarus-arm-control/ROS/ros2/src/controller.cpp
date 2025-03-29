@@ -16,6 +16,8 @@
 
 void Controller::step()
 {
+  assign_data();
+
   RCLCPP_INFO(rclcpp::get_logger("data"),"\t\t----------------------------------\n");
 
   RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tLinear Velocity: [%f; %f; %f]\n", linear_velocity_S_x, linear_velocity_S_y, linear_velocity_S_z);
@@ -29,6 +31,8 @@ void Controller::step()
 
 void Controller::plot()
 {
+  assign_data();
+  
   int t_now = static_cast<int>( current_timeMs() );
   double a_S_x = static_cast<double>(linear_acceleration_S_x);
   double a_S_y = static_cast<double>(linear_acceleration_S_y);
@@ -56,6 +60,31 @@ void Controller::plot()
   matplot::show();
 }
 
+void Controller::assign_data()
+{
+  // Only store in this function... storing will be remove for efficiency
+
+  // Store (preintegrated) delta theta values into class members
+  theta = pimu->dtheta.x;
+  phi = pimu->dtheta.y;
+  psi = pimu->dtheta.z;
+
+  // Store (preintegrated) delta theta values into class members
+  linear_velocity_S_x = pimu->dvel.x;
+  linear_velocity_S_y = pimu->dvel.y;
+  linear_velocity_S_z = pimu->dvel.z;
+
+  // Store angular velocity values into class members
+  angular_velocity_x = imu.angular_velocity.x;
+  angular_velocity_y = imu.angular_velocity.y;
+  angular_velocity_z = imu.angular_velocity.z;
+
+  // Store acceleration values into class members
+  linear_acceleration_S_x = imu.linear_acceleration.x;
+  linear_acceleration_S_y = imu.linear_acceleration.y;
+  linear_acceleration_S_z = imu.linear_acceleration.z;
+}
+
 void Controller::cbWheelEncoder(const sensor_msgs::msg::JointState &msg)
 {
     if (!quiet)
@@ -69,16 +98,6 @@ void Controller::cbPIMU(const icarus_arm_control::msg::PIMU::SharedPtr pimu)
     if (got_gps_tow)
         pimu_ts.push_back(pimu->header.stamp.sec);
     this->did_rx_pimu_ = true;
-
-    // Store (preintegrated) delta theta values into class members
-    theta = pimu->dtheta.x;
-    phi = pimu->dtheta.y;
-    psi = pimu->dtheta.z;
-
-    // Store (preintegrated) delta theta values into class members
-    linear_velocity_S_x = pimu->dvel.x;
-    linear_velocity_S_y = pimu->dvel.y;
-    linear_velocity_S_z = pimu->dvel.z;
 }
 
 void Controller::cbIMU(const  sensor_msgs::msg::Imu &imu)
@@ -87,16 +106,6 @@ void Controller::cbIMU(const  sensor_msgs::msg::Imu &imu)
         std::cout << "Rx IMU : " << std::fixed << std::setw(11) << std::setprecision(6) << imu.header.stamp.sec << std::endl;
     if (got_gps_tow)
         imu_ts.push_back(imu.header.stamp.sec);
-    
-    // Store angular velocity values into class members
-    angular_velocity_x = imu.angular_velocity.x;
-    angular_velocity_y = imu.angular_velocity.y;
-    angular_velocity_z = imu.angular_velocity.z;
-
-    // Store acceleration values into class members
-    linear_acceleration_S_x = imu.linear_acceleration.x;
-    linear_acceleration_S_y = imu.linear_acceleration.y;
-    linear_acceleration_S_z = imu.linear_acceleration.z;
 }
 
 int Controller::get_deviations(std::vector<double> &a, std::vector<double> &b, std::vector<double> &out) 

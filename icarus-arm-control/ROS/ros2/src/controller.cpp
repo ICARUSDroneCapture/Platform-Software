@@ -41,7 +41,7 @@ void Controller::cbWheelEncoder(const sensor_msgs::msg::JointState &msg)
         std::cout << "Rx wheel encoder : " << std::fixed << std::setw(11) << std::setprecision(6) << msg.header.stamp.sec << std::endl;
 }
 
-void Controller::cbPIMU(const icarus_arm_control::msg::PIMU::SharedPtr pimu)
+void Controller::cbPIMU(icarus_arm_control::msg::PIMU::SharedPtr pimu)
 {
     if (!quiet)
         std::cout << "Rx PIMU : " << std::fixed << std::setw(11) << std::setprecision(6) << pimu->header.stamp.sec << std::endl;
@@ -60,7 +60,7 @@ void Controller::cbPIMU(const icarus_arm_control::msg::PIMU::SharedPtr pimu)
     linear_velocity_S_z = pimu->dvel.z;
 }
 
-void Controller::cbIMU(const  sensor_msgs::msg::Imu &imu)
+void Controller::cbIMU(sensor_msgs::msg::Imu &imu)
 {
     if (!quiet)
         std::cout << "Rx IMU : " << std::fixed << std::setw(11) << std::setprecision(6) << imu.header.stamp.sec << std::endl;

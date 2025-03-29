@@ -78,6 +78,14 @@ void Controller::plot()
   matplot::show();
 }
 
+voind Controller::debugPrint() {
+  printf("\n\t\t Time [old, present]: [");
+  for (int i = 0; i < size_store; ++i) {
+    printf("%f,", *(ts_ptr + i));
+  }
+  printf("\n");
+}
+
 void Controller::assign_data()
 {
   // Only store in this function... storing will be remove for efficiency

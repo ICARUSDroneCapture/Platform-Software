@@ -10,7 +10,9 @@ This is all tested on Noble Ubuntu (Ubuntu 24.04.2). Likely should work for othe
 If not using Ubuntu, it is recommended to use VirtualBox to run a Noble Ubuntu VM to be able to build code if there is no access to hardware.
 > [!IMPORTANT]
 > When creating a VirtualBox VM, be sure to use at least 4Gs of RAM, recommended 8Gs. Trying to build ROS with any less RAM will probably cause a crash. Same goes for the hardware a user chooses to build on.
+> 
 > Disk space is up to preference, I allocated 50Gs to not worry. Processor count up to preference, especially dependening on how many packages you may want to build at once when running colcon. I assigned 4 processors.
+> 
 > GuestAdditions in recommended to improve QoL when using the VM.
 
 Code is built and run on a Raspberry Pi 5 with 16G of RAM, connected to an Inertial Sense IMU (IMX-5) and ODrive Motors (ODRIVE S1).

@@ -74,7 +74,10 @@ using namespace std::chrono_literals;
  class Controller : public rclcpp::Node // Listener
  {
  public:
-    Controller() : Node("controller_listener_node"){}
+    Controller() : Node("controller_listener_node") {
+        // auto raw_data_f = matplot::figure()
+        matplot::tiledlayout(3, 1);
+    }
     void init();
     void step();
 
@@ -116,13 +119,9 @@ using namespace std::chrono_literals;
     std::vector<double> imu_ts;
     std::vector<double> pimu_ts;
 
-    // auto raw_data_f = matplot::figure()
-
-    tiledlayout(3, 1);
-
-    auto ax1 = nexttile();
-    auto ax2 = nexttile();
-    auto ax3 = nexttile();
+    auto ax1 = matplot::nexttile();
+    auto ax2 = matplot::nexttile();
+    auto ax3 = matplot::nexttile();
  
 private:
 

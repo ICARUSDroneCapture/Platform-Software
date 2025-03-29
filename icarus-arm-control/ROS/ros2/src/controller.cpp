@@ -29,15 +29,15 @@ void Controller::step()
 
   unsigned int t_now = current_timeMs();
 
-  auto l1 = scatter(ax1, t_now, linear_acceleration_S_x);
-  auto l2 = scatter(ax2, t_now, linear_acceleration_S_y);
-  auto l3 = scatter(ax3, t_now, linear_acceleration_S_z);
+  auto l1 = matplot::scatter(ax1, t_now, linear_acceleration_S_x);
+  auto l2 = matplot::scatter(ax2, t_now, linear_acceleration_S_y);
+  auto l3 = matplot::scatter(ax3, t_now, linear_acceleration_S_z);
 
-  l1->marker_face(true);
-  l2->marker_face(true);
-  l3->marker_face(true);
+  l1->matplot::marker_face(true);
+  l2->matplot::marker_face(true);
+  l3->matplot::marker_face(true);
 
-  show();
+  matplot::show();
 }
 
 void Controller::cbWheelEncoder(const sensor_msgs::msg::JointState &msg)

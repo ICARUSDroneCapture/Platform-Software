@@ -118,10 +118,6 @@ using namespace std::chrono_literals;
     std::vector<double> gps_ts;
     std::vector<double> imu_ts;
     std::vector<double> pimu_ts;
-
-    static auto ax1 = matplot::nexttile();
-    static auto ax2 = matplot::nexttile();
-    static auto ax3 = matplot::nexttile();
  
 private:
 

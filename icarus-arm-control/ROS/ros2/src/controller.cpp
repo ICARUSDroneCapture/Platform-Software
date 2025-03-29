@@ -29,6 +29,10 @@ void Controller::step()
 
   unsigned int t_now = current_timeMs();
 
+  auto ax1 = matplot::nexttile();
+  auto ax2 = matplot::nexttile();
+  auto ax3 = matplot::nexttile();
+
   auto l1 = matplot::scatter(ax1, t_now, linear_acceleration_S_x);
   auto l2 = matplot::scatter(ax2, t_now, linear_acceleration_S_y);
   auto l3 = matplot::scatter(ax3, t_now, linear_acceleration_S_z);
@@ -36,6 +40,8 @@ void Controller::step()
   l1->matplot::marker_face(true);
   l2->matplot::marker_face(true);
   l3->matplot::marker_face(true);
+
+  hold({ax1, ax2, ax3}, on);
 
   matplot::show();
 }

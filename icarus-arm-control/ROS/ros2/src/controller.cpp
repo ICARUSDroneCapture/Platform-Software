@@ -47,9 +47,9 @@ void Controller::plot()
   auto l2 = matplot::scatter(ax2, t_p, ay_p);
   auto l3 = matplot::scatter(ax3, t_p, az_p);
 
-  l1->matplot::marker_face(true);
-  l2->matplot::marker_face(true);
-  l3->matplot::marker_face(true);
+  l1->marker_face(true);
+  l2->marker_face(true);
+  l3->marker_face(true);
 
   matplot::hold({ax1, ax2, ax3}, on);
 

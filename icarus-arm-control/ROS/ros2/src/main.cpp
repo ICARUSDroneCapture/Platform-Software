@@ -74,6 +74,7 @@
 
     while (ok())
     {
+        isROS.update();
         // controller_node->step();
         rclcpp::spin_some(controller_node);
 

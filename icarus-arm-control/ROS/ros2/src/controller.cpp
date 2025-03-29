@@ -16,12 +16,7 @@
 
 void Controller::step()
 {
-  // cbPIMU(pimu);
-  // cbIMU(imu);
-
-  std::bind(&Controller::cbPIMU, this, std::placeholders::_1);
-  std::bind(&Controller::cbIMU, this, std::placeholders::_1);
-
+  
   RCLCPP_INFO(rclcpp::get_logger("data"),"\t\t----------------------------------\n");
 
   RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tLinear Velocity: [%f; %f; %f]\n", linear_velocity_S_x, linear_velocity_S_y, linear_velocity_S_z);
@@ -31,7 +26,6 @@ void Controller::step()
   RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tLinear Accelertion: [%f; %f; %f]\n", linear_acceleration_S_x, linear_acceleration_S_y, linear_acceleration_S_z);
   
   RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tAngular Velocity: [%f; %f; %f]\n", angular_velocity_x, angular_velocity_y, angular_velocity_z);
-
 }
 
 void Controller::cbWheelEncoder(const sensor_msgs::msg::JointState &msg)
@@ -57,12 +51,6 @@ void Controller::cbPIMU(const icarus_arm_control::msg::PIMU::SharedPtr pimu)
     linear_velocity_S_x = pimu->dvel.x;
     linear_velocity_S_y = pimu->dvel.y;
     linear_velocity_S_z = pimu->dvel.z;
-
-    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\t----------------------------------\n");
-
-    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tLinear Velocity: [%f; %f; %f]\n", linear_velocity_S_x, linear_velocity_S_y, linear_velocity_S_z);
-    
-    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tAngle: [%f; %f; %f]\n", theta, phi, psi);
 }
 
 void Controller::cbIMU(const  sensor_msgs::msg::Imu &imu)
@@ -81,10 +69,6 @@ void Controller::cbIMU(const  sensor_msgs::msg::Imu &imu)
     linear_acceleration_S_x = imu.linear_acceleration.x;
     linear_acceleration_S_y = imu.linear_acceleration.y;
     linear_acceleration_S_z = imu.linear_acceleration.z;
-
-    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tLinear Accelertion: [%f; %f; %f]\n", linear_acceleration_S_x, linear_acceleration_S_y, linear_acceleration_S_z);
-    
-    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tAngular Velocity: [%f; %f; %f]\n", angular_velocity_x, angular_velocity_y, angular_velocity_z);
 }
 
 int Controller::get_deviations(std::vector<double> &a, std::vector<double> &b, std::vector<double> &out) 

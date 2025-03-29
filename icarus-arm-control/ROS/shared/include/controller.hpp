@@ -8,6 +8,12 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
+// #define DOF3_CONTROL
+#define DOF1_CONTROL
+
+// #define RK4_INTEGRATION
+#define EULER_INTEGRATION
+
 #include <stdio.h>
 #include <iostream>
 #include <algorithm>
@@ -59,6 +65,8 @@
 #include "geometry_msgs/geometry_msgs/msg/pose_with_covariance_stamped.hpp"
 #include "diagnostic_msgs/diagnostic_msgs/msg/diagnostic_array.hpp"
 
+#include "ControlHelper.hpp"
+
 using namespace rclcpp;
 using namespace icarus_arm_control;
 using namespace std::chrono_literals;
@@ -83,6 +91,9 @@ using namespace std::chrono_literals;
     void plot();
 
     void assign_data();
+    void integrate();
+    void control_1dof();
+    void control_3dof();
 
     void cbWheelEncoder(const sensor_msgs::msg::JointState &msg);
     void cbPIMU(const icarus_arm_control::msg::PIMU::SharedPtr pimu);
@@ -118,13 +129,31 @@ using namespace std::chrono_literals;
     float angular_velocity_x = 0.0;
     float angular_velocity_y = 0.0;
     float angular_velocity_z = 0.0;
+    
+    // Integrated angle values from IMU Values
+    float integrated_v_x = 0;
+    float integrated_v_y = 0;
+    float integrated_v_z = 0;
+
+    ControlHelper ch_;
 
     // Array list for angular velocity values at 4 different timesteps
-    static const int timestep_store = 4;
+
+    #ifdef EULER_INTEGRATION
+        static const int timestep_store = 2;
+    #endif
+
+    #ifdef RK4_INTEGRATION
+        static const int timestep_store = 4;
+    #endif
 
     float ang_vel_x_ts_l[timestep_store] = { };
     float ang_vel_y_ts_q[timestep_store] = { };
     float ang_vel_z_ts_q[timestep_store] = { };
+
+    float *arr_x_ptr = ang_vel_x_ts_l;
+    float *arr_y_ptr = ang_vel_y_ts_q;
+    float *arr_z_ptr = ang_vel_z_ts_q;
 
     std::vector<double> gps_ts;
     std::vector<double> imu_ts;

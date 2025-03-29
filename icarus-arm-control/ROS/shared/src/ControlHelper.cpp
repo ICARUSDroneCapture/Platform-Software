@@ -11,3 +11,8 @@ void ControlHelper::someFunction()
 {
     printf("Controller debug placeholder.");
 }
+
+void ControlHelper::terminate()
+{
+    printf("Controller debug placeholder.");
+}

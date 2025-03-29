@@ -16,17 +16,27 @@
 
 void Controller::step()
 {
-  assign_data();
+  if (!quiet) {
+    assign_data();
 
-  RCLCPP_INFO(rclcpp::get_logger("data"),"\t\t----------------------------------\n");
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\t----------------------------------\n");
 
-  RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tLinear Velocity: [%f; %f; %f]\n", linear_velocity_S_x, linear_velocity_S_y, linear_velocity_S_z);
-  
-  RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tAngle: [%f; %f; %f]\n", theta, phi, psi);
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tLinear Velocity: [%f; %f; %f]\n", linear_velocity_S_x, linear_velocity_S_y, linear_velocity_S_z);
+    
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tAngle: [%f; %f; %f]\n", theta, phi, psi);
 
-  RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tLinear Accelertion: [%f; %f; %f]\n", linear_acceleration_S_x, linear_acceleration_S_y, linear_acceleration_S_z);
-  
-  RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tAngular Velocity: [%f; %f; %f]\n", angular_velocity_x, angular_velocity_y, angular_velocity_z);
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tLinear Accelertion: [%f; %f; %f]\n", linear_acceleration_S_x, linear_acceleration_S_y, linear_acceleration_S_z);
+    
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tAngular Velocity: [%f; %f; %f]\n", angular_velocity_x, angular_velocity_y, angular_velocity_z);
+  }
+
+  #ifdef DOF1_CONTROL
+    control_1dof();
+  #endif
+
+  #ifdef DOF3_CONTROL
+    control_3dof();
+  #endif
 }
 
 void Controller::plot()
@@ -83,6 +93,36 @@ void Controller::assign_data()
   linear_acceleration_S_x = imu.linear_acceleration.x;
   linear_acceleration_S_y = imu.linear_acceleration.y;
   linear_acceleration_S_z = imu.linear_acceleration.z;
+}
+
+void Controller::integrate()
+{
+  // timestep array usage: [now, now-dt, oldest + dt, oldest]
+
+  // only the front of the array can point to data (up-to-date), rest of the array needs to be shifted with copy
+  arr_x_ptr = &imu.angular_velocity.x;
+  arr_y_ptr = &imu.angular_velocity.y;
+  arr_z_ptr = &imu.angular_velocity.z;
+
+  // for(int i = 1; i < timestep_store; i++) {
+
+  //     arr_x_ptr = &imu.angular_velocity.x;
+
+  //     // all older values must be copied
+  //     ptr++;  // Move pointer to next element
+  // }
+}
+
+void Controller::control_1dof()
+{
+  // insert 1dof control law stuff at this timestep
+  printf("Controller debug placeholder.");
+}
+
+void Controller::control_3dof()
+{
+  // insert 3dof control law stuff at this timestep
+  printf("Controller debug placeholder.");
 }
 
 void Controller::cbWheelEncoder(const sensor_msgs::msg::JointState &msg)

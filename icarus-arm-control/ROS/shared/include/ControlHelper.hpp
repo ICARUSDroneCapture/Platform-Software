@@ -27,13 +27,11 @@
 class ControlHelper
 {
 public:
-    // Public members (accessible from anywhere)
-    // Constructor (optional)
     ControlHelper();
-    // Member functions (methods)
+    ~ControlHelper() { terminate(); }
+
     void someFunction();
-    // Data members (attributes)
-    int someVariable;
+    void terminate();
 
 private:
     // Private members (accessible only within the class)

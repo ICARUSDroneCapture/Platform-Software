@@ -130,20 +130,8 @@ void Controller::euler_integrate()
 
 void Controller::rk4_integrate()
 {
-  // timestep array usage: [now, now-dt, oldest + dt, oldest]
-
-  // only the front of the array can point to data (up-to-date), rest of the array needs to be shifted with copy
-  arr_x_ptr = &imu.angular_velocity.x;
-  arr_y_ptr = &imu.angular_velocity.y;
-  arr_z_ptr = &imu.angular_velocity.z;
-
-  for(int i = 1; i < timestep_store; i++) {
-
-      arr_x_ptr = &imu.angular_velocity.x;
-
-      // all older values must be copied
-      ptr++;  // Move pointer to next element
-  }
+  // insert 1dof control law stuff at this timestep
+  printf("Controller debug placeholder.");
 }
 
 void Controller::control_1dof()

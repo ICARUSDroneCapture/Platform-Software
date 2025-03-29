@@ -17,8 +17,8 @@
 void Controller::step()
 {
 
-  cbPIMU(pimu);
-  cbIMU(imu);
+  // cbPIMU(pimu);
+  // cbIMU(imu);
 
   RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tLinear Velocity: [%f; %f; %f]\n", linear_velocity_S_x, linear_velocity_S_y, linear_velocity_S_z);
   

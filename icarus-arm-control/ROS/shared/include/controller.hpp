@@ -77,8 +77,8 @@ using namespace std::chrono_literals;
     void step();
 
     void cbWheelEncoder(const sensor_msgs::msg::JointState &msg);
-    void cbPIMU(icarus_arm_control::msg::PIMU::SharedPtr pimu);
-    void cbIMU(sensor_msgs::msg::Imu &imu);
+    void cbPIMU(const icarus_arm_control::msg::PIMU::SharedPtr pimu);
+    void cbIMU(const sensor_msgs::msg::Imu &imu);
 
     int get_deviations(std::vector<double> &a, std::vector<double> &b, std::vector<double> &out);
     double get_avg_deviation(std::vector<double> &a, std::vector<double> &b);

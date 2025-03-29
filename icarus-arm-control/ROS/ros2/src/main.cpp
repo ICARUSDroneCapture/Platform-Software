@@ -76,12 +76,12 @@
     {
         isROS.update();
         // controller_node->step();
-        controller_node->plot();
         rclcpp::spin_some(controller_node);
 
         // periodic print, add update function
         SLEEP_MS(200);
         if (prevTimeMs / 1000 != nowTimeMs / 1000) {
+            controller_node->plot();
             RCLCPP_INFO(rclcpp::get_logger("controller"),"running...  (time: %u)\n\n", nowTimeMs);
             prevTimeMs = nowTimeMs;
         }

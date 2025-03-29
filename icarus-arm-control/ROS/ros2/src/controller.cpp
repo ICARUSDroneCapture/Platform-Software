@@ -30,14 +30,22 @@ void Controller::step()
 void Controller::plot()
 {
   int t_now = static_cast<int>( current_timeMs() );
+  double a_S_x = static_cast<double>(linear_acceleration_S_x);
+  double a_S_y = static_cast<double>(linear_acceleration_S_y);
+  double a_S_z = static_cast<double>(linear_acceleration_S_z);
+
+  auto t_p = linspace(0, t_now, 1);
+  auto ax_p = linspace(0, a_S_x, 1);
+  auto ay_p = linspace(0, a_S_y, 1);
+  auto az_p = linspace(0, a_S_z, 1);
 
   auto ax1 = matplot::nexttile();
   auto ax2 = matplot::nexttile();
   auto ax3 = matplot::nexttile();
 
-  auto l1 = matplot::scatter(ax1, t_now, static_cast<double>(linear_acceleration_S_x));
-  auto l2 = matplot::scatter(ax2, t_now, static_cast<double>(linear_acceleration_S_x));
-  auto l3 = matplot::scatter(ax3, t_now, static_cast<double>(linear_acceleration_S_x));
+  auto l1 = matplot::scatter(ax1, t_p, ax_p);
+  auto l2 = matplot::scatter(ax2, t_p, ay_p);
+  auto l3 = matplot::scatter(ax3, t_p, az_p);
 
   l1->matplot::marker_face(true);
   l2->matplot::marker_face(true);

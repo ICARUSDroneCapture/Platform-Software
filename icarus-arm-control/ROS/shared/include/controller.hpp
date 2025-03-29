@@ -16,7 +16,6 @@
 #include <yaml-cpp/yaml.h>
 #include <termios.h>
 #include <unistd.h>
-#include <queue>
 
 #include <matplot/matplot.h>
 
@@ -120,10 +119,12 @@ using namespace std::chrono_literals;
     float angular_velocity_y = 0.0;
     float angular_velocity_z = 0.0;
 
-    // Queue for angular velocity values at 4 different timesteps
-    std::queue<int> ang_vel_x_ts_q;
-    std::queue<int> ang_vel_y_ts_q;
-    std::queue<int> ang_vel_z_ts_q;
+    // Array list for angular velocity values at 4 different timesteps
+    const int timestep_store = 4;
+
+    float ang_vel_x_ts_l[timestep_store] = { };
+    float ang_vel_y_ts_q[timestep_store] = { };
+    float ang_vel_z_ts_q[timestep_store] = { };
 
     std::vector<double> gps_ts;
     std::vector<double> imu_ts;

@@ -32,7 +32,7 @@ void Controller::step()
 void Controller::plot()
 {
   assign_data();
-  
+
   int t_now = static_cast<int>( current_timeMs() );
   double a_S_x = static_cast<double>(linear_acceleration_S_x);
   double a_S_y = static_cast<double>(linear_acceleration_S_y);

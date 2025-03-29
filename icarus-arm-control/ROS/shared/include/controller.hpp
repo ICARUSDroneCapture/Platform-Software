@@ -17,6 +17,8 @@
 #include <termios.h>
 #include <unistd.h>
 
+#include <matplot/matplot.h>
+
 #include "data_sets.h"
 #include "InertialSense.h"
 

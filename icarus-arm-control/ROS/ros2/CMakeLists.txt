@@ -20,6 +20,7 @@ find_package(diagnostic_msgs REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(std_srvs REQUIRED)
 find_package(ament_cmake_gtest REQUIRED)
+find_package(Matplot++ REQUIRED)
 find_package(Threads)
 
 add_definitions(-DROS2)
@@ -117,7 +118,7 @@ add_executable(controller_listener_node
 rosidl_get_typesupport_target(cpp_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_cpp")
 target_link_libraries(controller_listener_node "${cpp_typesupport_target}")
 ament_target_dependencies(controller_listener_node rclcpp std_msgs geometry_msgs nav_msgs diagnostic_msgs sensor_msgs std_srvs)
-target_link_libraries(controller_listener_node InertialSenseSDK ${YAML_CPP_LIBRARIES} pthread)
+target_link_libraries(controller_listener_node Matplot++::matplot InertialSenseSDK ${YAML_CPP_LIBRARIES} pthread)
 
 add_executable(talker src/test_publisher.cpp)
 ament_target_dependencies(talker rclcpp std_msgs)

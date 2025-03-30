@@ -175,13 +175,14 @@ void Controller::cbPIMU(const icarus_arm_control::msg::PIMU::SharedPtr pimu)
         pimu_ts.push_back(pimu->header.stamp.sec);
     this->did_rx_pimu_ = true;
 
-    *ts_ptr = pimu->dt;
-    // // *ts_ptr = 2.0;
+    imu_dt = pimu->dt;
 
-    // // Copy the value of source_double to the memory location pointed to by destination_ptr
-    // std::memcpy(ts_ptr, &imu.header.stamp.sec, sizeof(double));
-
-    RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\tTimestamp: [%f]\n", *ts_ptr);
+    theta = pimu->dtheta.x;
+    phi = pimu->dtheta.y;
+    psi = pimu->dtheta.z;
+    RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\tTimestamp: [%f]\n", imu_dt);
+    RCLCPP_INFO(rclcpp::get_logger("data debug"),"\t\tAngle Changes: [%f; %f; %f]\n", theta, phi, psi);
+    
 }
 
 void Controller::cbIMU(const  sensor_msgs::msg::Imu &imu)
@@ -190,6 +191,14 @@ void Controller::cbIMU(const  sensor_msgs::msg::Imu &imu)
         std::cout << "Rx IMU : " << std::fixed << std::setw(11) << std::setprecision(6) << imu.header.stamp.sec << std::endl;
     if (got_gps_tow)
         imu_ts.push_back(imu.header.stamp.sec);
+    
+      // *ts_ptr = pimu->dt;
+      // // // *ts_ptr = 2.0;
+  
+      // // // Copy the value of source_double to the memory location pointed to by destination_ptr
+      // // std::memcpy(ts_ptr, &imu.header.stamp.sec, sizeof(double));
+  
+      // RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\tTimestamp: [%f]\n", *ts_ptr);
 }
 
 int Controller::get_deviations(std::vector<double> &a, std::vector<double> &b, std::vector<double> &out) 

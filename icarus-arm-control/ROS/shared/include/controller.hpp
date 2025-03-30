@@ -150,9 +150,8 @@ using namespace std::chrono_literals;
         static const int timestep_store = 4;
     #endif
 
-    double ts[timestep_store] = { };
-    double *ts_ptr = ts;
-
+    double imu_dt;
+    
     double ang_vel_x_ts_l[timestep_store] = { };
     double ang_vel_y_ts_q[timestep_store] = { };
     double ang_vel_z_ts_q[timestep_store] = { };

@@ -87,6 +87,14 @@ sourceICARUS
 ros2 run icarus_arm_control controller_listener_node
 ```
 
+#### Debugging
+
+You can use gdb to debug, reference here in ROS docs:
+https://docs.ros.org/en/jazzy/How-To-Guides/Getting-Backtraces-in-ROS-2.html
+
+So to run this node specifically in gdb, run the following after building:
+`ros2 run --prefix 'gdb -ex run --args' icarus_arm_control controller_listener_node`
+
 ## Installation Notes
 
 ##### MatPlotPlusPlus

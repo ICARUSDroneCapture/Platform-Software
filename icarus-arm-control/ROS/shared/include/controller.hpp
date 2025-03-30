@@ -89,7 +89,6 @@ using namespace std::chrono_literals;
     void init();
     void step();
     void plot();
-    void debugPrint();
 
     void assign_data();
     void euler_integrate();
@@ -107,7 +106,7 @@ using namespace std::chrono_literals;
     double get_min_deviation(std::vector<double> &a, std::vector<double> &b);
     double get_max_deviation(std::vector<double> &a, std::vector<double> &b);
 
-    bool quiet = false;
+    bool quiet = true;
     bool plot_quiet = true;
     bool got_gps_tow = false;
     bool did_rx_pimu_ = false;
@@ -145,24 +144,19 @@ using namespace std::chrono_literals;
 
     // Array list for angular velocity values at 4 different timesteps
 
-    #ifdef EULER_INTEGRATION
-        static const int timestep_store = 1;
-        double prev_theta;
-        double prev_phi;
-        double prev_psi;
-    #endif
+    double prev_theta;
+    double prev_phi;
+    double prev_psi;
 
-    #ifdef RK4_INTEGRATION
-        static const int timestep_store = 4;
-    #endif    
-
+    static const int timestep_store = 4;
+    
     double ang_vel_x_ts_l[timestep_store] = { };
     double ang_vel_y_ts_q[timestep_store] = { };
     double ang_vel_z_ts_q[timestep_store] = { };
 
     double *arr_x_ptr = ang_vel_x_ts_l;
     double *arr_y_ptr = ang_vel_y_ts_q;
-    double *arr_z_ptr = ang_vel_z_ts_q;
+    double *arr_z_ptr = ang_vel_z_ts_q; 
 
     std::vector<double> gps_ts;
     std::vector<double> imu_ts;

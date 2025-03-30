@@ -21,15 +21,15 @@ void Controller::step()
 
     RCLCPP_INFO(rclcpp::get_logger("data"),"\t\t----------------------------------\n");
 
-    RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\tdt: [%f]\n", pimu->dt);
+    RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\tdt: [%f]\n", imu_dt);
 
-    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tLinear Velocity: [%f; %f; %f]\n", pimu->dvel.x, pimu->dvel.y, pimu->dvel.z);
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tLinear Velocity: [%f; %f; %f]\n", linear_velocity_S_x, linear_velocity_S_y, linear_velocity_S_z);
     
-    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tAngle: [%f; %f; %f]\n", pimu->dtheta.x, pimu->dtheta.y, pimu->dtheta.z);
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tAngle: [%f; %f; %f]\n", theta, phi, psi);
 
-    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tLinear Accelertion: [%f; %f; %f]\n", imu.linear_acceleration.x, imu.linear_acceleration.y, imu.linear_acceleration.z);
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tLinear Acceleration: [%f; %f; %f]\n", linear_acceleration_S_x, linear_acceleration_S_y, linear_acceleration_S_z);
     
-    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tAngular Velocity: [%f; %f; %f]\n", imu.angular_velocity.x, imu.angular_velocity.y, imu.angular_velocity.z);
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tAngular Velocity: [%f; %f; %f]\n", angular_velocity_x, angular_velocity_y, angular_velocity_z);
   }
 
   #ifdef EULER_INTEGRATION
@@ -80,17 +80,13 @@ void Controller::plot()
   matplot::show();
 }
 
-void Controller::debugPrint() {
-  printf("\n\t\t Time [old, present]: [");
-  // for (int i = 0; i < timestep_store; ++i) {
-  //   printf("%f, ", *(arr_x_ptr + i));
-  // }
-  // printf("]\n");
-}
-
 void Controller::assign_data()
 {
   // Only store in this function... storing will be remove for efficiency
+  
+  // Note, if printed, this value doesn't seem to change.
+  // I tested this, values are in fact changing, dt is just very consistent
+  imu_dt = pimu->dt;
 
   // Store (preintegrated) delta theta values into class members
   theta = pimu->dtheta.x;
@@ -115,16 +111,17 @@ void Controller::assign_data()
 
 void Controller::euler_integrate()
 {
-  // timestep array usage: [now, now-dt, oldest + dt, oldest]
+  integrated_theta = prev_theta + (pimu->dt * imu.angular_velocity.x);
+  integrated_phi = prev_phi + (pimu->dt * imu.angular_velocity.y);
+  integrated_psi = prev_theta + (pimu->dt * imu.angular_velocity.z);
 
-  // only the front of the array can point to data (up-to-date), rest of the array needs to be shifted with copy
-  arr_x_ptr = &imu.angular_velocity.x;
-  arr_y_ptr = &imu.angular_velocity.y;
-  arr_z_ptr = &imu.angular_velocity.z;
+  quiet = false;
+  if (!quiet) {
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\t----------------------------------\n");
 
-  arr_x_ptr++;
-  arr_y_ptr++;
-  arr_z_ptr++;
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tIntegrated Angle: [%f; %f; %f]\n", integrated_theta, integrated_phi, integrated_psi);
+  }
+  quiet = true;
 
   // for(int i = 1; i < timestep_store; i++) {
 
@@ -135,13 +132,32 @@ void Controller::euler_integrate()
   // }
 
 
-//   integrated_theta = v_prev
+//   integrated_angle_x = v_prev
 }
 
 void Controller::rk4_integrate()
 {
+  // timestep array usage: [now, now-dt, oldest + dt, oldest]
+
+  // // only the front of the array can point to data (up-to-date), rest of the array needs to be shifted with copy
+  // arr_x_ptr = &imu.angular_velocity.x;
+  // arr_y_ptr = &imu.angular_velocity.y;
+  // arr_z_ptr = &imu.angular_velocity.z;
+
+  // arr_x_ptr++;
+  // arr_y_ptr++;
+  // arr_z_ptr++;
+
   // insert 1dof control law stuff at this timestep
   printf("Controller debug placeholder.");
+
+  // *ts_ptr = pimu->dt;
+  // // // *ts_ptr = 2.0;
+
+  // // // Copy the value of source_double to the memory location pointed to by destination_ptr
+  // // std::memcpy(ts_ptr, &imu.header.stamp.sec, sizeof(double));
+
+  // RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\tTimestamp: [%f]\n", *ts_ptr);
 }
 
 void Controller::control_1dof()
@@ -161,6 +177,14 @@ void Controller::insert_front(double *a, const int n, double val) {
      *(a+i) = *(a+i-1);
   }
   *a = val;
+
+  if (!quiet) {
+    printf("\n\t\t Array: [");
+    for (int i = 0; i < n; ++i) {
+      printf("%f, ", *(a + i));
+    }
+    printf("]\n");
+  }
 }
 
 void Controller::cbWheelEncoder(const sensor_msgs::msg::JointState &msg)
@@ -176,10 +200,6 @@ void Controller::cbPIMU(const icarus_arm_control::msg::PIMU::SharedPtr pimu)
     if (got_gps_tow)
         pimu_ts.push_back(pimu->header.stamp.sec);
     this->did_rx_pimu_ = true;
-
-    // Note, if printed, this value doesn't seem to change.
-    // I tested this, values are in fact changing, dt is just very consistent
-    imu_dt = pimu->dt;    
 }
 
 void Controller::cbIMU(const  sensor_msgs::msg::Imu &imu)
@@ -188,14 +208,6 @@ void Controller::cbIMU(const  sensor_msgs::msg::Imu &imu)
         std::cout << "Rx IMU : " << std::fixed << std::setw(11) << std::setprecision(6) << imu.header.stamp.sec << std::endl;
     if (got_gps_tow)
         imu_ts.push_back(imu.header.stamp.sec);
-    
-      // *ts_ptr = pimu->dt;
-      // // // *ts_ptr = 2.0;
-  
-      // // // Copy the value of source_double to the memory location pointed to by destination_ptr
-      // // std::memcpy(ts_ptr, &imu.header.stamp.sec, sizeof(double));
-  
-      // RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\tTimestamp: [%f]\n", *ts_ptr);
 }
 
 int Controller::get_deviations(std::vector<double> &a, std::vector<double> &b, std::vector<double> &out) 

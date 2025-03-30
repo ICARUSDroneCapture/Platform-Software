@@ -81,7 +81,7 @@ void Controller::plot()
 void Controller::debugPrint() {
   printf("\n\t\t Time [old, present]: [");
   for (int i = 0; i < timestep_store; ++i) {
-    printf("%f, ", *(ts_ptr + i));
+    printf("%f, ", *(arr_x_ptr + i));
   }
   printf("]\n");
 }

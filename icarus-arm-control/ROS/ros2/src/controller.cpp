@@ -185,8 +185,16 @@ void Controller::cbIMU(const  sensor_msgs::msg::Imu &imu)
 
     // Update timesteps array
     // insert_front(ts_ptr, timestep_store, imu.header.stamp.sec);
+    // *(ts_ptr+i) = imu.header.stamp.sec;
     *ts_ptr = imu.header.stamp.sec;
-    printf("%f, ", *ts_ptr);
+    RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\tTimestamp: [%f]\n", *ts_ptr);
+    
+
+    // for (int i = n; i > 0; i--) {
+    //   *(a+i) = *(a+i-1);
+    // }
+    // *a = val;
+
     // printf("%f, ", *(ts_ptr + 0));
 }
 

@@ -155,7 +155,7 @@ void Controller::control_3dof()
 }
 
 void Controller::insert_front(double *a, const int n, double val) {
-  for (int i = n; i >0; i--) {
+  for (int i = n; i > 0; i--) {
      *(a+i) = *(a+i-1);
   }
   *a = val;
@@ -184,7 +184,7 @@ void Controller::cbIMU(const  sensor_msgs::msg::Imu &imu)
         imu_ts.push_back(imu.header.stamp.sec);
 
     // Update timesteps array
-    // insert_front(ts_ptr, timestep_store, imu.header.stamp.sec);
+    insert_front(ts_ptr, timestep_store, imu.header.stamp.sec);
 }
 
 int Controller::get_deviations(std::vector<double> &a, std::vector<double> &b, std::vector<double> &out) 

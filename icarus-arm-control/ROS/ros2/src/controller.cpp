@@ -183,7 +183,8 @@ void Controller::cbIMU(const  sensor_msgs::msg::Imu &imu)
     if (got_gps_tow) {
         imu_ts.push_back(imu.header.stamp.sec);
     } else {
-      *ts_ptr = imu.header.stamp.sec;
+      // *ts_ptr = imu.header.stamp.sec;
+      *ts_ptr = 2.0;
       RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\tTimestamp: [%f]\n", *ts_ptr);
     }
 

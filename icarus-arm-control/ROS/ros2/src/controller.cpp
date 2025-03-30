@@ -30,13 +30,7 @@ void Controller::step()
     RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tAngular Velocity: [%f; %f; %f]\n", angular_velocity_x, angular_velocity_y, angular_velocity_z);
   }
 
-  #ifdef EULER_INTEGRATION
-    euler_integrate();
-  #endif
-
-  #ifdef RK4_INTEGRATION
-    rk4_integrate();
-  #endif
+  integrate();
 
   #ifdef DOF1_CONTROL
     control_1dof();
@@ -110,25 +104,16 @@ void Controller::assign_data()
   linear_acceleration_S_z = imu.linear_acceleration.z;
 }
 
-void Controller::euler_integrate()
+void Controller::integrate()
 {
 
-  // quiet = false;
-  if (!quiet) {
-
-    RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\t----------------------------------\n");
-
-    RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\tdt: [%f]\n", imu_dt);
-    
-    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tAngular Velocity: [%f; %f; %f]\n", angular_velocity_x, angular_velocity_y, angular_velocity_z);
-  }
-  quiet = true;
+  #ifdef EULER_INTEGRATION
 
   integrated_theta = prev_theta + (imu_dt * angular_velocity_x);
   integrated_phi = prev_phi + (imu_dt * angular_velocity_y);
   integrated_psi = prev_theta + (imu_dt * angular_velocity_z);
 
-  quiet = false;
+  // quiet = false;
   if (!quiet) {
     RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\t----------------------------------\n");
 
@@ -136,20 +121,9 @@ void Controller::euler_integrate()
   }
   quiet = true;
 
-  // for(int i = 1; i < timestep_store; i++) {
+  #endif
 
-  //     arr_x_ptr = &imu.angular_velocity.x;
-
-  //     // all older values must be copied
-  //     ptr++;  // Move pointer to next element
-  // }
-
-
-//   integrated_angle_x = v_prev
-}
-
-void Controller::rk4_integrate()
-{
+  #ifdef RK4_INTEGRATION
   // timestep array usage: [now, now-dt, oldest + dt, oldest]
 
   // // only the front of the array can point to data (up-to-date), rest of the array needs to be shifted with copy
@@ -171,6 +145,10 @@ void Controller::rk4_integrate()
   // // std::memcpy(ts_ptr, &imu.header.stamp.sec, sizeof(double));
 
   // RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\tTimestamp: [%f]\n", *ts_ptr);
+  #endif
+
+
+  
 }
 
 void Controller::control_1dof()
@@ -190,14 +168,6 @@ void Controller::insert_front(double *a, const int n, double val) {
      *(a+i) = *(a+i-1);
   }
   *a = val;
-
-  if (!quiet) {
-    printf("\n\t\t Array: [");
-    for (int i = 0; i < n; ++i) {
-      printf("%f, ", *(a + i));
-    }
-    printf("]\n");
-  }
 }
 
 void Controller::cbWheelEncoder(const sensor_msgs::msg::JointState &msg)

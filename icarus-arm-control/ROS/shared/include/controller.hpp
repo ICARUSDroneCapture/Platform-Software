@@ -91,8 +91,7 @@ using namespace std::chrono_literals;
     void plot();
 
     void assign_data();
-    void euler_integrate();
-    void rk4_integrate();
+    void integrate();
     void control_1dof();
     void control_3dof();
     void insert_front(double *a, const int n, double val);
@@ -142,12 +141,14 @@ using namespace std::chrono_literals;
 
     // ControlHelper ch_;
 
-    // Array list for angular velocity values at 4 different timesteps
-
+    #ifdef EULER_INTEGRATION
     double prev_theta;
     double prev_phi;
     double prev_psi;
+    #endif
 
+    #ifdef RK4_INTEGRATION
+    // Array list for angular velocity values at 4 different timesteps
     static const int timestep_store = 4;
     
     double ang_vel_x_ts_l[timestep_store] = { };
@@ -157,6 +158,7 @@ using namespace std::chrono_literals;
     double *arr_x_ptr = ang_vel_x_ts_l;
     double *arr_y_ptr = ang_vel_y_ts_q;
     double *arr_z_ptr = ang_vel_z_ts_q; 
+    #endif
 
     std::vector<double> gps_ts;
     std::vector<double> imu_ts;

@@ -106,7 +106,7 @@ using namespace std::chrono_literals;
     double get_min_deviation(std::vector<double> &a, std::vector<double> &b);
     double get_max_deviation(std::vector<double> &a, std::vector<double> &b);
 
-    bool quiet = true;
+    bool quiet = false;
     bool plot_quiet = true;
     bool got_gps_tow = false;
     bool did_rx_pimu_ = false;

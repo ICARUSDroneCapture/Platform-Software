@@ -85,7 +85,7 @@
                 controller_node->plot();
             }
             RCLCPP_INFO(rclcpp::get_logger("controller"),"running...  (time: %u)\n\n", nowTimeMs);
-            // controller_node->debugPrint();
+            controller_node->debugPrint();
             prevTimeMs = nowTimeMs;
         }
         nowTimeMs = current_timeMs();

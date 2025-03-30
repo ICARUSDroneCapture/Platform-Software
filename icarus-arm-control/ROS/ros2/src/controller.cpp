@@ -21,6 +21,8 @@ void Controller::step()
 
     RCLCPP_INFO(rclcpp::get_logger("data"),"\t\t----------------------------------\n");
 
+    RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\tdt: [%f]\n", pimu->dt);
+
     RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tLinear Velocity: [%f; %f; %f]\n", linear_velocity_S_x, linear_velocity_S_y, linear_velocity_S_z);
     
     RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tAngle: [%f; %f; %f]\n", theta, phi, psi);
@@ -175,14 +177,9 @@ void Controller::cbPIMU(const icarus_arm_control::msg::PIMU::SharedPtr pimu)
         pimu_ts.push_back(pimu->header.stamp.sec);
     this->did_rx_pimu_ = true;
 
-    imu_dt = pimu->dt;
-
-    theta = pimu->dtheta.x;
-    phi = pimu->dtheta.y;
-    psi = pimu->dtheta.z;
-    RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\tTimestamp: [%f]\n", imu_dt);
-    RCLCPP_INFO(rclcpp::get_logger("data debug"),"\t\tAngle Changes: [%f; %f; %f]\n", theta, phi, psi);
-    
+    // Note, if printed, this value doesn't seem to change.
+    // I tested this, values are in fact changing, dt is just very consistent
+    imu_dt = pimu->dt;    
 }
 
 void Controller::cbIMU(const  sensor_msgs::msg::Imu &imu)

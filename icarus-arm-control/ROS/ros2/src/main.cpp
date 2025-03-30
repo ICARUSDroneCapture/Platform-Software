@@ -65,7 +65,6 @@
             SLEEP_MS(200);
             if (prevTimeMs / 1000 != nowTimeMs / 1000) {
                 RCLCPP_INFO(rclcpp::get_logger("init"),"waiting...  (time: %u)\n", nowTimeMs);
-                controller_node->debugPrint();
                 prevTimeMs = nowTimeMs;
             }
         }
@@ -86,6 +85,7 @@
                 controller_node->plot();
             }
             RCLCPP_INFO(rclcpp::get_logger("controller"),"running...  (time: %u)\n\n", nowTimeMs);
+            controller_node->debugPrint();
             prevTimeMs = nowTimeMs;
         }
         nowTimeMs = current_timeMs();

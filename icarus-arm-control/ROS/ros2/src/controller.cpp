@@ -53,11 +53,18 @@ void Controller::plot()
 {
   assign_data();
 
+  // std::vector<double> t_p = {static_cast<double>( current_timeMs() )};
+
+  // std::vector<double> ax_p = {static_cast<double>( linear_acceleration_S_x )};
+  // std::vector<double> ay_p = {static_cast<double>( linear_acceleration_S_y )};
+  // std::vector<double> az_p = {static_cast<double>( linear_acceleration_S_z )};
+
+
   std::vector<double> t_p = {static_cast<double>( current_timeMs() )};
 
-  std::vector<double> ax_p = {static_cast<double>( linear_acceleration_S_x )};
-  std::vector<double> ay_p = {static_cast<double>( linear_acceleration_S_y )};
-  std::vector<double> az_p = {static_cast<double>( linear_acceleration_S_z )};
+  std::vector<double> ax_p = {linear_acceleration_S_x};
+  std::vector<double> ay_p = {linear_acceleration_S_y};
+  std::vector<double> az_p = {linear_acceleration_S_z};
 
   auto ax1 = matplot::nexttile();
   auto ax2 = matplot::nexttile();

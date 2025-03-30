@@ -53,7 +53,7 @@ void Controller::plot()
 {
   assign_data();
 
-  std::vector<int> t_p = {static_cast<int>( current_timeMs() )};
+  std::vector<double> t_p = {static_cast<double>( current_timeMs() )};
 
   std::vector<double> ax_p = {static_cast<double>( linear_acceleration_S_x )};
   std::vector<double> ay_p = {static_cast<double>( linear_acceleration_S_y )};
@@ -63,9 +63,9 @@ void Controller::plot()
   auto ax2 = matplot::nexttile();
   auto ax3 = matplot::nexttile();
 
-  auto l1 = matplot::scatter(ax1, t_p, ax_p);
-  auto l2 = matplot::scatter(ax2, t_p, ay_p);
-  auto l3 = matplot::scatter(ax3, t_p, az_p);
+  auto l1 = matplot::plot(ax1, t_p, ax_p);
+  auto l2 = matplot::plot(ax2, t_p, ay_p);
+  auto l3 = matplot::plot(ax3, t_p, az_p);
 
   l1->marker_face(true);
   l2->marker_face(true);
@@ -107,9 +107,24 @@ void Controller::assign_data()
 
 void Controller::euler_integrate()
 {
-  integrated_theta = prev_theta + (pimu->dt * imu.angular_velocity.x);
-  integrated_phi = prev_phi + (pimu->dt * imu.angular_velocity.y);
-  integrated_psi = prev_theta + (pimu->dt * imu.angular_velocity.z);
+
+  quiet = false;
+  if (!quiet) {
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\t----------------------------------\n");
+
+    RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\tdt: [%f]\n", imu_dt);
+
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tAngular Velocity: [%f; %f; %f]\n", angular_velocity_x, angular_velocity_y, angular_velocity_z);
+  }
+  quiet = true;
+
+  // integrated_theta = prev_theta + (pimu->dt * imu.angular_velocity.x);
+  // integrated_phi = prev_phi + (pimu->dt * imu.angular_velocity.y);
+  // integrated_psi = prev_theta + (pimu->dt * imu.angular_velocity.z);
+
+  integrated_theta = 0.0;
+  integrated_phi = 0.0;
+  integrated_psi = 0.0;
 
   quiet = false;
   if (!quiet) {

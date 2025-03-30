@@ -56,8 +56,10 @@
 	while((nowTimeMs = current_timeMs()) - startTimeMs < 5000)
 	{
         isROS.update();
-        controller_node->step();
 	    rclcpp::spin_some(controller_node);
+
+        controller_node->step();
+
         if (controller_node->did_rx_pimu_) {
             success = true;
             break;
@@ -76,8 +78,9 @@
     while (ok())
     {
         isROS.update();
-        controller_node->step();
         rclcpp::spin_some(controller_node);
+
+        controller_node->step();
 
         // periodic print, add update function
         SLEEP_MS(200);

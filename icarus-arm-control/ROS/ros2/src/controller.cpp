@@ -184,21 +184,13 @@ void Controller::cbIMU(const  sensor_msgs::msg::Imu &imu)
         imu_ts.push_back(imu.header.stamp.sec);
     } else {
       // *ts_ptr = imu.header.stamp.sec;
-      *ts_ptr = 2.0;
+      // *ts_ptr = 2.0;
+
+      // Copy the value of source_double to the memory location pointed to by destination_ptr
+      std::memcpy(ts_ptr, &imu.header.stamp.sec, sizeof(double));
+
       RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\tTimestamp: [%f]\n", *ts_ptr);
     }
-
-    // Update timesteps array
-    // insert_front(ts_sec_ptr, timestep_store, imu.header.stamp.sec);
-    // *(ts_sec_ptr+i) = imu.header.stamp.sec;
-    
-
-    // for (int i = n; i > 0; i--) {
-    //   *(a+i) = *(a+i-1);
-    // }
-    // *a = val;
-
-    // printf("%f, ", *(ts_ptr + 0));
 }
 
 int Controller::get_deviations(std::vector<double> &a, std::vector<double> &b, std::vector<double> &out) 

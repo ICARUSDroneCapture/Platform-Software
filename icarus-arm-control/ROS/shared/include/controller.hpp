@@ -138,20 +138,24 @@ using namespace std::chrono_literals;
     float integrated_phi = 0;
     float integrated_psi = 0;
 
+    // dt value retrieved from pimu
+    double imu_dt;
+
     // ControlHelper ch_;
 
     // Array list for angular velocity values at 4 different timesteps
 
     #ifdef EULER_INTEGRATION
-        static const int timestep_store = 2;
+        static const int timestep_store = 1;
+        double prev_theta;
+        double prev_phi;
+        double prev_psi;
     #endif
 
     #ifdef RK4_INTEGRATION
         static const int timestep_store = 4;
-    #endif
+    #endif    
 
-    double imu_dt;
-    
     double ang_vel_x_ts_l[timestep_store] = { };
     double ang_vel_y_ts_q[timestep_store] = { };
     double ang_vel_z_ts_q[timestep_store] = { };

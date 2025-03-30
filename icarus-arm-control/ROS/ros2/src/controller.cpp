@@ -23,13 +23,13 @@ void Controller::step()
 
     RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\tdt: [%f]\n", pimu->dt);
 
-    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tLinear Velocity: [%f; %f; %f]\n", linear_velocity_S_x, linear_velocity_S_y, linear_velocity_S_z);
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tLinear Velocity: [%f; %f; %f]\n", pimu->dvel.x, pimu->dvel.y, pimu->dvel.z);
     
-    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tAngle: [%f; %f; %f]\n", theta, phi, psi);
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tAngle: [%f; %f; %f]\n", pimu->dtheta.x, pimu->dtheta.y, pimu->dtheta.z);
 
-    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tLinear Accelertion: [%f; %f; %f]\n", linear_acceleration_S_x, linear_acceleration_S_y, linear_acceleration_S_z);
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tLinear Accelertion: [%f; %f; %f]\n", imu.linear_acceleration.x, imu.linear_acceleration.y, imu.linear_acceleration.z);
     
-    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tAngular Velocity: [%f; %f; %f]\n", angular_velocity_x, angular_velocity_y, angular_velocity_z);
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tAngular Velocity: [%f; %f; %f]\n", imu.angular_velocity.x, imu.angular_velocity.y, imu.angular_velocity.z);
   }
 
   #ifdef EULER_INTEGRATION
@@ -82,10 +82,10 @@ void Controller::plot()
 
 void Controller::debugPrint() {
   printf("\n\t\t Time [old, present]: [");
-  for (int i = 0; i < timestep_store; ++i) {
-    printf("%f, ", *(arr_x_ptr + i));
-  }
-  printf("]\n");
+  // for (int i = 0; i < timestep_store; ++i) {
+  //   printf("%f, ", *(arr_x_ptr + i));
+  // }
+  // printf("]\n");
 }
 
 void Controller::assign_data()

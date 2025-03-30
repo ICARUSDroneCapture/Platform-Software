@@ -184,7 +184,9 @@ void Controller::cbIMU(const  sensor_msgs::msg::Imu &imu)
         imu_ts.push_back(imu.header.stamp.sec);
 
     // Update timesteps array
-    insert_front(ts_ptr, timestep_store, imu.header.stamp.sec);
+    // insert_front(ts_ptr, timestep_store, imu.header.stamp.sec);
+    double test = 1.0;
+    insert_front(ts_ptr, timestep_store, test);
 }
 
 int Controller::get_deviations(std::vector<double> &a, std::vector<double> &b, std::vector<double> &out) 

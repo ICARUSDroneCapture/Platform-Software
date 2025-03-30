@@ -117,11 +117,11 @@ void Controller::euler_integrate()
 
   quiet = false;
   if (!quiet) {
-    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\t----------------------------------\n");
+    RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\t----------------------------------\n");
 
-    RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\tdt: [%f]\n", imu_dt);
+    RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\tdt: [%f]\n", pimu->dt);
 
-    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tAngular Velocity: [%f; %f; %f]\n", angular_velocity_x, angular_velocity_y, angular_velocity_z);
+    RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\tAngular Velocity: [%f; %f; %f]\n", imu.angular_velocity.x, imu.angular_velocity.y, imu.angular_velocity.z);
   }
   quiet = true;
 
@@ -135,9 +135,9 @@ void Controller::euler_integrate()
 
   quiet = false;
   if (!quiet) {
-    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\t----------------------------------\n");
+    RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\t----------------------------------\n");
 
-    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tIntegrated Angle: [%f; %f; %f]\n", integrated_theta, integrated_phi, integrated_psi);
+    RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\tIntegrated Angle: [%f; %f; %f]\n", integrated_theta, integrated_phi, integrated_psi);
   }
   quiet = true;
 

@@ -56,6 +56,7 @@
 	while((nowTimeMs = current_timeMs()) - startTimeMs < 5000)
 	{
         isROS.update();
+        controller_node->step();
 	    rclcpp::spin_some(controller_node);
         if (controller_node->did_rx_pimu_) {
             success = true;

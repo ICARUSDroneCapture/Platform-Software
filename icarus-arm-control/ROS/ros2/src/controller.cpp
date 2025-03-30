@@ -32,13 +32,13 @@ void Controller::step()
     RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tAngular Velocity: [%f; %f; %f]\n", angular_velocity_x, angular_velocity_y, angular_velocity_z);
   }
 
-  #ifdef EULER_INTEGRATION
-    euler_integrate();
-  #endif
+  // #ifdef EULER_INTEGRATION
+  //   euler_integrate();
+  // #endif
 
-  #ifdef RK4_INTEGRATION
-    rk4_integrate();
-  #endif
+  // #ifdef RK4_INTEGRATION
+  //   rk4_integrate();
+  // #endif
 
   #ifdef DOF1_CONTROL
     control_1dof();

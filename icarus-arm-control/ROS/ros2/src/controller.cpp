@@ -117,29 +117,31 @@ void Controller::euler_integrate()
 
   quiet = false;
   if (!quiet) {
+    assign_data();
+
     RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\t----------------------------------\n");
 
-    RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\tdt: [%f]\n", pimu->dt);
-
-    RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\tAngular Velocity: [%f; %f; %f]\n", imu.angular_velocity.x, imu.angular_velocity.y, imu.angular_velocity.z);
+    RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\tdt: [%f]\n", imu_dt);
+    
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tAngular Velocity: [%f; %f; %f]\n", angular_velocity_x, angular_velocity_y, angular_velocity_z);
   }
   quiet = true;
 
-  // integrated_theta = prev_theta + (pimu->dt * imu.angular_velocity.x);
-  // integrated_phi = prev_phi + (pimu->dt * imu.angular_velocity.y);
-  // integrated_psi = prev_theta + (pimu->dt * imu.angular_velocity.z);
+  // // integrated_theta = prev_theta + (pimu->dt * imu.angular_velocity.x);
+  // // integrated_phi = prev_phi + (pimu->dt * imu.angular_velocity.y);
+  // // integrated_psi = prev_theta + (pimu->dt * imu.angular_velocity.z);
 
-  integrated_theta = 0.0;
-  integrated_phi = 0.0;
-  integrated_psi = 0.0;
+  // integrated_theta = 0.0;
+  // integrated_phi = 0.0;
+  // integrated_psi = 0.0;
 
-  quiet = false;
-  if (!quiet) {
-    RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\t----------------------------------\n");
+  // quiet = false;
+  // if (!quiet) {
+  //   RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\t----------------------------------\n");
 
-    RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\tIntegrated Angle: [%f; %f; %f]\n", integrated_theta, integrated_phi, integrated_psi);
-  }
-  quiet = true;
+  //   RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\tIntegrated Angle: [%f; %f; %f]\n", integrated_theta, integrated_phi, integrated_psi);
+  // }
+  // quiet = true;
 
   // for(int i = 1; i < timestep_store; i++) {
 

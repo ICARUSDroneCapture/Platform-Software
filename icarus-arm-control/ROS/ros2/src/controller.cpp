@@ -53,15 +53,11 @@ void Controller::plot()
 {
   assign_data();
 
-  int t_now = static_cast<int>( current_timeMs() );
-  double a_S_x = static_cast<double>(linear_acceleration_S_x);
-  double a_S_y = static_cast<double>(linear_acceleration_S_y);
-  double a_S_z = static_cast<double>(linear_acceleration_S_z);
+  std::vector<int> t_p = {static_cast<int>( current_timeMs() )};
 
-  auto t_p = matplot::linspace(t_now, t_now, 1);
-  auto ax_p = matplot::linspace(a_S_x, a_S_x, 1);
-  auto ay_p = matplot::linspace(a_S_x, a_S_y, 1);
-  auto az_p = matplot::linspace(a_S_x, a_S_z, 1);
+  std::vector<double> ax_p = {static_cast<double>( linear_acceleration_S_x )};
+  std::vector<double> ay_p = {static_cast<double>( linear_acceleration_S_y )};
+  std::vector<double> az_p = {static_cast<double>( linear_acceleration_S_z )};
 
   auto ax1 = matplot::nexttile();
   auto ax2 = matplot::nexttile();

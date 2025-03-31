@@ -160,4 +160,9 @@ cd libusb
 git checkout 1c2ddf4f19caa222161162fb5aa28f54a3980f94
 ```
 
-If you still get the "install error "config.h: No such file" error when building, navigate to `/usr/include` and copy the `libusb
+If you still get the "install error "config.h: No such file" error when building, navigate to `/usr/include` and copy the `libusb-1.0/libusb.h` into `/usr/include` while preserving permissions:
+
+```
+cd /usr/include
+cp -a libusb-1.0/libusb.h .
+```

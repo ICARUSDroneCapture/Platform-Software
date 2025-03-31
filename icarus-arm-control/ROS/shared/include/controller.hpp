@@ -14,6 +14,8 @@
 // #define RK4_INTEGRATION
 #define EULER_INTEGRATION
 
+#define GRAVITY 9.81
+
 #include <stdio.h>
 #include <iostream>
 #include <algorithm>
@@ -22,6 +24,7 @@
 #include <yaml-cpp/yaml.h>
 #include <termios.h>
 #include <unistd.h>
+#include <cmath>
 
 #include <matplot/matplot.h>
 
@@ -91,6 +94,7 @@ using namespace std::chrono_literals;
     void plot(double startTime);
 
     void integrate();
+    void remove_gravity();
     void control_1dof();
     void control_3dof();
     void insert_front(double *a, const int n, double val);
@@ -105,7 +109,7 @@ using namespace std::chrono_literals;
     double get_max_deviation(std::vector<double> &a, std::vector<double> &b);
 
     bool quiet = true;
-    bool plot_quiet = false;
+    bool plot_quiet = true;
     bool got_gps_tow = false;
     bool did_rx_pimu_ = false;
 
@@ -134,6 +138,11 @@ using namespace std::chrono_literals;
     float integrated_theta = 0;
     float integrated_phi = 0;
     float integrated_psi = 0;
+
+    // Gravity corrected acceleration values
+    float a_x_g_corrected = 0;
+    float a_y_g_corrected = 0;
+    float a_z_g_corrected = 0;
 
     // dt value retrieved from pimu
     double imu_dt;

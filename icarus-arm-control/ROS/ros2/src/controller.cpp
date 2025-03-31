@@ -39,6 +39,8 @@ void Controller::step()
   #ifdef DOF3_CONTROL
     control_3dof();
   #endif
+
+  remove_gravity();
 }
 
 void Controller::plot(double startTime)
@@ -56,13 +58,6 @@ void Controller::plot(double startTime)
   plot_a_y.erase(plot_a_y.begin());
   plot_a_z.erase(plot_a_z.begin());
 
-  RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tLinear Acceleration: [%f; %f; %f]\n", linear_acceleration_S_x, linear_acceleration_S_y, linear_acceleration_S_z);
-
-  RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\ttime: [%f, %f]\n", plot_ts[0], plot_ts[1]);
-  RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\ttime: [%f, %f]\n", plot_a_x[0], plot_a_x[1]);
-  RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\ttime: [%f, %f]\n", plot_a_y[0], plot_a_y[1]);
-  RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\ttime: [%f, %f]\n", plot_a_z[0], plot_a_z[1]);
-
   auto ax1 = matplot::nexttile();
   auto ax2 = matplot::nexttile();
   auto ax3 = matplot::nexttile();
@@ -71,9 +66,9 @@ void Controller::plot(double startTime)
   auto l2 = matplot::scatter(ax2, plot_ts, plot_a_y);
   auto l3 = matplot::scatter(ax3, plot_ts, plot_a_z);
 
-  xlim(ax1, {0, 10});
-  xlim(ax2, {0, 10});
-  xlim(ax3, {0, 10});
+  xlim(ax1, {0, 180});
+  xlim(ax2, {0, 180});
+  xlim(ax3, {0, 180});
 
   ylim(ax1, {-2, 2});
   ylim(ax2, {-2, 2});
@@ -128,9 +123,27 @@ void Controller::integrate()
 
   // RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\tTimestamp: [%f]\n", *ts_ptr);
   #endif
-
-
   
+}
+
+void Controller:remove_gravity()
+{
+  // TODO: Add check to make sure angle is getting integrated
+
+  // angle is in radians (i think? check!!! the numbers were just smol)
+  a_x_g_corrected = linear_acceleration_S_x / cos(integrated_theta);
+  a_y_g_corrected = linear_acceleration_S_y / cos(integrated_phi);
+  a_z_g_corrected = linear_acceleration_S_z / cos(integrated_psi) + GRAVITY;
+
+  quiet = false;
+  if (!quiet) {
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\t----------------------------------\n");
+    
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tLinear Acceleration: [%f; %f; %f]\n", linear_acceleration_S_x, linear_acceleration_S_y, linear_acceleration_S_z);
+
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tCorrected Acceleration: [%f; %f; %f]\n", a_x_g_corrected, a_x_g_corrected, a_x_g_corrected);
+  }
+  quiet = true;
 }
 
 void Controller::control_1dof()

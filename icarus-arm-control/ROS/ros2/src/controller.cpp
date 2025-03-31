@@ -41,6 +41,19 @@ void Controller::step()
   #endif
 }
 
+void Controller::showPlot()
+{
+  using namespace std;
+  streambuf *backup;
+  istringstream oss("\n");
+  backup = cin.rdbuf();
+  cin.rdbuf(oss.rdbuf());
+  string str;
+
+  matplot::show();
+  cin >> str;
+}
+
 void Controller::plot()
 {
 
@@ -68,7 +81,8 @@ void Controller::plot()
   matplot::plot(plot_ts, plot_a_z);
   matplot::hold(matplot::on);
 
-  matplot::show();
+  std::async(std::launch::async, showPlot);
+  
 }
 
 void Controller::integrate()

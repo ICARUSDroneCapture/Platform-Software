@@ -88,6 +88,7 @@ using namespace std::chrono_literals;
     }
     void init();
     void step();
+    void showPlot();
     void plot();
 
     void integrate();

@@ -86,8 +86,16 @@ void Controller::plot()
   auto ax3 = matplot::nexttile();
 
   auto l1 = matplot::scatter(ax1, plot_ts, plot_a_x);
+  l1->xlim({0, 60});
+  l1->ylim({-10, 10});
+
   auto l2 = matplot::scatter(ax2, plot_ts, plot_a_x);
+  l1->xlim({0, 60});
+  l1->ylim({-10, 10});
+  
   auto l3 = matplot::scatter(ax3, plot_ts, plot_a_x);
+  l1->xlim({0, 60});
+  l1->ylim({-10, 10});
 
   l1->marker_face(true);
   l2->marker_face(true);

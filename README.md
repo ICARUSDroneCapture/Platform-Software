@@ -41,6 +41,9 @@ Add symlink in `src` for the icarus-arm-control package:
 cd ~/ros2_ws/src
 sudo ln -s Platform-Software/icarus-arm-control/ROS/ros2 icarus_arm_control
 ```
+
+There are other steps outside of actually installing ROS and cloning the repo required to make this package build properly. See the [`Installation Notes`](#installation-notes) section below.
+
 ## Building and Running
 
 For ease of use, add the following code to the end of your `~/.bashrc` file using your editor of choice, such as `vim`:
@@ -58,7 +61,7 @@ You may have already put the first two lines (the `source /opt/ros/jazzy/setup.b
 
 Once this code has been added to your `~/.bashrc`, either close the terminal instance and start a new one, or run `source ~/.bashrc`.
 
-#### Building
+### Building
 
 From the `~/ros2_ws` directory, run `colcon build`. It will throw many warnings, but the package should finish building:
 ```
@@ -79,7 +82,7 @@ You should see the following at the bottom when the build finishes as an indicat
 Finished <<< icarus_arm_control [<some_time>s]
 ```
 
-#### Running
+### Running
 
 After building successfully, you can run the icarus package controller node. To do so, run the following commands:
 ```
@@ -87,7 +90,7 @@ sourceICARUS
 ros2 run icarus_arm_control controller_listener_node
 ```
 
-#### Debugging
+### Debugging
 
 You can use gdb to debug, reference here in ROS docs:
 https://docs.ros.org/en/jazzy/How-To-Guides/Getting-Backtraces-in-ROS-2.html
@@ -97,13 +100,52 @@ So to run this node specifically in gdb, run the following after building:
 
 ## Installation Notes
 
-##### MatPlotPlusPlus
+### MatPlotPlusPlus
 
 User must install MatPlotPlusPlus: (live plotting cpp package)
 - https://github.com/alandefreitas/matplotplusplus
 - Recommended to use CMake to install system wide (or local wide), (section "Install as a Package via CMake" in the README)
 
-##### libusb
+> [!IMPORTANT]
+> This package has the ability to do live plotting. However, it requires backend modification of the MatPlotPlusPlus program. If you used the recommended process to install MatPlotPlusPlus, you should have cloned the repo and run cmake to install it either system-wide or local-wide. If you did this, do the following. This removes the need for user input everytime a plot is modified.
+
+Navigate to wherever you cloned the MatPlotPlusPlus repository. The file we want to edit is the following: `matplotplusplus/source/matplot/backend`. If you cloned the repo into your home directory, this path will just be `~/matplotplusplus/source/matplot/backend`. Modify the path as needed based on where you cloned the directory.
+
+In this file, find the `backend_interface::show` function. It should look like the following:
+
+```
+void backend_interface::show(class matplot::figure_type *f) {
+    // The default implementation waits for the user to interact with the
+    // console. In interactive backends we expect this to start a render
+    // loop that will stop only when the user closes the window.
+    f->draw();
+    matplot::wait();
+}
+```
+
+Comment out the `wait` function. This is where the user input is requested. The function should simply now look like the following:
+
+```
+void backend_interface::show(class matplot::figure_type *f) {
+    // The default implementation waits for the user to interact with the
+    // console. In interactive backends we expect this to start a render
+    // loop that will stop only when the user closes the window.
+    f->draw();
+    //matplot::wait();
+}
+```
+
+Reinstall the the Matplot++ package. As a reminder, if you are doing it system-wide, you would run the following commands:
+
+```
+cmake --preset=system
+cmake --build --preset=system
+sudo cmake --install build/system
+```
+
+Now when you run the `controller_listener_node` with plotting enabled, it shouldn't pause for input from the user.
+
+### libusb
 
 User must install libusb:
 ` sudo apt-get install git libssl-dev libusb-1.0-0-dev pkg-config libgtk-3-dev `
@@ -118,4 +160,9 @@ cd libusb
 git checkout 1c2ddf4f19caa222161162fb5aa28f54a3980f94
 ```
 
-If you still get the "install error "config.h: No such file" error when building, navigate to `/usr/include` and copy the `libusb
+If you still get the "install error "config.h: No such file" error when building, navigate to `/usr/include` and copy the `libusb-1.0/libusb.h` into `/usr/include` while preserving permissions:
+
+```
+cd /usr/include
+cp -a libusb-1.0/libusb.h .
+```

@@ -53,9 +53,9 @@ void Controller::plot()
   auto ax2 = matplot::nexttile();
   auto ax3 = matplot::nexttile();
 
-  auto l1 = matplot::plot(ax1, t_p, ax_p);
-  auto l2 = matplot::plot(ax2, t_p, ay_p);
-  auto l3 = matplot::plot(ax3, t_p, az_p);
+  auto l1 = matplot::scatter(ax1, t_p, ax_p);
+  auto l2 = matplot::scatter(ax2, t_p, ay_p);
+  auto l3 = matplot::scatter(ax3, t_p, az_p);
 
   l1->marker_face(true);
   l2->marker_face(true);

@@ -43,15 +43,6 @@ void Controller::step()
 
 void Controller::plot()
 {
-  assign_data();
-
-  // std::vector<double> t_p = {static_cast<double>( current_timeMs() )};
-
-  // std::vector<double> ax_p = {static_cast<double>( linear_acceleration_S_x )};
-  // std::vector<double> ay_p = {static_cast<double>( linear_acceleration_S_y )};
-  // std::vector<double> az_p = {static_cast<double>( linear_acceleration_S_z )};
-
-
   std::vector<double> t_p = {static_cast<double>( current_timeMs() )};
 
   std::vector<double> ax_p = {linear_acceleration_S_x};
@@ -75,35 +66,6 @@ void Controller::plot()
   matplot::show();
 }
 
-void Controller::assign_data()
-{
-  // Only store in this function... storing will be remove for efficiency
-  
-  // Note, if printed, this value doesn't seem to change.
-  // I tested this, values are in fact changing, dt is just very consistent
-  imu_dt = pimu->dt;
-
-  // Store (preintegrated) delta theta values into class members
-  theta = pimu->dtheta.x;
-  phi = pimu->dtheta.y;
-  psi = pimu->dtheta.z;
-
-  // Store (preintegrated) delta theta values into class members
-  linear_velocity_S_x = pimu->dvel.x;
-  linear_velocity_S_y = pimu->dvel.y;
-  linear_velocity_S_z = pimu->dvel.z;
-
-  // Store angular velocity values into class members
-  angular_velocity_x = imu.angular_velocity.x;
-  angular_velocity_y = imu.angular_velocity.y;
-  angular_velocity_z = imu.angular_velocity.z;
-
-  // Store acceleration values into class members
-  linear_acceleration_S_x = imu.linear_acceleration.x;
-  linear_acceleration_S_y = imu.linear_acceleration.y;
-  linear_acceleration_S_z = imu.linear_acceleration.z;
-}
-
 void Controller::integrate()
 {
 
@@ -114,12 +76,12 @@ void Controller::integrate()
   integrated_psi = prev_theta + (imu_dt * angular_velocity_z);
 
   // quiet = false;
-  if (!quiet) {
-    RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\t----------------------------------\n");
+  // if (!quiet) {
+  //   RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\t----------------------------------\n");
 
-    RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\tIntegrated Angle: [%f; %f; %f]\n", integrated_theta, integrated_phi, integrated_psi);
-  }
-  quiet = true;
+  //   RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\tIntegrated Angle: [%f; %f; %f]\n", integrated_theta, integrated_phi, integrated_psi);
+  // }
+  // quiet = true;
 
   #endif
 
@@ -134,9 +96,6 @@ void Controller::integrate()
   // arr_x_ptr++;
   // arr_y_ptr++;
   // arr_z_ptr++;
-
-  // insert 1dof control law stuff at this timestep
-  printf("Controller debug placeholder.");
 
   // *ts_ptr = pimu->dt;
   // // // *ts_ptr = 2.0;
@@ -154,7 +113,7 @@ void Controller::integrate()
 void Controller::control_1dof()
 {
   // insert 1dof control law stuff at this timestep
-  printf("Controller debug placeholder.");
+  printf("Controller debug placeholder.\n");
 }
 
 void Controller::control_3dof()

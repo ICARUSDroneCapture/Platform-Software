@@ -90,7 +90,6 @@ using namespace std::chrono_literals;
     void step();
     void plot();
 
-    void assign_data();
     void integrate();
     void control_1dof();
     void control_3dof();
@@ -106,7 +105,7 @@ using namespace std::chrono_literals;
     double get_max_deviation(std::vector<double> &a, std::vector<double> &b);
 
     bool quiet = true;
-    bool plot_quiet = true;
+    bool plot_quiet = false;
     bool got_gps_tow = false;
     bool did_rx_pimu_ = false;
 

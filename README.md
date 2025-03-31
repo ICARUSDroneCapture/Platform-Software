@@ -61,7 +61,7 @@ You may have already put the first two lines (the `source /opt/ros/jazzy/setup.b
 
 Once this code has been added to your `~/.bashrc`, either close the terminal instance and start a new one, or run `source ~/.bashrc`.
 
-#### Building
+### Building
 
 From the `~/ros2_ws` directory, run `colcon build`. It will throw many warnings, but the package should finish building:
 ```
@@ -82,7 +82,7 @@ You should see the following at the bottom when the build finishes as an indicat
 Finished <<< icarus_arm_control [<some_time>s]
 ```
 
-#### Running
+### Running
 
 After building successfully, you can run the icarus package controller node. To do so, run the following commands:
 ```
@@ -90,7 +90,7 @@ sourceICARUS
 ros2 run icarus_arm_control controller_listener_node
 ```
 
-#### Debugging
+### Debugging
 
 You can use gdb to debug, reference here in ROS docs:
 https://docs.ros.org/en/jazzy/How-To-Guides/Getting-Backtraces-in-ROS-2.html
@@ -100,7 +100,7 @@ So to run this node specifically in gdb, run the following after building:
 
 ## Installation Notes
 
-##### MatPlotPlusPlus
+### MatPlotPlusPlus
 
 User must install MatPlotPlusPlus: (live plotting cpp package)
 - https://github.com/alandefreitas/matplotplusplus
@@ -145,7 +145,7 @@ sudo cmake --install build/system
 
 Now when you run the `controller_listener_node` with plotting enabled, it shouldn't pause for input from the user.
 
-##### libusb
+### libusb
 
 User must install libusb:
 ` sudo apt-get install git libssl-dev libusb-1.0-0-dev pkg-config libgtk-3-dev `

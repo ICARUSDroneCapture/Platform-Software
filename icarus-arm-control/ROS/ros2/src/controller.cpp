@@ -57,10 +57,10 @@ void Controller::plot()
 
   RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tLinear Acceleration: [%f; %f; %f]\n", linear_acceleration_S_x, linear_acceleration_S_y, linear_acceleration_S_z);
 
-  RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\ttime: [%f, %f]\n", plot_ts.begin(), plot_ts[1]);
-  RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\ta_x: [%f, %f]\n", plot_a_x.begin(), plot_a_x[1]);
-  RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\ta_y: [%f, %f]\n", plot_a_y.begin(), plot_a_y[1]);
-  RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\ta_z: [%f, %f]\n", plot_a_z.begin(), plot_a_z[1]);
+  RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\ttime: [%f, %f]\n", plot_ts[0], plot_ts[1]);
+  RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\ta_x: [%f, %f]\n", plot_a_x[0], plot_a_x[1]);
+  RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\ta_y: [%f, %f]\n", plot_a_y[0], plot_a_y[1]);
+  RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\ta_z: [%f, %f]\n", plot_a_z[0], plot_a_z[1]);
 
   auto ax1 = matplot::nexttile();
   auto ax2 = matplot::nexttile();

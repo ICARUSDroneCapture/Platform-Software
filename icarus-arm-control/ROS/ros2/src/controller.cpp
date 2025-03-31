@@ -44,7 +44,7 @@ void Controller::step()
 void Controller::plot()
 {
 
-  plot_ts.push_back(static_cast<double>( current_timeMs() ));
+  plot_ts.push_back(static_cast<double>( current_timeMs() ) / 1000.0);
 
   plot_a_x.push_back(linear_acceleration_S_x);
   plot_a_y.push_back(linear_acceleration_S_y);
@@ -58,14 +58,20 @@ void Controller::plot()
 
   matplot::nexttile();
   matplot::plot(plot_ts, plot_a_x);
+  matplot::xlim({0, 60});
+  matplot::xlim({-10, 10});
   matplot::hold(matplot::on);
 
   matplot::nexttile();
   matplot::plot(plot_ts, plot_a_y);
+  matplot::xlim({0, 60});
+  matplot::xlim({-10, 10});
   matplot::hold(matplot::on);
 
   matplot::nexttile();
   matplot::plot(plot_ts, plot_a_z);
+  matplot::xlim({0, 60});
+  matplot::xlim({-20, 0});
   matplot::hold(matplot::on);
 
   matplot::show();

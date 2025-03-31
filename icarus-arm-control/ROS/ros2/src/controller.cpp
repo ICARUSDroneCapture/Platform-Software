@@ -50,11 +50,11 @@ void Controller::plot()
   plot_a_y.push_back(linear_acceleration_S_y);
   plot_a_z.push_back(linear_acceleration_S_z);
 
-  plot_ts.erase(myVector.begin());
+  plot_ts.erase(plot_ts.begin());
 
-  plot_a_x.erase(myVector.begin());
-  plot_a_y.erase(myVector.begin());
-  plot_a_z.erase(myVector.begin());
+  plot_a_x.erase(plot_a_x.begin());
+  plot_a_y.erase(plot_a_y.begin());
+  plot_a_z.erase(plot_a_z.begin());
 
   matplot::nexttile();
   matplot::plot(plot_ts, plot_a_x);

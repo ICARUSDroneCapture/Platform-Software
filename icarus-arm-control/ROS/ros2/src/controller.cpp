@@ -46,16 +46,18 @@ void Controller::plot()
   double t_now = static_cast<double>( current_timeMs() );
 
   matplot::nexttile();
-  matplot::plot({t_now}, {linear_acceleration_S_x}, "o");
-
-  matplot::nexttile();
-  matplot::plot({t_now}, {linear_acceleration_S_y}, "o");
-
-  matplot::nexttile();
-  matplot::plot({t_now}, {linear_acceleration_S_z}, "o");
-
+  matplot::plot({0, t_now}, {0, linear_acceleration_S_x}, "o");
   matplot::hold(matplot::on);
+  matplot::show();
 
+  matplot::nexttile();
+  matplot::plot({0, t_now}, {0, linear_acceleration_S_y}, "o");
+  matplot::hold(matplot::on);
+  matplot::show();
+
+  matplot::nexttile();
+  matplot::plot({0, t_now}, {0, linear_acceleration_S_z}, "o");
+  matplot::hold(matplot::on);
   matplot::show();
 }
 

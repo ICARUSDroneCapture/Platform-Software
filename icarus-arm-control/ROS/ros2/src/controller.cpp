@@ -44,17 +44,17 @@ void Controller::step()
 void Controller::plot()
 {
 
-  plot_ts.push_back(static_cast<double>( current_timeMs() ) / 1000.0);
-
-  plot_a_x.push_back(linear_acceleration_S_x);
-  plot_a_y.push_back(linear_acceleration_S_y);
-  plot_a_z.push_back(linear_acceleration_S_z);
-
   plot_ts.erase(plot_ts.begin());
 
   plot_a_x.erase(plot_a_x.begin());
   plot_a_y.erase(plot_a_y.begin());
   plot_a_z.erase(plot_a_z.begin());
+
+  plot_ts.push_back(static_cast<double>( current_timeMs() ) / 1000.0);
+
+  plot_a_x.push_back(linear_acceleration_S_x);
+  plot_a_y.push_back(linear_acceleration_S_y);
+  plot_a_z.push_back(linear_acceleration_S_z);
 
   // matplot::nexttile();
   // matplot::scatter(plot_ts, plot_a_x);

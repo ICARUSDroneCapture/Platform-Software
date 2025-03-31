@@ -74,7 +74,7 @@ void Controller::plot()
   matplot::ylim({-20, 0});
   matplot::hold(matplot::on);
 
-  matplot::show();s
+  matplot::show();
   
 }
 

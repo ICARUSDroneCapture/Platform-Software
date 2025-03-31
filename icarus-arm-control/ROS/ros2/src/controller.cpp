@@ -56,23 +56,42 @@ void Controller::plot()
   plot_a_y.erase(plot_a_y.begin());
   plot_a_z.erase(plot_a_z.begin());
 
-  matplot::nexttile();
-  matplot::scatter(plot_ts, plot_a_x);
-  matplot::xlim({0, 60});
-  matplot::ylim({-10, 10});
-  matplot::hold(matplot::on);
+  // matplot::nexttile();
+  // matplot::scatter(plot_ts, plot_a_x);
+  // matplot::xlim({0, 60});
+  // matplot::ylim({-10, 10});
+  // matplot::hold(matplot::on);
 
-  matplot::nexttile();
-  matplot::scatter(plot_ts, plot_a_y);
-  matplot::xlim({0, 60});
-  matplot::ylim({-10, 10});
-  matplot::hold(matplot::on);
+  // matplot::nexttile();
+  // matplot::scatter(plot_ts, plot_a_y);
+  // matplot::xlim({0, 60});
+  // matplot::ylim({-10, 10});
+  // matplot::hold(matplot::on);
 
-  matplot::nexttile();
-  matplot::scatter(plot_ts, plot_a_z);
-  matplot::xlim({0, 60});
-  matplot::ylim({-20, 0});
-  matplot::hold(matplot::on);
+  // matplot::nexttile();
+  // matplot::scatter(plot_ts, plot_a_z);
+  // matplot::xlim({0, 60});
+  // matplot::ylim({-20, 0});
+  // matplot::hold(matplot::on);
+
+  RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\ttime: [%f]\n", plot_ts.begin());
+  RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\ta_x: [%f]\n", plot_a_x.begin());
+  RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\ta_y: [%f]\n", plot_a_y.begin());
+  RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\ta_z: [%f]\n", plot_a_z.begin());
+
+  auto ax1 = matplot::nexttile();
+  auto ax2 = matplot::nexttile();
+  auto ax3 = matplot::nexttile();
+
+  auto l1 = matplot::scatter(ax1, plot_ts, plot_a_x);
+  auto l2 = matplot::scatter(ax2, plot_ts, plot_a_x);
+  auto l3 = matplot::scatter(ax3, plot_ts, plot_a_x);
+
+  l1->marker_face(true);
+  l2->marker_face(true);
+  l3->marker_face(true);
+
+  matplot::hold({ax1, ax2, ax3}, matplot::on);
 
   matplot::show();
   

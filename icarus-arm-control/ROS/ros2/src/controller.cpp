@@ -59,19 +59,19 @@ void Controller::plot()
   matplot::nexttile();
   matplot::plot(plot_ts, plot_a_x);
   matplot::xlim({0, 60});
-  matplot::xlim({-10, 10});
+  matplot::ylim({-10, 10});
   matplot::hold(matplot::on);
 
   matplot::nexttile();
   matplot::plot(plot_ts, plot_a_y);
   matplot::xlim({0, 60});
-  matplot::xlim({-10, 10});
+  matplot::ylim({-10, 10});
   matplot::hold(matplot::on);
 
   matplot::nexttile();
   matplot::plot(plot_ts, plot_a_z);
   matplot::xlim({0, 60});
-  matplot::xlim({-20, 0});
+  matplot::ylim({-20, 0});
   matplot::hold(matplot::on);
 
   matplot::show();

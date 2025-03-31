@@ -50,6 +50,13 @@ void Controller::plot()
   // plot_a_y.erase(plot_a_y.begin());
   // plot_a_z.erase(plot_a_z.begin());
 
+
+  plot_ts.erase(plot_ts.back());
+
+  plot_a_x.erase(plot_a_x.back());
+  plot_a_y.erase(plot_a_y.back());
+  plot_a_z.erase(plot_a_z.back());
+
   plot_ts.push_back(static_cast<double>( current_timeMs() ) / 1000.0);
 
   plot_a_x.push_back(linear_acceleration_S_x);

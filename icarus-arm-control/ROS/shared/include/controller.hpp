@@ -165,17 +165,16 @@ using namespace std::chrono_literals;
     std::vector<double> pimu_ts;
 
     // Periodic plotting vectors
-    static const int plot_store = 2;
 
-    std::vector<double> plot_ts(plot_store);
-    
-    std::vector<double> plot_theta(plot_store);
-    std::vector<double> plot_phi(plot_store);
-    std::vector<double> plot_psi(plot_store);
+    std::vector<double> plot_ts = {0, 0};
 
-    std::vector<double> plot_a_x(plot_store);
-    std::vector<double> plot_a_y(plot_store);
-    std::vector<double> plot_a_z(plot_store);
+    std::vector<double> plot_theta = {0, 0};
+    std::vector<double> plot_phi = {0, 0};
+    std::vector<double> plot_psi = {0, 0};
+
+    std::vector<double> plot_a_x = {0, 0};
+    std::vector<double> plot_a_y = {0, 0};
+    std::vector<double> plot_a_z = {0, 0};
  
 private:
 

@@ -57,18 +57,18 @@ void Controller::plot()
 
   RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tLinear Acceleration: [%f; %f; %f]\n", linear_acceleration_S_x, linear_acceleration_S_y, linear_acceleration_S_z);
 
-  RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\ttime: [%f, %f]\n", plot_ts[0], plot_ts[1]);
-  RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\ta_x: [%f, %f]\n", plot_a_x[0], plot_a_x[1]);
-  RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\ta_y: [%f, %f]\n", plot_a_y[0], plot_a_y[1]);
-  RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\ta_z: [%f, %f]\n", plot_a_z[0], plot_a_z[1]);
+  RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\ttime: [%f]\n", plot_ts.begin());
+  RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\ttime: [%f]\n", plot_a_x.begin());
+  RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\ttime: [%f]\n", plot_a_y.begin());
+  RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\ttime: [%f]\n", plot_a_z.begin());
 
   auto ax1 = matplot::nexttile();
   auto ax2 = matplot::nexttile();
   auto ax3 = matplot::nexttile();
 
   auto l1 = matplot::scatter(ax1, plot_ts, plot_a_x);  
-  auto l2 = matplot::scatter(ax2, plot_ts, plot_a_x);
-  auto l3 = matplot::scatter(ax3, plot_ts, plot_a_x);
+  auto l2 = matplot::scatter(ax2, plot_ts, plot_a_y);
+  auto l3 = matplot::scatter(ax3, plot_ts, plot_a_z);
 
   xlim(ax1, {0, 60});
   xlim(ax2, {0, 60});

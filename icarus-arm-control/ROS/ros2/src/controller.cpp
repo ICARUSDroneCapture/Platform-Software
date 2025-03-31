@@ -43,19 +43,19 @@ void Controller::step()
 
 void Controller::plot()
 {
-  std::vector<double> t_p = {static_cast<double>( current_timeMs() )};
+  // std::vector<double> t_p = {};
 
-  std::vector<double> ax_p = {linear_acceleration_S_x};
-  std::vector<double> ay_p = {linear_acceleration_S_y};
-  std::vector<double> az_p = {linear_acceleration_S_z};
+  // std::vector<double> ax_p = {linear_acceleration_S_x};
+  // std::vector<double> ay_p = {linear_acceleration_S_y};
+  // std::vector<double> az_p = {linear_acceleration_S_z};
 
   auto ax1 = matplot::nexttile();
   auto ax2 = matplot::nexttile();
   auto ax3 = matplot::nexttile();
 
-  auto l1 = matplot::scatter(ax1, t_p, ax_p);
-  auto l2 = matplot::scatter(ax2, t_p, ay_p);
-  auto l3 = matplot::scatter(ax3, t_p, az_p);
+  auto l1 = matplot::plot({static_cast<double>( current_timeMs() )}, {linear_acceleration_S_x}, "o");
+  auto l1 = matplot::plot({static_cast<double>( current_timeMs() )}, {linear_acceleration_S_y}, "o");
+  auto l1 = matplot::plot({static_cast<double>( current_timeMs() )}, {linear_acceleration_S_z}, "o");
 
   l1->marker_face(true);
   l2->marker_face(true);

@@ -44,22 +44,28 @@ void Controller::step()
 void Controller::plot()
 {
 
-  std::vector<double> t_now; = {0, static_cast<double>( current_timeMs() )};
+  plot_ts.push_back(static_cast<double>( current_timeMs() ));
 
-  std::vector<double> a_x; = {0, linear_acceleration_S_x};
-  std::vector<double> a_y; = {0, linear_acceleration_S_y};
-  std::vector<double> a_z; = {0, linear_acceleration_S_z};
+  plot_a_x.push_back(linear_acceleration_S_x);
+  plot_a_y.push_back(linear_acceleration_S_y);
+  plot_a_z.push_back(linear_acceleration_S_z);
+
+  plot_ts.erase(myVector.begin());
+
+  plot_a_x.erase(myVector.begin());
+  plot_a_y.erase(myVector.begin());
+  plot_a_z.erase(myVector.begin());
 
   matplot::nexttile();
-  matplot::plot(t_now, a_x);
+  matplot::plot(plot_ts, plot_a_x);
   matplot::hold(matplot::on);
 
   matplot::nexttile();
-  matplot::scatter(t_now, a_y);
+  matplot::plot(plot_ts, plot_a_y);
   matplot::hold(matplot::on);
 
   matplot::nexttile();
-  matplot::scatter(t_now, a_z);
+  matplot::plot(plot_ts, plot_a_z);
   matplot::hold(matplot::on);
 
   matplot::show();

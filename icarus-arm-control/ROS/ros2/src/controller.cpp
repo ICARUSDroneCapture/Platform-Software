@@ -30,6 +30,8 @@ void Controller::step()
     RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tAngular Velocity: [%f; %f; %f]\n", angular_velocity_x, angular_velocity_y, angular_velocity_z);
   }
 
+
+  imu_error_correction();
   integrate();
 
   #ifdef DOF1_CONTROL
@@ -84,6 +86,23 @@ void Controller::plot(double startTime)
   
 }
 
+void Controller::imu_configure()
+{
+  // !!NOTICE!! THIS IS ASSUMING IMU IS LEVEL AT START
+  // CORRECT THIS ONCE WE HAVE PREDICATBLE MISSALIGNMENT VALUES
+
+  double a_x_misalignment = linear_acceleration_S_x;
+  double a_y_misalignment = linear_acceleration_S_y;
+  double a_z_misalignment = linear_acceleration_S_z;
+}
+
+void Controller::imu_error_correction()
+{
+  linear_acceleration_S_x = linear_acceleration_S_x - a_x_misalignment;
+  linear_acceleration_S_y = linear_acceleration_S_y - a_y_misalignment;
+  linear_acceleration_S_z = linear_acceleration_S_z - a_z_misalignment;
+}
+
 void Controller::integrate()
 {
 
@@ -126,7 +145,7 @@ void Controller::integrate()
   
 }
 
-void Controller:remove_gravity()
+void Controller::remove_gravity()
 {
   // TODO: Add check to make sure angle is getting integrated
 
@@ -139,6 +158,8 @@ void Controller:remove_gravity()
   if (!quiet) {
     RCLCPP_INFO(rclcpp::get_logger("data"),"\t\t----------------------------------\n");
     
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tIntegrated Angle: [%f; %f; %f]\n", integrated_theta, integrated_phi, integrated_psi);
+
     RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tLinear Acceleration: [%f; %f; %f]\n", linear_acceleration_S_x, linear_acceleration_S_y, linear_acceleration_S_z);
 
     RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tCorrected Acceleration: [%f; %f; %f]\n", a_x_g_corrected, a_x_g_corrected, a_x_g_corrected);

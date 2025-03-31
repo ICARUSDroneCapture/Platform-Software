@@ -77,6 +77,16 @@
 
     double startTime = static_cast<double>( current_timeMs() );
 
+    if (ok()) {
+        isROS.update();
+        rclcpp::spin_some(controller_node);
+        controller_node->imu_configure();
+    } else {
+        RCLCPP_INFO(rclcpp::get_logger("error"),"\n\n");
+        success = false;
+        ASSERT_EX(success, std::cout << "imu ready, ROS failure... exiting.\n");
+    }
+
     while (ok())
     {
         isROS.update();

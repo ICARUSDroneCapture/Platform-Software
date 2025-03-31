@@ -93,6 +93,8 @@ using namespace std::chrono_literals;
     void step();
     void plot(double startTime);
 
+    void imu_configure();
+    void imu_error_correction();
     void integrate();
     void remove_gravity();
     void control_1dof();
@@ -135,14 +137,14 @@ using namespace std::chrono_literals;
     float angular_velocity_z = 0.0;
     
     // Integrated angle values from IMU Values
-    float integrated_theta = 0;
-    float integrated_phi = 0;
-    float integrated_psi = 0;
+    float integrated_theta;
+    float integrated_phi;
+    float integrated_psi;
 
     // Gravity corrected acceleration values
-    float a_x_g_corrected = 0;
-    float a_y_g_corrected = 0;
-    float a_z_g_corrected = 0;
+    float a_x_g_corrected;
+    float a_y_g_corrected;
+    float a_z_g_corrected;
 
     // dt value retrieved from pimu
     double imu_dt;
@@ -183,6 +185,11 @@ using namespace std::chrono_literals;
     std::vector<double> plot_a_x = {0, 0};
     std::vector<double> plot_a_y = {0, 0};
     std::vector<double> plot_a_z = {0, 0};
+
+    // Error Correction: make struct/class for imu correction stuff, too tired rn lolol
+    double a_x_misalignment;
+    double a_y_misalignment;
+    double a_z_misalignment;
  
 private:
 

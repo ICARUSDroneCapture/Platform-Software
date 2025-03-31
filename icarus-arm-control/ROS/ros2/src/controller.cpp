@@ -43,43 +43,17 @@ void Controller::step()
 
 void Controller::plot()
 {
-
-  // plot_ts.erase(plot_ts.begin());
-
-  // plot_a_x.erase(plot_a_x.begin());
-  // plot_a_y.erase(plot_a_y.begin());
-  // plot_a_z.erase(plot_a_z.begin());
-
-
-  plot_ts.erase(plot_ts.back());
-
-  plot_a_x.erase(plot_a_x.back());
-  plot_a_y.erase(plot_a_y.back());
-  plot_a_z.erase(plot_a_z.back());
-
   plot_ts.push_back(static_cast<double>( current_timeMs() ) / 1000.0);
 
   plot_a_x.push_back(linear_acceleration_S_x);
   plot_a_y.push_back(linear_acceleration_S_y);
   plot_a_z.push_back(linear_acceleration_S_z);
 
-  // matplot::nexttile();
-  // matplot::scatter(plot_ts, plot_a_x);
-  // matplot::xlim({0, 60});
-  // matplot::ylim({-10, 10});
-  // matplot::hold(matplot::on);
+  plot_ts.erase(plot_ts.begin());
 
-  // matplot::nexttile();
-  // matplot::scatter(plot_ts, plot_a_y);
-  // matplot::xlim({0, 60});
-  // matplot::ylim({-10, 10});
-  // matplot::hold(matplot::on);
-
-  // matplot::nexttile();
-  // matplot::scatter(plot_ts, plot_a_z);
-  // matplot::xlim({0, 60});
-  // matplot::ylim({-20, 0});
-  // matplot::hold(matplot::on);
+  plot_a_x.erase(plot_a_x.begin());
+  plot_a_y.erase(plot_a_y.begin());
+  plot_a_z.erase(plot_a_z.begin());
 
   RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tLinear Acceleration: [%f; %f; %f]\n", linear_acceleration_S_x, linear_acceleration_S_y, linear_acceleration_S_z);
 

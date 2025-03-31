@@ -75,6 +75,8 @@
 
     ASSERT_EX(success, std::cout << "IMU RX fail.\n");
 
+    double startTime = static_cast<double>( current_timeMs() );
+
     while (ok())
     {
         isROS.update();
@@ -86,7 +88,7 @@
         SLEEP_MS(200);
         if (prevTimeMs / 1000 != nowTimeMs / 1000) {
             if (!controller_node->plot_quiet) {
-                controller_node->plot();
+                controller_node->plot(startTime);
             }
             RCLCPP_INFO(rclcpp::get_logger("controller"),"running...  (time: %u)\n\n", nowTimeMs);
             prevTimeMs = nowTimeMs;

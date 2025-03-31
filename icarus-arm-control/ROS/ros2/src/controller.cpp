@@ -41,9 +41,10 @@ void Controller::step()
   #endif
 }
 
-void Controller::plot()
+void Controller::plot(double startTime)
 {
-  plot_ts.push_back(static_cast<double>( current_timeMs() ) / 1000.0);
+  double currTime = static_cast<double>( current_timeMs() ) - startTime;
+  plot_ts.push_back(currTime / 1000.0);
 
   plot_a_x.push_back(linear_acceleration_S_x);
   plot_a_y.push_back(linear_acceleration_S_y);
@@ -62,29 +63,29 @@ void Controller::plot()
   RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\ttime: [%f, %f]\n", plot_a_y[0], plot_a_y[1]);
   RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\ttime: [%f, %f]\n", plot_a_z[0], plot_a_z[1]);
 
-  // auto ax1 = matplot::nexttile();
-  // auto ax2 = matplot::nexttile();
-  // auto ax3 = matplot::nexttile();
+  auto ax1 = matplot::nexttile();
+  auto ax2 = matplot::nexttile();
+  auto ax3 = matplot::nexttile();
 
-  // auto l1 = matplot::scatter(ax1, plot_ts, plot_a_x);  
-  // auto l2 = matplot::scatter(ax2, plot_ts, plot_a_y);
-  // auto l3 = matplot::scatter(ax3, plot_ts, plot_a_z);
+  auto l1 = matplot::scatter(ax1, plot_ts, plot_a_x);  
+  auto l2 = matplot::scatter(ax2, plot_ts, plot_a_y);
+  auto l3 = matplot::scatter(ax3, plot_ts, plot_a_z);
 
-  // xlim(ax1, {0, 60});
-  // xlim(ax2, {0, 60});
-  // xlim(ax3, {0, 60});
+  xlim(ax1, {0, 10});
+  xlim(ax2, {0, 10});
+  xlim(ax3, {0, 10});
 
-  // ylim(ax1, {-10, 10});
-  // ylim(ax2, {-10, 10});
-  // ylim(ax3, {-20, 0});
+  ylim(ax1, {-2, 2});
+  ylim(ax2, {-2, 2});
+  ylim(ax3, {-12, -8});
 
-  // l1->marker_face(true);
-  // l2->marker_face(true);
-  // l3->marker_face(true);
+  l1->marker_face(true);
+  l2->marker_face(true);
+  l3->marker_face(true);
 
-  // matplot::hold({ax1, ax2, ax3}, matplot::on);
+  matplot::hold({ax1, ax2, ax3}, matplot::on);
 
-  // matplot::show();
+  matplot::show();
   
 }
 

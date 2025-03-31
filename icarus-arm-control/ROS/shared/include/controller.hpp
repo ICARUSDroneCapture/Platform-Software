@@ -88,8 +88,7 @@ using namespace std::chrono_literals;
     }
     void init();
     void step();
-    void showPlot();
-    void plot();
+    void plot(double startTime);
 
     void integrate();
     void control_1dof();

@@ -44,11 +44,11 @@ void Controller::step()
 void Controller::plot()
 {
 
-  plot_ts.erase(plot_ts.begin());
+  // plot_ts.erase(plot_ts.begin());
 
-  plot_a_x.erase(plot_a_x.begin());
-  plot_a_y.erase(plot_a_y.begin());
-  plot_a_z.erase(plot_a_z.begin());
+  // plot_a_x.erase(plot_a_x.begin());
+  // plot_a_y.erase(plot_a_y.begin());
+  // plot_a_z.erase(plot_a_z.begin());
 
   plot_ts.push_back(static_cast<double>( current_timeMs() ) / 1000.0);
 
@@ -85,17 +85,17 @@ void Controller::plot()
   auto ax2 = matplot::nexttile();
   auto ax3 = matplot::nexttile();
 
-  auto l1 = matplot::scatter(ax1, plot_ts, plot_a_x);
-  l1->xlim({0, 60});
-  l1->ylim({-10, 10});
-
+  auto l1 = matplot::scatter(ax1, plot_ts, plot_a_x);  
   auto l2 = matplot::scatter(ax2, plot_ts, plot_a_x);
-  l1->xlim({0, 60});
-  l1->ylim({-10, 10});
-  
   auto l3 = matplot::scatter(ax3, plot_ts, plot_a_x);
-  l1->xlim({0, 60});
-  l1->ylim({-10, 10});
+
+  xlim(ax1, {0, 60});
+  xlim(ax2, {0, 60});
+  xlim(ax3, {0, 60});
+
+  ylim(ax1, {-10, 10});
+  ylim(ax2, {-10, 10});
+  ylim(ax3, {-20, 0});
 
   l1->marker_face(true);
   l2->marker_face(true);

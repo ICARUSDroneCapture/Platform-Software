@@ -43,25 +43,18 @@ void Controller::step()
 
 void Controller::plot()
 {
-  // std::vector<double> t_p = {};
+  double t_now = static_cast<double>( current_timeMs() );
 
-  // std::vector<double> ax_p = {linear_acceleration_S_x};
-  // std::vector<double> ay_p = {linear_acceleration_S_y};
-  // std::vector<double> az_p = {linear_acceleration_S_z};
+  matplot::nexttile();
+  matplot::plot({t_now}, {linear_acceleration_S_x}, "o");
 
-  auto ax1 = matplot::nexttile();
-  auto ax2 = matplot::nexttile();
-  auto ax3 = matplot::nexttile();
+  matplot::nexttile();
+  matplot::plot({t_now}, {linear_acceleration_S_y}, "o");
 
-  auto l1 = matplot::plot({static_cast<double>( current_timeMs() )}, {linear_acceleration_S_x}, "o");
-  auto l1 = matplot::plot({static_cast<double>( current_timeMs() )}, {linear_acceleration_S_y}, "o");
-  auto l1 = matplot::plot({static_cast<double>( current_timeMs() )}, {linear_acceleration_S_z}, "o");
+  matplot::nexttile();
+  matplot::plot({t_now}, {linear_acceleration_S_z}, "o");
 
-  l1->marker_face(true);
-  l2->marker_face(true);
-  l3->marker_face(true);
-
-  matplot::hold({ax1, ax2, ax3}, matplot::on);
+  matplot::hold(matplot::on);
 
   matplot::show();
 }

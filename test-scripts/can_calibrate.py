@@ -12,7 +12,7 @@ message_id = (node_id << 5 | cmd_id)
 
 
 for msg in bus:
-  if msg.arbitration_id == message_id
+  if msg.arbitration_id == message_id:
       error, state, result, traj_done = struct.unpack('<IBBB', bytes(msg.data[:7]))
       break
 print(error, state, result, traj_done)

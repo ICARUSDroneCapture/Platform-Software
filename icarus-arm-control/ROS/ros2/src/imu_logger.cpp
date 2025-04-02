@@ -29,9 +29,11 @@ public:
               << "linear_acceleration_x,linear_acceleration_y,linear_acceleration_z" << std::endl;
 
         // Subscribe to IMU topic
-        subscription_ = this->create_subscription<sensor_msgs::msg::Imu>(
-            "/imu/data", 10,
-            std::bind(&ImuLoggerNode::topic_callback, this, std::placeholders::_1));
+        //subscription_ = this->create_subscription<sensor_msgs::msg::Imu>(
+        //    "/imu/data", 10,
+        //    std::bind(&ImuLoggerNode::topic_callback, this, std::placeholders::_1));
+
+            subscription_ = this->create_subscription<sensor_msgs::msg::Imu>("imu", 1, std::bind(&ImuLoggerNode::topic_callback, this, std::placeholders::_1));
     }
 
     ~ImuLoggerNode()

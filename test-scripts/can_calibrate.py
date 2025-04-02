@@ -17,3 +17,6 @@ for msg in bus:
       break
 print(error, state, result, traj_done)
 
+
+bus.shutdown()
+

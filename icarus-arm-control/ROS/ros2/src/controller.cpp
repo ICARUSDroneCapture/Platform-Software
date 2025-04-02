@@ -102,7 +102,7 @@ void Controller::imu_error_correction()
   linear_acceleration_S_y = linear_acceleration_S_y - a_y_misalignment;
   linear_acceleration_S_z = linear_acceleration_S_z - a_z_misalignment;
 }
-
+         
 void Controller::integrate()
 {
 
@@ -162,7 +162,7 @@ void Controller::remove_gravity()
 
     RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tLinear Acceleration: [%f; %f; %f]\n", linear_acceleration_S_x, linear_acceleration_S_y, linear_acceleration_S_z);
 
-    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tCorrected Acceleration: [%f; %f; %f]\n", a_x_g_corrected, a_x_g_corrected, a_x_g_corrected);
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tCorrected Acceleration: [%f; %f; %f]\n", a_x_g_corrected, a_y_g_corrected, a_z_g_corrected);
   }
   quiet = true;
 }

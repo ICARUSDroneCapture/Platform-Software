@@ -34,16 +34,16 @@ for msg in bus:
         if state == 8: # 8: AxisState.CLOSED_LOOP_CONTROL
             break
 
-bus.send(can.Message(
-    arbitration_id=(node_id << 5 | 0x0d), # 0x0d: Set_Input_Vel
-    data=struct.pack('<ff', 1.0, 0.0), # 1.0: velocity, 0.0: torque feedforward
-    is_extended_id=False
-))
+# bus.send(can.Message(
+#     arbitration_id=(node_id << 5 | 0x0d), # 0x0d: Set_Input_Vel
+#     data=struct.pack('<ff', 1.0, 0.0), # 1.0: velocity, 0.0: torque feedforward
+#     is_extended_id=False
+# ))
 
-for msg in bus:
-    if msg.arbitration_id == (node_id << 5 | 0x09): # 0x09: Get_Encoder_Estimates
-        pos, vel = struct.unpack('<ff', bytes(msg.data))
-        print(f"pos: {pos:.3f} [turns], vel: {vel:.3f} [turns/s]")
+# for msg in bus:
+#     if msg.arbitration_id == (node_id << 5 | 0x09): # 0x09: Get_Encoder_Estimates
+#         pos, vel = struct.unpack('<ff', bytes(msg.data))
+#         print(f"pos: {pos:.3f} [turns], vel: {vel:.3f} [turns/s]")
 
 
 bus.send(can.Message(

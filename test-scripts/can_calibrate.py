@@ -1,7 +1,7 @@
 import can
 import struct
 
-bus = can.interface.Bus("can0", bustype="socketcan")
+bus = can.interface.Bus("can0", interface="socketcan")
 
 # Flush CAN RX buffer so there are no more old pending messages
 while not (bus.recv(timeout=0) is None): pass

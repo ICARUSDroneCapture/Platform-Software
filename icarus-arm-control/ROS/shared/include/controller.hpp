@@ -48,7 +48,6 @@
  #include "epoll_event_loop.hpp"
  #include "socket_can.hpp"
  #include "odrive_enums.h"
- #include "byte_swap.hpp"
  
  #include "TopicHelper.h"
  
@@ -129,6 +128,8 @@
     void cbWheelEncoder(const sensor_msgs::msg::JointState &msg);
     void cbPIMU(const icarus_arm_control::msg::PIMU::SharedPtr pimu);
     void cbIMU(const sensor_msgs::msg::Imu &imu);
+    void cbCtrlStatus(const  icarus_arm_control::msg::ControllerStatus::SharedPtr ctrl_stat_);
+    void cbODrvStatus(const  icarus_arm_control::msg::ODriveStatus::SharedPtr odrv_stat_);
 
     int get_deviations(std::vector<double> &a, std::vector<double> &b, std::vector<double> &out);
     double get_avg_deviation(std::vector<double> &a, std::vector<double> &b);
@@ -170,6 +171,12 @@
     float a_x_g_corrected;
     float a_y_g_corrected;
     float a_z_g_corrected;
+
+    // Motor Encoder Controller Status Values
+    float encoder_position;
+    float encoder_velocity;
+
+    float motor_temperature;
 
     // dt value retrieved from pimu
     double imu_dt;
@@ -222,7 +229,8 @@ private:
     rclcpp::Subscription<icarus_arm_control::msg::PIMU>::SharedPtr sub_pimu_;
     rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr sub_imu_;
 
-    rclcpp::Subscription<icarus_arm_control::msg::ControllerStatus>::SharedPtr sub_motor_cntr_sts_;
+    rclcpp::Subscription<icarus_arm_control::msg::ControllerStatus>::SharedPtr sub_motor_cntr_stat_;
+    rclcpp::Subscription<icarus_arm_control::msg::ODriveStatus>::SharedPtr sub_odrv_stat_;
  
  };
  

@@ -109,18 +109,18 @@ void Controller::bias_calibrate()
   double sum_z = std::accumulate(a_z_misalignment.begin(), a_z_misalignment.end(), 0.0);
 
   // Calculate the biases
-  bias_x = sum_x / a_x_misalignment.size();  // Ensure you're dividing by the actual size of the array
-  bias_y = sum_y / a_y_misalignment.size();
-  bias_z = sum_z / a_z_misalignment.size();
+  offset_and_turnon_bias_x = sum_x / a_x_misalignment.size();  // Ensure you're dividing by the actual size of the array
+  offset_and_turnon_bias_y = sum_y / a_y_misalignment.size();
+  offset_and_turnon_bias_z = sum_z / a_z_misalignment.size();
 
 
 }
 
 void Controller::imu_error_correction()
 {
-  linear_acceleration_S_x = linear_acceleration_S_x - bias_x;
-  linear_acceleration_S_y = linear_acceleration_S_y - bias_y;
-  linear_acceleration_S_z = linear_acceleration_S_z - bias_z;
+  linear_acceleration_S_x = linear_acceleration_S_x - offset_and_turnon_bias_x;
+  linear_acceleration_S_y = linear_acceleration_S_y - offset_and_turnon_bias_y;
+  linear_acceleration_S_z = linear_acceleration_S_z - offset_and_turnon_bias_z;
 }
          
 void Controller::integrate()

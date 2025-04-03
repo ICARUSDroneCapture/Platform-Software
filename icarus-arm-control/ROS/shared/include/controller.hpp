@@ -148,9 +148,9 @@ using namespace std::chrono_literals;
     float a_z_g_corrected;
 
     //Bias Values
-    float bias_x;
-    float bias_y;
-    float bias_z;
+    float offset_and_turnon_bias_x;
+    float offset_and_turnon_bias_y;
+    float offset_and_turnon_bias_z;
 
     // dt value retrieved from pimu
     double imu_dt;

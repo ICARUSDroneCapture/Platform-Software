@@ -18,5 +18,19 @@ for msg in bus:
 print(error, state, result, traj_done)
 
 
+# --------------------------- Try configuration for allowing encoder messages -------------------------------
+
+encoder_msg_rate_ms = 10 # must match `<odrv>.axis0.config.can.node_id`. The default is 0.
+cmd_id = 0x09 # heartbeat command ID
+message_id = (node_id << 5 | cmd_id)
+
+
+for msg in bus:
+  if msg.arbitration_id == message_id:
+      error, state, result, traj_done = struct.unpack('<IBBB', bytes(msg.data[:7]))
+      break
+print(error, state, result, traj_done)
+
+
 bus.shutdown()
 

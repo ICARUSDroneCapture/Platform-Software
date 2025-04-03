@@ -344,17 +344,17 @@ void InertialSenseROS::load_params(YAML::Node &node)
     int rs_odom_ins_enu_period = nh_->declare_parameter<int>("msg/odom_ins_enu/period", 1);
     ph.msgParams(rs_.odom_ins_enu, "odom_ins_enu", "", false, rs_odom_ins_enu_period, rs_odom_ins_enu_enable);
 
-    bool rs_odom_ins_ned_enable = nh_->declare_parameter<bool>("msg/odom_ins_ned/enable", true);
+    bool rs_odom_ins_ned_enable = nh_->declare_parameter<bool>("msg/odom_ins_ned/enable", false);
     int rs_odom_ins_ned_period = nh_->declare_parameter<int>("msg/odom_ins_ned/period", 1);
-    ph.msgParams(rs_.odom_ins_ned, "odom_ins_ned", "", true, rs_odom_ins_ned_period, rs_odom_ins_ned_enable);
+    ph.msgParams(rs_.odom_ins_ned, "odom_ins_ned", "", false, rs_odom_ins_ned_period, rs_odom_ins_ned_enable);
 
     bool rs_odom_ins_ecef_enable = nh_->declare_parameter<bool>("msg/odom_ins_ecef/enable", false);
     int rs_odom_ins_ecef_period = nh_->declare_parameter<int>("msg/odom_ins_ecef/period", 1);
     ph.msgParams(rs_.odom_ins_ecef, "odom_ins_ecef", "", false, rs_odom_ins_ecef_period, rs_odom_ins_ecef_enable);
 
-    bool did_ins1_enable = nh_->declare_parameter<bool>("msg/did_ins1/enable", false);
+    bool did_ins1_enable = nh_->declare_parameter<bool>("msg/did_ins1/enable", true);
     int did_ins1_period = nh_->declare_parameter<int>("msg/did_ins1/period", 1);
-    ph.msgParams(rs_.did_ins1, "msg/did_ins1/enable", "ins_eul_uvw_ned", false, did_ins1_period, did_ins1_enable);
+    ph.msgParams(rs_.did_ins1, "msg/did_ins1/enable", "ins_eul_uvw_ned", true, did_ins1_period, did_ins1_enable);
 
     bool did_ins2_enable = nh_->declare_parameter<bool>("msg/did_ins2/enable", false);
     int did_ins2_period = nh_->declare_parameter<int>("msg/did_ins2/period", 1);
@@ -385,9 +385,9 @@ void InertialSenseROS::load_params(YAML::Node &node)
     ph.nodeParamVec("antenna_offset", 3, rs_.gps1.antennaOffset, rs_.gps1.antennaOffset);
     YAML::Node gps1Msgs = ph.node(gps1Node, "messages", 2);
 
-    bool rs_gps1_enable = nh_->declare_parameter<bool>("msg/gps1/enable", true);
+    bool rs_gps1_enable = nh_->declare_parameter<bool>("msg/gps1/enable", false);
     int rs_gps1_period = nh_->declare_parameter<int>("msg/gps1/period", 1) ;
-    ph.msgParams(rs_.gps1, "pos_vel", "gps1/pos_vel", true, rs_gps1_period, rs_gps1_enable);
+    ph.msgParams(rs_.gps1, "pos_vel", "gps1/pos_vel", false, rs_gps1_period, rs_gps1_enable);
 
     bool rs_gps1_info_enable = nh_->declare_parameter<bool>("msg/gps1_info/enable", false);
     int rs_gps1_info_period = nh_->declare_parameter<int>("msg/gps1_info/period", 1);

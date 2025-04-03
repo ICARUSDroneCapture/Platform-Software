@@ -31,6 +31,12 @@ public:
         subscription_ = this->create_subscription<sensor_msgs::msg::Imu>(
             "imu", 1,
             std::bind(&ImuLoggerNode::topic_callback, this, std::placeholders::_1));
+        // Subscribe to IMU topic
+        //subscription_ = this->create_subscription<sensor_msgs::msg::Imu>(
+        //    "/imu/data", 10,
+        //    std::bind(&ImuLoggerNode::topic_callback, this, std::placeholders::_1));
+
+            subscription_ = this->create_subscription<sensor_msgs::msg::Imu>("imu", 1, std::bind(&ImuLoggerNode::topic_callback, this, std::placeholders::_1));
     }
 
     ~ImuLoggerNode()

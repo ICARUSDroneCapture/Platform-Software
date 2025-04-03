@@ -15,7 +15,7 @@ class ImuLoggerNode : public rclcpp::Node
 {
 public:
     ImuLoggerNode()
-        : Node("imu_logger_node"), z_bias_(0.0)
+        : Node("imu_logger_node")
     {
         // Open CSV file and write headers
         file_.open("imu_data.csv", std::ios::out);
@@ -45,8 +45,6 @@ public:
             file_.close();
         }
 
-        compute_z_bias_from_csv("imu_data.csv");
-        RCLCPP_INFO(this->get_logger(), "Z-axis bias (gravity-compensated): %.6f", z_bias_);
     }
 
 private:
@@ -71,51 +69,11 @@ private:
               << std::endl;
     }
 
-    void compute_z_bias_from_csv(const std::string &filename)
-    {
-        std::ifstream infile(filename);
-        std::string line;
-        std::vector<double> z_values;
-        const double GRAVITY = 9.80665;
 
-        // Skip header
-        std::getline(infile, line);
-
-        while (std::getline(infile, line)) {
-            std::stringstream ss(line);
-            std::string token;
-            int column = 0;
-            double value;
-            while (std::getline(ss, token, ',')) {
-                if (column == 10) {  // linear_acceleration_z is the 11th column (index 10)
-                    try {
-                        value = std::stod(token);
-                        z_values.push_back(value);
-                    } catch (...) {
-                        continue;
-                    }
-                    break;
-                }
-                ++column;
-            }
-        }
-
-        if (!z_values.empty()) {
-            double sum = 0.0;
-            for (double z : z_values) {
-                sum += z;
-            }
-            double average = sum / z_values.size();
-            z_bias_ = average - GRAVITY;
-        } else {
-            RCLCPP_WARN(this->get_logger(), "No Z-axis acceleration data found to compute bias.");
-            z_bias_ = 0.0;
-        }
-    }
 
     rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr subscription_;
     std::ofstream file_;
-    double z_bias_;
+
 };
 
 int main(int argc, char *argv[])

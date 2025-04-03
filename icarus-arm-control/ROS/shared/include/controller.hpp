@@ -25,6 +25,7 @@
 #include <termios.h>
 #include <unistd.h>
 #include <cmath>
+#include <array>
 
 #include <matplot/matplot.h>
 
@@ -92,8 +93,8 @@ using namespace std::chrono_literals;
     void init();
     void step();
     void plot(double startTime);
-
-    void imu_configure();
+    void bias_calibrate();
+    void imu_configure(int);
     void imu_error_correction();
     void integrate();
     void remove_gravity();
@@ -146,6 +147,11 @@ using namespace std::chrono_literals;
     float a_y_g_corrected;
     float a_z_g_corrected;
 
+    //Bias Values
+    float bias_x;
+    float bias_y;
+    float bias_z;
+
     // dt value retrieved from pimu
     double imu_dt;
 
@@ -187,9 +193,11 @@ using namespace std::chrono_literals;
     std::vector<double> plot_a_z = {0, 0};
 
     // Error Correction: make struct/class for imu correction stuff, too tired rn lolol
-    double a_x_misalignment;
-    double a_y_misalignment;
-    double a_z_misalignment;
+    static const int data_points = 5000;
+
+    std::array<double, data_points> a_x_misalignment = {};
+    std::array<double, data_points> a_y_misalignment = {};
+    std::array<double, data_points> a_z_misalignment = {};
  
 private:
 

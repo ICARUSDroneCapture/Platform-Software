@@ -86,21 +86,41 @@ void Controller::plot(double startTime)
   
 }
 
-void Controller::imu_configure()
+void Controller::imu_configure(int index)
 {
   // !!NOTICE!! THIS IS ASSUMING IMU IS LEVEL AT START
   // CORRECT THIS ONCE WE HAVE PREDICATBLE MISSALIGNMENT VALUES
 
-  double a_x_misalignment = linear_acceleration_S_x;
-  double a_y_misalignment = linear_acceleration_S_y;
-  double a_z_misalignment = linear_acceleration_S_z;
+   a_x_misalignment[index] = linear_acceleration_S_x;
+   a_y_misalignment[index] = linear_acceleration_S_y;
+   a_z_misalignment[index] = linear_acceleration_S_z;
+}
+
+void Controller::bias_calibrate()
+{
+  if (a_x_misalignment.size() == 0 || a_y_misalignment.size() == 0 || a_z_misalignment.size() == 0) {
+      std::cerr << "Bias could not be calculated: Misalignment arrays are empty!" << std::endl;
+      return;
+  }
+
+  // Accumulate sums of the arrays
+  double sum_x = std::accumulate(a_x_misalignment.begin(), a_x_misalignment.end(), 0.0);
+  double sum_y = std::accumulate(a_y_misalignment.begin(), a_y_misalignment.end(), 0.0);
+  double sum_z = std::accumulate(a_z_misalignment.begin(), a_z_misalignment.end(), 0.0);
+
+  // Calculate the biases
+  bias_x = sum_x / a_x_misalignment.size();  // Ensure you're dividing by the actual size of the array
+  bias_y = sum_y / a_y_misalignment.size();
+  bias_z = sum_z / a_z_misalignment.size();
+
+
 }
 
 void Controller::imu_error_correction()
 {
-  linear_acceleration_S_x = linear_acceleration_S_x - a_x_misalignment;
-  linear_acceleration_S_y = linear_acceleration_S_y - a_y_misalignment;
-  linear_acceleration_S_z = linear_acceleration_S_z - a_z_misalignment;
+  linear_acceleration_S_x = linear_acceleration_S_x - bias_x;
+  linear_acceleration_S_y = linear_acceleration_S_y - bias_y;
+  linear_acceleration_S_z = linear_acceleration_S_z - bias_z;
 }
          
 void Controller::integrate()

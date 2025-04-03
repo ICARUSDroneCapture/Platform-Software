@@ -80,15 +80,22 @@
 
     double startTime = static_cast<double>( current_timeMs() );
 
-    if (ok()) {
+    
+    int data_points = 5000;
+    int i = 0;
+    while (i <= data_points) {
+
+        std::cout << "Calibrating... " << std::to_string(i) << "/" << std::to_string(data_points) << std::endl;
+        
         isROS.update();
         rclcpp::spin_some(controller_node);
-        controller_node->imu_configure();
-    } else {
-        RCLCPP_INFO(rclcpp::get_logger("error"),"\n\n");
-        success = false;
-        ASSERT_EX(success, std::cout << "imu ready, ROS failure... exiting.\n");
+        controller_node->imu_configure(i);
+        i += 1;
     }
+
+    rclcpp::spin_some(controller_node);
+    controller_node->bias_calibrate();
+    
 
     while (ok())
     {

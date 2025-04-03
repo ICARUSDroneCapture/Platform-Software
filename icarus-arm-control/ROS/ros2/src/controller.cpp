@@ -15,8 +15,8 @@
     sub_pimu_               = this->create_subscription<icarus_arm_control::msg::PIMU>("pimu", 1, std::bind(&Controller::cbPIMU, this, std::placeholders::_1));
     sub_imu_                = this->create_subscription<sensor_msgs::msg::Imu>("imu", 1, std::bind(&Controller::cbIMU, this, std::placeholders::_1));
 
-    sub_motor_cntr_stat_     = this->create_subscription<icarus_arm_control::msg::ControllerStatus>("controller_status", 1, std::bind(&Controller::cbCtrlStatus, this, std::placeholders::_1));
-    sub_odrv_stat_     = this->create_subscription<icarus_arm_control::msg::ODriveStatus>("odrive_status", 1, std::bind(&Controller::cbODrvStatus, this, std::placeholders::_1));
+    sub_motor_cntr_stat_    = this->create_subscription<icarus_arm_control::msg::ControllerStatus>("controller_status", 1, std::bind(&Controller::cbCtrlStatus, this, std::placeholders::_1));
+    pub_motor_cntr_msg_     = this->create_publisher<icarus_arm_control::msg::ControlMessage>("control_message", 1);
 }
 
 void Controller::step()

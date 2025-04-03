@@ -225,12 +225,16 @@
  
 private:
 
+    // IMU subscribers
     rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr sub_wheel_encoder_;
     rclcpp::Subscription<icarus_arm_control::msg::PIMU>::SharedPtr sub_pimu_;
     rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr sub_imu_;
 
+    // Motor encoder subscriber
     rclcpp::Subscription<icarus_arm_control::msg::ControllerStatus>::SharedPtr sub_motor_cntr_stat_;
-    rclcpp::Subscription<icarus_arm_control::msg::ODriveStatus>::SharedPtr sub_odrv_stat_;
+    
+    //  Motor control message publisher
+    rclcpp::Publisher<icarus_arm_control::msg::ControlMessage>::SharedPtr pub_motor_cntr_msg_;
  
  };
  

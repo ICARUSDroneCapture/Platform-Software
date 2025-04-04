@@ -200,20 +200,36 @@ void Controller::control_1dof()
 
   // Implement proportion of gains for inertial stabilizing vs relative positional control
   
-  // measured position of imu from where torque is being applied
-  pm = bar_length; 
+  // // measured position of imu from where torque is being applied
+  // pm = bar_length; 
 
-  desired_change = 0.0; // DESIRED_DISTANCE is normally 0.5 m for 3D, here we want norm around 0 change in Z
+  // desired_location = 0.0; // DESIRED_DISTANCE is normally 0.5 m for 3D, here we want norm around 0 change in Z
 
-  angle  = encoder_position / 2*M_PI;
+  // angle  = encoder_position / (2*M_PI);
 
-  z_dev = pm * sin(angle); // Change in z-position
+  // z_dev = pm * sin(angle); // Change in z-position
 
-  pr_err = z_dev - desired_change;
+  // pr_err = z_dev - desired_location;
 
   f_i = -ka*a_z_g_corrected;
 
-  control_torque = bar_length * f_i * sin(angle);
+  control_torque = bar_length * f_i;
+
+  quiet = false;
+  if (!quiet) {
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\t----------------------------------\n");
+    
+    // RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tEncoder Position: %f\n", encoder_position);
+    
+    // RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tZ Axis Deviation: %f\n", z_dev);
+    
+    // RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tCorrective Distance: %f\n", pr_err);
+
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tNecessary Applied Force: %f\n", f_i);
+
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tInputed Torque: %f\n", control_torque);
+  }
+  quiet = true;
 
   SendControlMessage(control_torque);
 }

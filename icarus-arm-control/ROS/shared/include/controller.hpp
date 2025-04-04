@@ -130,6 +130,7 @@
     void cbIMU(const sensor_msgs::msg::Imu &imu);
     void cbCtrlStatus(const  icarus_arm_control::msg::ControllerStatus::SharedPtr ctrl_stat_);
     void cbODrvStatus(const  icarus_arm_control::msg::ODriveStatus::SharedPtr odrv_stat_);
+    void SendControlMessage();
 
     int get_deviations(std::vector<double> &a, std::vector<double> &b, std::vector<double> &out);
     double get_avg_deviation(std::vector<double> &a, std::vector<double> &b);

@@ -122,6 +122,9 @@ add_executable(imu_logger_node src/imu_logger.cpp)
 ament_target_dependencies(imu_logger_node rclcpp sensor_msgs)
 install(TARGETS imu_logger_node DESTINATION lib/${PROJECT_NAME})
 
+add_executable(imu_pimu_subscriber_node src/imu_pimu_subscriber.cpp)
+ament_target_dependencies(imu_pimu_subscriber_node rclcpp sensor_msgs)
+install(TARGETS imu_pimu_subscriber_node DESTINATION lib/${PROJECT_NAME})
 
 add_executable(controller_listener_node 
     src/controller.cpp

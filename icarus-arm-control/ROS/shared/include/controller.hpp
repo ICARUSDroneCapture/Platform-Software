@@ -179,7 +179,6 @@
     float motor_temperature;
 
     // Message for Motor Control
-    float32_t input_torque;
     icarus_arm_control::msg::ControlMessage msg_ctrl;
 
     // dt value retrieved from pimu

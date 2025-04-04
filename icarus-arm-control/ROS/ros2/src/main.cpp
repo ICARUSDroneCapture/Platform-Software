@@ -26,6 +26,7 @@
     rclcpp::init(argc, argv);
     
     auto controller_node = std::make_shared<Controller>();
+    // auto can_node = std::make_shared<ODriveCanNode>("ODriveCanNode");
 
     // Initialize our controller object
     controller_node->init();

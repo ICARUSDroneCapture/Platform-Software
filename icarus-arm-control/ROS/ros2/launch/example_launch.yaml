@@ -4,7 +4,6 @@ launch:
     pkg: "icarus_arm_control"
     exec: "odrive_can_node"
     name: "can_node"
-    namespace: "odrive_axis0"
     param:
     -
       name: "node_id"

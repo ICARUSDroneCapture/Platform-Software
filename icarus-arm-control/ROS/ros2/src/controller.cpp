@@ -7,18 +7,63 @@
 
 #include "controller.hpp"
 
+//  #include "byte_swap.hpp"
+
  void Controller::init()
  {
     sub_wheel_encoder_      = this->create_subscription<sensor_msgs::msg::JointState>("msg_wheel_encoder", 1, std::bind(&Controller::cbWheelEncoder, this, std::placeholders::_1));
     sub_pimu_               = this->create_subscription<icarus_arm_control::msg::PIMU>("pimu", 1, std::bind(&Controller::cbPIMU, this, std::placeholders::_1));
     sub_imu_                = this->create_subscription<sensor_msgs::msg::Imu>("imu", 1, std::bind(&Controller::cbIMU, this, std::placeholders::_1));
     sub_ins_                = this->create_subscription<icarus_arm_control::msg::DIDINS1>("ins_eul_uvw_ned", 1, std::bind(&Controller::cbINS, this, std::placeholders::_1));
+
+    sub_motor_cntr_stat_    = this->create_subscription<icarus_arm_control::msg::ControllerStatus>("controller_status", 1, std::bind(&Controller::cbCtrlStatus, this, std::placeholders::_1));
+    sub_odrv_stat_     = this->create_subscription<icarus_arm_control::msg::ODriveStatus>("odrive_status", 1, std::bind(&Controller::cbODrvStatus, this, std::placeholders::_1));
+
+    pub_motor_cntr_msg_     = this->create_publisher<icarus_arm_control::msg::ControlMessage>("control_message", 1);
 }
 
 void Controller::step()
 {
+  if (!quiet) {
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\t----------------------------------\n");
+
+    RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\tdt: [%f]\n", imu_dt);
+
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tLinear Velocity: [%f; %f; %f]\n", linear_velocity_S_x, linear_velocity_S_y, linear_velocity_S_z);
+    
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tAngle: [%f; %f; %f]\n", theta, phi, psi);
+
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tLinear Acceleration: [%f; %f; %f]\n", linear_acceleration_S_x, linear_acceleration_S_y, linear_acceleration_S_z);
+    
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tAngular Velocity: [%f; %f; %f]\n", angular_velocity_x, angular_velocity_y, angular_velocity_z);
+  }
+
+  // quiet = false;
+    if (!quiet) {
+      RCLCPP_INFO(rclcpp::get_logger("data"),"\t\t----------------------------------\n");
+      
+      RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tEncoder Position and Velocity: [%f; %f]\n", encoder_position, encoder_velocity);
+    }
+  quiet = true;
+
+  // Correct for imu sensor errors
   imu_error_correction();
+
+  // Integrate IMU angular velocity
   integrate();
+
+  // Remove gravity from acceleration values
+  remove_gravity();
+  
+  // Perform 1DOF control law
+  #ifdef DOF1_CONTROL
+    control_1dof();
+  #endif
+
+  #ifdef DOF3_CONTROL
+    control_3dof();
+  #endif
+
 }
 
 void Controller::plot(double startTime)
@@ -228,7 +273,10 @@ void Controller::remove_gravity()
 void Controller::control_1dof()
 {
   // insert 1dof control law stuff at this timestep
-  printf("Controller debug placeholder.\n");
+
+  double control_torque = 0.1;
+
+  SendControlMessage(control_torque);
 }
 
 void Controller::control_3dof()
@@ -302,6 +350,21 @@ void Controller::cbINS(const  icarus_arm_control::msg::DIDINS1::SharedPtr did_in
     psi_ins = did_ins1->theta[2];
 
    
+void Controller::cbCtrlStatus(const  icarus_arm_control::msg::ControllerStatus::SharedPtr ctrl_stat_)
+{
+    encoder_position = ctrl_stat_->pos_estimate;
+    encoder_velocity = ctrl_stat_->vel_estimate;
+}
+
+void Controller::cbODrvStatus(const  icarus_arm_control::msg::ODriveStatus::SharedPtr odrv_stat_)
+{
+    motor_temperature = odrv_stat_->motor_temperature;
+}
+
+void Controller::SendControlMessage(double control_torque)
+{
+  msg_ctrl.input_torque = control_torque;
+  pub_motor_cntr_msg_->publish(msg_ctrl);
 }
 
 int Controller::get_deviations(std::vector<double> &a, std::vector<double> &b, std::vector<double> &out) 

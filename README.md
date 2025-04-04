@@ -166,3 +166,42 @@ If you still get the "install error "config.h: No such file" error when building
 cd /usr/include
 cp -a libusb-1.0/libusb.h .
 ```
+
+### How to run software from scratch
+
+So once you have the 1 DOF testing rig set up and all of the electronics plugged in, you're ready to set up the software.
+
+First, we must open the CAN link and test motor calibration. To do this, type
+
+```
+cdSTARTUP
+CANstart
+MOTORenumerate
+MOTORcalibrate
+MOTORconfigset
+```
+
+If none of these throw any errors, the CAN link has been established and you can go ahead and confirm that you can read packets. If there is an error, or you're unsure if the CAN link is even open, type 
+`ifconfig`
+and search for the can0 port.
+
+To test if the motor is sending packets, type
+`candump can0 -xct z -n 10`
+
+Now that the motor is set up, you can build and run the ros2 code. To access the code, type
+
+```
+cd ~/ros2_ws/src/Platform-Software
+git status
+git checkout ______
+source ICARUS
+ros2 run icarus-arm-implementation
+```
+
+The code has a calibration phase at the very beginning with a length of `data_points` that averages data over a that length to estimate the biases. Be VERY CAREFUL to not move the IMU around during thise phase as it will make the data unusable. 
+
+
+
+
+
+

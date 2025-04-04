@@ -264,6 +264,21 @@
     std::array<double, data_points> calibrate_u = {};
     std::array<double, data_points> calibrate_v = {};
     std::array<double, data_points> calibrate_w = {};
+
+
+    // ----------------------------- 1DOF Control Law Related Parameters -----------------------------
+
+    // Relative Position Control
+    double kp = 1.2;  // Proportional [N/m]
+    double kd = 0.4;  // Derivative [Ns/m]    
+    double ki = 0;  // Integral [N/ms]
+    
+    // Inertial Stabilization Control
+    double ka =  3.4;  // Acceleration Control [kg]
+    double kv = 12;  // Velocity Control [kg/s]
+    double ks = 0;  // Position Control [kg*s^-2]
+
+    double pm, desired_change, angle, z_dev, pr_err, f_i, control_torque;
  
 private:
 

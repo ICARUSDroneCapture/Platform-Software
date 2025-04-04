@@ -19,7 +19,11 @@
     sub_motor_cntr_stat_    = this->create_subscription<icarus_arm_control::msg::ControllerStatus>("controller_status", 1, std::bind(&Controller::cbCtrlStatus, this, std::placeholders::_1));
     sub_odrv_stat_     = this->create_subscription<icarus_arm_control::msg::ODriveStatus>("odrive_status", 1, std::bind(&Controller::cbODrvStatus, this, std::placeholders::_1));
 
+    msg_ctrl.control_mode = 1;
+    msg_ctrl.input_mode = 1;
     pub_motor_cntr_msg_     = this->create_publisher<icarus_arm_control::msg::ControlMessage>("control_message", 1);
+
+    
 }
 
 void Controller::step()
@@ -237,9 +241,27 @@ void Controller::remove_gravity()
 
 void Controller::control_1dof()
 {
-  // insert 1dof control law stuff at this timestep
+  // 1DOF circular arm test
 
-  double control_torque = 0.1;
+  double bar_length = 0.639; // bar length, meters
+  double bar_mass = 0.39; // bar mass, kg
+
+  // Implement proportion of gains for inertial stabilizing vs relative positional control
+  
+  // measured position of imu from where torque is being applied
+  pm = bar_length; 
+
+  desired_change = 0.0; // DESIRED_DISTANCE is normally 0.5 m for 3D, here we want norm around 0 change in Z
+
+  angle  = encoder_position / 2*M_PI;
+
+  z_dev = pm * sin(angle); // Change in z-position
+
+  pr_err = z_dev - desired_change;
+
+  f_i = -ka*a_z_g_corrected;
+
+  control_torque = bar_length * f_i * sin(angle);
 
   SendControlMessage(control_torque);
 }

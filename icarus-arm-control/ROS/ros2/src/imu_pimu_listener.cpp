@@ -1,23 +1,22 @@
+#include "controller.hpp"
 #include "imu_pimu_listener.hpp"
 
 ImuPimuListener::ImuPimuListener()
 : Node("imu_pimu_listener_node")
 {
-    sub_imu_ = this->create_subscription<sensor_msgs::msg::Imu>(
-        "imu", 10, std::bind(&ImuPimuListener::imu_callback, this, std::placeholders::_1));
-
-    sub_pimu_ = this->create_subscription<icarus_arm_control::msg::PIMU>(
-        "pimu", 10, std::bind(&ImuPimuListener::pimu_callback, this, std::placeholders::_1));
+    sub_pimu_               = this->create_subscription<icarus_arm_control::msg::PIMU>("pimu", 1, std::bind(&ImuPimuListener::imu_callback, this, std::placeholders::_1));
+    sub_imu_                = this->create_subscription<sensor_msgs::msg::Imu>("imu", 1, std::bind(&ImuPimuListener::pimu_callback, this, std::placeholders::_1));
+    
 }
 
-void ImuPimuListener::imu_callback(const sensor_msgs::msg::Imu::SharedPtr msg)
+void ImuPimuListener::imu_callback(const sensor_msgs::msg::Imu::SharedPtr imu)
 {
     angular_velocity_x_ = msg->angular_velocity.x;
     angular_velocity_y_ = msg->angular_velocity.y;
     angular_velocity_z_ = msg->angular_velocity.z;
 }
 
-void ImuPimuListener::pimu_callback(const icarus_arm_control::msg::PIMU::SharedPtr msg)
+void ImuPimuListener::pimu_callback(const icarus_arm_control::msg::PIMU::SharedPtr pimu)
 {
     imu_dt_ = msg->dt;
 }

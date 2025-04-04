@@ -102,6 +102,7 @@ using namespace std::chrono_literals;
     void control_3dof();
     void insert_front(double *a, const int n, double val);
 
+    void cbINS(const  icarus_arm_control::msg::DIDINS1::SharedPtr ins);
     void cbWheelEncoder(const sensor_msgs::msg::JointState &msg);
     void cbPIMU(const icarus_arm_control::msg::PIMU::SharedPtr pimu);
     void cbIMU(const sensor_msgs::msg::Imu &imu);
@@ -136,7 +137,13 @@ using namespace std::chrono_literals;
     float angular_velocity_x = 0.0;
     float angular_velocity_y = 0.0;
     float angular_velocity_z = 0.0;
+
+    //INS Values
     
+    float theta_ins = 0.0;
+    float phi_ins = 0.0;
+    float psi_ins = 0.0;
+
     // Integrated angle values from IMU Values
     float integrated_theta;
     float integrated_phi;
@@ -151,6 +158,14 @@ using namespace std::chrono_literals;
     float offset_and_turnon_bias_x;
     float offset_and_turnon_bias_y;
     float offset_and_turnon_bias_z;
+
+    float bias_ins_theta;
+    float bias_ins_phi;
+    float bias_ins_psi;
+
+    float angular_velocity_bias_u;
+    float angular_velocity_bias_v;
+    float angular_velocity_bias_w;
 
     // dt value retrieved from pimu
     double imu_dt;
@@ -193,17 +208,26 @@ using namespace std::chrono_literals;
     std::vector<double> plot_a_z = {0, 0};
 
     // Error Correction: make struct/class for imu correction stuff, too tired rn lolol
-    static const int data_points = 5000;
+    static const int data_points = 25000;
 
     std::array<double, data_points> a_x_misalignment = {};
     std::array<double, data_points> a_y_misalignment = {};
     std::array<double, data_points> a_z_misalignment = {};
+
+    std::array<double, data_points> calibrate_theta = {};
+    std::array<double, data_points> calibrate_phi = {};
+    std::array<double, data_points> calibrate_psi = {};
+
+    std::array<double, data_points> calibrate_u = {};
+    std::array<double, data_points> calibrate_v = {};
+    std::array<double, data_points> calibrate_w = {};
  
 private:
 
     rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr sub_wheel_encoder_;
     rclcpp::Subscription<icarus_arm_control::msg::PIMU>::SharedPtr sub_pimu_;
     rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr sub_imu_;
+    rclcpp::Subscription<icarus_arm_control::msg::DIDINS1>::SharedPtr sub_ins_;
  
  };
  

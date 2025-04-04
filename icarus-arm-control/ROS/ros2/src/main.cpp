@@ -81,7 +81,7 @@
     double startTime = static_cast<double>( current_timeMs() );
 
     
-    int data_points = 5000;
+    int data_points = 25000;
     int i = 0;
     while (i <= data_points) {
 
@@ -105,7 +105,7 @@
         controller_node->step();
 
         // periodic print, add update function
-        SLEEP_MS(200);
+        SLEEP_MS(20);
         if (prevTimeMs / 1000 != nowTimeMs / 1000) {
             if (!controller_node->plot_quiet) {
                 controller_node->plot(startTime);

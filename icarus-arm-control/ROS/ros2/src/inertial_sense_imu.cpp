@@ -284,9 +284,9 @@ void InertialSenseROS::load_params(YAML::Node &node)
     YAML::Node sensorsNode = ph.node(node, "sensors");
     YAML::Node sensorsMsgs = ph.node(sensorsNode, "messages", 2);
 
-    bool imu_enable = nh_->declare_parameter<bool>("msg/imu/enable", false);
+    bool imu_enable = nh_->declare_parameter<bool>("msg/imu/enable", true);
     int imu_period = nh_->declare_parameter<int>("msg/imu/period", 1);
-    ph.msgParams(rs_.imu, "imu", "", false, imu_period, imu_enable);
+    ph.msgParams(rs_.imu, "imu", "",true, imu_period, imu_enable);
 
     bool pimu_enable = nh_->declare_parameter<bool>("msg/pimu/enable", false);
     int pimu_period = nh_->declare_parameter<int>("msg/pimu/period", 1);

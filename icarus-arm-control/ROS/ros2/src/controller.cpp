@@ -250,24 +250,30 @@ void Controller::integrate()
 
 void Controller::remove_gravity()
 {
-  // TODO: Add check to make sure angle is getting integrated
 
+  string angle_mode = "ins";
+
+  if (angle_mode = "integration"){
   // angle is in radians (i think? check!!! the numbers were just smol)
-  //a_x_g_corrected = linear_acceleration_S_x / cos(integrated_theta);
-  //a_y_g_corrected = linear_acceleration_S_y / cos(integrated_phi);
-  //a_z_g_corrected = linear_acceleration_S_z / cos(integrated_psi) + GRAVITY;
+    double theta_rg = integrated_theta;
+    double phi_rg   = integrated_phi;
+    double psi_rg   = integrated_psi;
+ 
+  }
+  else {
 
-  //quiet = false;
-  //if (!quiet) {
-  //  RCLCPP_INFO(rclcpp::get_logger("data"),"\t\t----------------------------------\n");
-   // 
-  //  RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tIntegrated Angle: [%f; %f; %f]\n", integrated_theta, integrated_phi, integrated_psi);
-//
-  //  RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tLinear Acceleration: [%f; %f; %f]\n", linear_acceleration_S_x, linear_acceleration_S_y, linear_acceleration_S_z);
-//
-  //  RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tCorrected Acceleration: [%f; %f; %f]\n", a_x_g_corrected, a_y_g_corrected, a_z_g_corrected);
- // }
-  //quiet = true;
+    double theta_rg = theta_ins;
+    double phi_rg   = phi_ins;
+    double psi_rg   = psi_ins;
+
+  }
+
+  
+
+a_x_g_corrected = linear_acceleration_S_x - cos(theta_rg) * sin(phi_rg) * GRAVITY;
+a_y_g_corrected = linear_acceleration_S_y - sin(theta_rg) * GRAVITY;
+a_z_g_corrected = linear_acceleration_S_z - cos(theta_rg) * cos(phi_rg) * GRAVITY;
+
 }
 
 void Controller::control_1dof()

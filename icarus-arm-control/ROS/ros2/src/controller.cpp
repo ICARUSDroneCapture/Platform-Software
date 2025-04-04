@@ -37,7 +37,7 @@ void Controller::step()
     RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tAngular Velocity: [%f; %f; %f]\n", angular_velocity_x, angular_velocity_y, angular_velocity_z);
   }
 
-  quiet = false;
+  // quiet = false;
     if (!quiet) {
       RCLCPP_INFO(rclcpp::get_logger("data"),"\t\t----------------------------------\n");
       
@@ -56,7 +56,7 @@ void Controller::step()
   
   // Perform 1DOF control law
   #ifdef DOF1_CONTROL
-    // control_1dof();
+    control_1dof();
   #endif
 
   #ifdef DOF3_CONTROL
@@ -190,7 +190,10 @@ void Controller::remove_gravity()
 void Controller::control_1dof()
 {
   // insert 1dof control law stuff at this timestep
-  printf("Controller debug placeholder.\n");
+
+  double control_torque = 0.1;
+
+  SendControlMessage(control_torque);
 }
 
 void Controller::control_3dof()
@@ -264,9 +267,9 @@ void Controller::cbODrvStatus(const  icarus_arm_control::msg::ODriveStatus::Shar
     motor_temperature = odrv_stat_->motor_temperature;
 }
 
-void Controller::SendControlMessage()
+void Controller::SendControlMessage(double control_torque)
 {
-  msg_ctrl.input_torque = 0.1;
+  msg_ctrl.input_torque = control_torque;
   pub_motor_cntr_msg_->publish(msg_ctrl);
 }
 

@@ -178,6 +178,10 @@
 
     float motor_temperature;
 
+    // Message for Motor Control
+    float32_t input_torque;
+    icarus_arm_control::msg::ControlMessage msg_ctrl;
+
     // dt value retrieved from pimu
     double imu_dt;
 
@@ -232,6 +236,7 @@ private:
 
     // Motor encoder subscriber
     rclcpp::Subscription<icarus_arm_control::msg::ControllerStatus>::SharedPtr sub_motor_cntr_stat_;
+    rclcpp::Subscription<icarus_arm_control::msg::ODriveStatus>::SharedPtr sub_odrv_stat_;
     
     //  Motor control message publisher
     rclcpp::Publisher<icarus_arm_control::msg::ControlMessage>::SharedPtr pub_motor_cntr_msg_;

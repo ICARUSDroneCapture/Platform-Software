@@ -16,6 +16,8 @@
     sub_imu_                = this->create_subscription<sensor_msgs::msg::Imu>("imu", 1, std::bind(&Controller::cbIMU, this, std::placeholders::_1));
 
     sub_motor_cntr_stat_    = this->create_subscription<icarus_arm_control::msg::ControllerStatus>("controller_status", 1, std::bind(&Controller::cbCtrlStatus, this, std::placeholders::_1));
+    sub_odrv_stat_     = this->create_subscription<icarus_arm_control::msg::ODriveStatus>("odrive_status", 1, std::bind(&Controller::cbODrvStatus, this, std::placeholders::_1));
+
     pub_motor_cntr_msg_     = this->create_publisher<icarus_arm_control::msg::ControlMessage>("control_message", 1);
 }
 
@@ -260,6 +262,12 @@ void Controller::cbCtrlStatus(const  icarus_arm_control::msg::ControllerStatus::
 void Controller::cbODrvStatus(const  icarus_arm_control::msg::ODriveStatus::SharedPtr odrv_stat_)
 {
     motor_temperature = odrv_stat_->motor_temperature;
+}
+
+void Controller::SendControlMessage()
+{
+  msg_ctrl.input_torque = 0.1;
+  pub_motor_cntr_msg_->publish(msg_ctrl);
 }
 
 int Controller::get_deviations(std::vector<double> &a, std::vector<double> &b, std::vector<double> &out) 

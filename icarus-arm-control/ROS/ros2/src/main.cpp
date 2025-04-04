@@ -96,7 +96,7 @@
         controller_node->step();
 
         // periodic print, add update function
-        SLEEP_MS(200);
+        SLEEP_MS(500);
         if (prevTimeMs / 1000 != nowTimeMs / 1000) {
             if (!controller_node->plot_quiet) {
                 controller_node->plot(startTime);

@@ -213,7 +213,7 @@ void Controller::control_1dof()
 
   f_i = -ka*a_z_g_corrected;
 
-  control_torque = bar_length * f_i;
+  control_torque = (bar_length * f_i) / 50;
 
   quiet = false;
   if (!quiet) {

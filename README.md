@@ -198,7 +198,8 @@ source ICARUS
 ros2 run icarus-arm-implementation
 ```
 
-The code has a calibration phase at the very beginning with a length of `data_points` that averages data over a that length to estimate the biases. Be VERY CAREFUL to not move the IMU around during thise phase as it will make the data unusable. 
+>[!IMPORTANT]
+>The code has a calibration phase at the very beginning with a length of `data_points` that averages data over a that length to estimate the biases. Be VERY CAREFUL to not move the IMU around during thise phase as >it will make the data unusable. 
 
 
 

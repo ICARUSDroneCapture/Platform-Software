@@ -18,7 +18,11 @@
     sub_motor_cntr_stat_    = this->create_subscription<icarus_arm_control::msg::ControllerStatus>("controller_status", 1, std::bind(&Controller::cbCtrlStatus, this, std::placeholders::_1));
     sub_odrv_stat_     = this->create_subscription<icarus_arm_control::msg::ODriveStatus>("odrive_status", 1, std::bind(&Controller::cbODrvStatus, this, std::placeholders::_1));
 
+    msg_ctrl.control_mode = 1;
+    msg_ctrl.input_mode = 1;
     pub_motor_cntr_msg_     = this->create_publisher<icarus_arm_control::msg::ControlMessage>("control_message", 1);
+
+    
 }
 
 void Controller::step()
@@ -191,7 +195,7 @@ void Controller::control_1dof()
 {
   // insert 1dof control law stuff at this timestep
 
-  double control_torque = 0.1;
+  double control_torque = 2;
 
   SendControlMessage(control_torque);
 }

@@ -68,10 +68,11 @@
             break;
         } else {
             // check regularly, but don't print regularly..
-            SLEEP_MS(200);
+            SLEEP_MS(14);
             if (prevTimeMs / 1000 != nowTimeMs / 1000) {
                 RCLCPP_INFO(rclcpp::get_logger("init"),"waiting...  (time: %u)\n", nowTimeMs);
                 prevTimeMs = nowTimeMs;
+                controller_node->print_data();
             }
         }
     }

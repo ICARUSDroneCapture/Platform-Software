@@ -97,6 +97,7 @@ using namespace std::chrono_literals;
     void imu_configure(int);
     void imu_error_correction();
     void integrate();
+    void print_data();
     void remove_gravity();
     void control_1dof();
     void control_3dof();

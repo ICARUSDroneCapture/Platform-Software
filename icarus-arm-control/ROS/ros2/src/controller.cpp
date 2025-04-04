@@ -62,6 +62,23 @@ void Controller::plot(double startTime)
   
 }
 
+void Controller::print_data(){
+
+
+  quiet = true;
+  if (!quiet) {
+    RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\t----------------------------------\n");
+
+    RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\tIntegrated Angle: [%f; %f; %f]\n", integrated_theta, integrated_phi, integrated_psi);
+
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tINS Corrected: [%f; %f; %f]\n", theta_ins, phi_ins, psi_ins);
+
+  }
+  quiet = true;
+
+
+}
+
 void Controller::imu_configure(int index)
 {
   // !!NOTICE!! THIS IS ASSUMING IMU IS LEVEL AT START
@@ -119,7 +136,7 @@ void Controller::bias_calibrate()
 
 void Controller::imu_error_correction()
 {
-  quiet = false;
+  quiet = true;
 
   if (!quiet) {
     RCLCPP_INFO(rclcpp::get_logger("data"),"\t\t----------------------------------\n");
@@ -145,9 +162,9 @@ void Controller::imu_error_correction()
   linear_acceleration_S_y = linear_acceleration_S_y - offset_and_turnon_bias_y;
   linear_acceleration_S_z = linear_acceleration_S_z - offset_and_turnon_bias_z;
 
-  angular_velocity_x = angular_velocity_x - angular_velocity_bias_u;
-  angular_velocity_y = angular_velocity_y - angular_velocity_bias_v;
-  angular_velocity_z = angular_velocity_z - angular_velocity_bias_w;
+  //angular_velocity_x = angular_velocity_x - angular_velocity_bias_u;
+  //angular_velocity_y = angular_velocity_y - angular_velocity_bias_v;
+  //angular_velocity_z = angular_velocity_z - angular_velocity_bias_w;
 
   theta_ins = theta_ins - bias_ins_theta;
   phi_ins = phi_ins - bias_ins_phi;
@@ -177,15 +194,6 @@ void Controller::integrate()
   integrated_theta = prev_theta + (imu_dt * angular_velocity_x);
   integrated_phi = prev_phi + (imu_dt * angular_velocity_y);
   integrated_psi = prev_psi + (imu_dt * angular_velocity_z);
-
-   quiet = true;
-   if (!quiet) {
-     RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\t----------------------------------\n");
-
-     RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\tIntegrated Angle: [%f; %f; %f]\n", integrated_theta, integrated_phi, integrated_psi);
-
-   }
-   quiet = true;
 
   prev_theta = integrated_theta;
   prev_phi = integrated_phi;

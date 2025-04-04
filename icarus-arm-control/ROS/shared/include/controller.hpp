@@ -71,40 +71,6 @@
 
 #include "ControlHelper.hpp"
 
-using namespace rclcpp;
-using namespace icarus_arm_control;
-using namespace std::chrono_literals;
- #ifndef CONTROLLER_H
- #define CONTROLLER_H
- 
- // #define DOF3_CONTROL
- #define DOF1_CONTROL
- 
- // #define RK4_INTEGRATION
- #define EULER_INTEGRATION
- 
- #define GRAVITY 9.81
- 
- #include <stdio.h>
- #include <iostream>
- #include <algorithm>
- #include <string>
- #include <cstdlib>
- #include <yaml-cpp/yaml.h>
- #include <termios.h>
- #include <unistd.h>
- #include <cmath>
- #include <thread>
- #include <sys/eventfd.h>
- #include <chrono>
- #include <memory>
- #include <cassert>
- #include <mutex>
- #include <condition_variable>
- #include <array>
- #include <algorithm>
- #include <linux/can.h>
- #include <linux/can/raw.h>
  
  #include <std_srvs/srv/empty.hpp>
  
@@ -120,37 +86,6 @@ using namespace std::chrono_literals;
  
  #include "TopicHelper.h"
  
- #include "rclcpp/rclcpp/rclcpp.hpp"
- #include "rclcpp/rclcpp/timer.hpp"
- #include "rclcpp/rclcpp/time.hpp"
- #include "rclcpp/rclcpp/publisher.hpp"
- #include "std_msgs/std_msgs/msg/string.hpp"
- #include "sensor_msgs/msg/imu.hpp"
- #include "sensor_msgs/msg/magnetic_field.hpp"
- #include "sensor_msgs/msg/fluid_pressure.hpp"
- #include "sensor_msgs/msg/joint_state.hpp"
- #include "sensor_msgs/msg/nav_sat_fix.hpp"
- #include "icarus_arm_control/msg/gps.hpp"
- #include "icarus_arm_control/msg/gps_info.hpp"
- #include "icarus_arm_control/msg/pimu.hpp"
- #include "icarus_arm_control/srv/firmware_update.hpp"
- #include "icarus_arm_control/srv/ref_lla_update.hpp"
- #include "icarus_arm_control/msg/rtk_rel.hpp"
- #include "icarus_arm_control/msg/rtk_info.hpp"
- #include "icarus_arm_control/msg/gnss_ephemeris.hpp"
- #include "icarus_arm_control/msg/glonass_ephemeris.hpp"
- #include "icarus_arm_control/msg/gnss_observation.hpp"
- #include "icarus_arm_control/msg/gnss_obs_vec.hpp"
- #include "icarus_arm_control/msg/inl2_states.hpp"
- #include "icarus_arm_control/msg/didins2.hpp"
- #include "icarus_arm_control/msg/didins1.hpp"
- #include "icarus_arm_control/msg/didins4.hpp"
- #include "nav_msgs/nav_msgs/msg/odometry.hpp"
- #include "std_srvs/std_srvs/srv/trigger.hpp"
- #include "std_msgs/std_msgs/msg/header.hpp"
- #include "geometry_msgs/geometry_msgs/msg/vector3_stamped.hpp"
- #include "geometry_msgs/geometry_msgs/msg/pose_with_covariance_stamped.hpp"
- #include "diagnostic_msgs/diagnostic_msgs/msg/diagnostic_array.hpp"
  
  #include "icarus_arm_control/msg/o_drive_status.hpp"
  #include "icarus_arm_control/msg/controller_status.hpp"
@@ -158,7 +93,7 @@ using namespace std::chrono_literals;
  #include "icarus_arm_control/srv/axis_state.hpp"
  //#include "std_srvs/std_srvs/srv/emtpy.hpp"
  
- #include "ControlHelper.hpp"
+
  
  using std::placeholders::_1;
  using std::placeholders::_2;
@@ -249,6 +184,10 @@ using namespace std::chrono_literals;
     float a_x_g_corrected;
     float a_y_g_corrected;
     float a_z_g_corrected;
+
+    float theta_rg;
+    float phi_rg;
+    float psi_rg;
 
     //Bias Values
     float offset_and_turnon_bias_x;

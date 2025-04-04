@@ -122,8 +122,14 @@ add_executable(imu_logger_node src/imu_logger.cpp)
 ament_target_dependencies(imu_logger_node rclcpp sensor_msgs)
 install(TARGETS imu_logger_node DESTINATION lib/${PROJECT_NAME})
 
-add_executable(imu_pimu_subscriber_node src/imu_pimu_subscriber.cpp)
-ament_target_dependencies(imu_pimu_subscriber_node rclcpp sensor_msgs)
+add_executable(imu_pimu_listener_node 
+                src/imu_pimu_listener.cpp 
+                src/imu_pimu_integrator.cpp)
+ament_target_dependencies(imu_pimu_listener_node rclcpp sensor_msgs icarus_arm_control)
+install(TARGETS imu_pimu_listener_node DESTINATION lib/${PROJECT_NAME})
+
+
+ament_target_dependencies(imu_pimu_listener_node rclcpp sensor_msgs)
 install(TARGETS imu_pimu_subscriber_node DESTINATION lib/${PROJECT_NAME})
 
 add_executable(controller_listener_node 

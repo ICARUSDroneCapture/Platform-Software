@@ -275,13 +275,13 @@ void Controller::control_testing(double iter_val)
   double alpha = 0.2;
   double beta = 2*M_PI / (7.5 / 1);
   double test_angle = atan(beta * alpha * cos(beta*iter_val));
-  double test_accel = -beta^2 * alpha * sin(beta*iter_val);
+  double test_accel = -std::pow(beta, 2) * alpha * sin(beta*iter_val);
 
   f_i = -ka*test_accel;
 
   control_torque = bar_length * f_i * sin(test_angle);
 
-  SendControlMessage(control_torque);
+  SendControlMessage(8*control_torque);
 }
 
 void Controller::control_3dof()

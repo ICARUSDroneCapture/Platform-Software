@@ -254,7 +254,7 @@
     std::vector<double> plot_a_z = {0, 0};
 
     // Error Correction: make struct/class for imu correction stuff, too tired rn lolol
-    static const int data_points = 25000;
+    static const int data_points = 5000;
 
     std::array<double, data_points> a_x_misalignment = {};
     std::array<double, data_points> a_y_misalignment = {};

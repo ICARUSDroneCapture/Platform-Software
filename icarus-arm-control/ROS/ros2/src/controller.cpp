@@ -41,7 +41,10 @@ void Controller::step()
   remove_gravity();
   
   // Perform 1DOF control law
-    control_1dof();
+
+  iter_val = iter_val + 0.01;
+  control_testing(iter_val);
+  // control_1dof();
 
   //Print
     print_data();
@@ -231,8 +234,6 @@ void Controller::remove_gravity()
 
   }
 
-  
-
   a_x_g_corrected = linear_acceleration_S_x - cos(theta_rg) * sin(phi_rg) * GRAVITY;
   a_y_g_corrected = linear_acceleration_S_y + sin(theta_rg) * GRAVITY;
   a_z_g_corrected = linear_acceleration_S_z + cos(theta_rg) * cos(phi_rg) * GRAVITY;
@@ -262,6 +263,20 @@ void Controller::control_1dof()
   f_i = -ka*a_z_g_corrected;
 
   control_torque = bar_length * f_i * sin(angle);
+
+  SendControlMessage(control_torque);
+}
+
+void Controller::control_testing(double iter_val)
+{
+  double alpha = 0.2;
+  double beta = 2*M_PI / (7.5 / 1);
+  double test_angle = atan(beta * alpha * cos(beta*iter_val));
+  double test_accel = -beta^2 * alpha * sin(beta*iter_val);
+
+  f_i = -ka*test_accel;
+
+  control_torque = bar_length * f_i * sin(test_angle);
 
   SendControlMessage(control_torque);
 }

@@ -126,6 +126,7 @@
     void integrate();
     void print_data();
     void remove_gravity();
+    void control_testing(double iter_val);
     void control_1dof();
     void control_3dof();
     void insert_front(double *a, const int n, double val);
@@ -206,6 +207,8 @@
     float encoder_velocity;
 
     float motor_temperature;
+
+    double iter_val = 0.0;
 
     // Message for Motor Control
     icarus_arm_control::msg::ControlMessage msg_ctrl;

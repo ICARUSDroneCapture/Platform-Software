@@ -269,6 +269,9 @@ void Controller::control_1dof()
 
 void Controller::control_testing(double iter_val)
 {
+  double bar_length = 0.639; // bar length, meters
+  double bar_mass = 0.39; // bar mass, kg
+  
   double alpha = 0.2;
   double beta = 2*M_PI / (7.5 / 1);
   double test_angle = atan(beta * alpha * cos(beta*iter_val));

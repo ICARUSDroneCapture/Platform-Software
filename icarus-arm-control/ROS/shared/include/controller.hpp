@@ -91,6 +91,9 @@
  #include "icarus_arm_control/msg/controller_status.hpp"
  #include "icarus_arm_control/msg/control_message.hpp"
  #include "icarus_arm_control/srv/axis_state.hpp"
+ 
+ #include "icarus_arm_control/msg/publish_data.hpp"
+
  //#include "std_srvs/std_srvs/srv/emtpy.hpp"
  
 
@@ -138,6 +141,7 @@
     void cbCtrlStatus(const  icarus_arm_control::msg::ControllerStatus::SharedPtr ctrl_stat_);
     void cbODrvStatus(const  icarus_arm_control::msg::ODriveStatus::SharedPtr odrv_stat_);
     void SendControlMessage(double control_torque);
+    void publish_imu();
 
     int get_deviations(std::vector<double> &a, std::vector<double> &b, std::vector<double> &out);
     double get_avg_deviation(std::vector<double> &a, std::vector<double> &b);
@@ -212,6 +216,8 @@
 
     // Message for Motor Control
     icarus_arm_control::msg::ControlMessage msg_ctrl;
+    // Message for Publish Data
+    icarus_arm_control::msg::PublishData publish_data;
 
     // dt value retrieved from pimu
     double imu_dt;
@@ -297,6 +303,7 @@ private:
     
     //  Motor control message publisher
     rclcpp::Publisher<icarus_arm_control::msg::ControlMessage>::SharedPtr pub_motor_cntr_msg_;
+    rclcpp::Publisher<icarus_arm_control::msg::PublishData>::SharedPtr pub_imu_ins_;
  
  };
  

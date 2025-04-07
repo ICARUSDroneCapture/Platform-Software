@@ -22,6 +22,7 @@
     msg_ctrl.control_mode = 1;
     msg_ctrl.input_mode = 1;
     pub_motor_cntr_msg_     = this->create_publisher<icarus_arm_control::msg::ControlMessage>("control_message", 1);
+    pub_imu_ins_            = this->create_publisher<icarus_arm_control::msg::PublishData>("publish_data", 1);
 
     
 }
@@ -47,10 +48,11 @@ void Controller::step()
   // control_1dof();
 
   //Print
-    print_data();
+   // print_data();
 
 
 
+  publish_imu();
 
 }
 
@@ -174,6 +176,10 @@ void Controller::bias_calibrate()
   bias_ins_phi = sum_phi / calibrate_phi.size();
   bias_ins_psi = sum_psi / calibrate_psi.size();
 
+  publish_data.accel_bias = {offset_and_turnon_bias_x,offset_and_turnon_bias_y,offset_and_turnon_bias_z};
+  publish_data.gyro_bias = {angular_velocity_bias_u,angular_velocity_bias_v,angular_velocity_bias_w};
+  publish_data.ins_bias = {bias_ins_theta,bias_ins_phi,bias_ins_psi};
+
 
 }
 
@@ -185,13 +191,17 @@ void Controller::imu_error_correction()
   linear_acceleration_S_y = linear_acceleration_S_y - offset_and_turnon_bias_y;
   linear_acceleration_S_z = linear_acceleration_S_z - offset_and_turnon_bias_z;
 
-  //angular_velocity_x = angular_velocity_x - angular_velocity_bias_u;
-  //angular_velocity_y = angular_velocity_y - angular_velocity_bias_v;
-  //angular_velocity_z = angular_velocity_z - angular_velocity_bias_w;
+  angular_velocity_x = angular_velocity_x - angular_velocity_bias_u;
+  angular_velocity_y = angular_velocity_y - angular_velocity_bias_v;
+  angular_velocity_z = angular_velocity_z - angular_velocity_bias_w;
 
   theta_ins = theta_ins - bias_ins_theta;
   phi_ins = phi_ins - bias_ins_phi;
   psi_ins = psi_ins - bias_ins_psi;
+
+  publish_data.accel_bias_rem = {linear_acceleration_S_x,linear_acceleration_S_y,linear_acceleration_S_z};
+  publish_data.gyro_bias_rem = {angular_velocity_x,angular_velocity_y,angular_velocity_z};
+  publish_data.ins_bias_rem = {theta_ins,phi_ins,psi_ins};
 
 
 
@@ -237,6 +247,8 @@ void Controller::remove_gravity()
   a_x_g_corrected = linear_acceleration_S_x - cos(theta_rg) * sin(phi_rg) * GRAVITY;
   a_y_g_corrected = linear_acceleration_S_y + sin(theta_rg) * GRAVITY;
   a_z_g_corrected = linear_acceleration_S_z + cos(theta_rg) * cos(phi_rg) * GRAVITY;
+
+  publish_data.accel_g_corr = {a_x_g_corrected,a_y_g_corrected,a_z_g_corrected};
 
 }
 
@@ -348,9 +360,6 @@ void Controller::cbIMU(const  sensor_msgs::msg::Imu &imu)
 
 void Controller::cbINS(const  icarus_arm_control::msg::DIDINS1::SharedPtr did_ins1)
 {
-   
-    
-
     // Store angular velocity values into class members
     theta_ins = did_ins1->theta[0];
     phi_ins = did_ins1->theta[1];
@@ -372,6 +381,11 @@ void Controller::SendControlMessage(double control_torque)
 {
   msg_ctrl.input_torque = control_torque;
   pub_motor_cntr_msg_->publish(msg_ctrl);
+}
+
+void Controller::publish_imu()
+{
+  pub_imu_ins_->publish(publish_data);
 }
 
 int Controller::get_deviations(std::vector<double> &a, std::vector<double> &b, std::vector<double> &out) 

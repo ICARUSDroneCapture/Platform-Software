@@ -67,6 +67,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
     "msg/ControllerStatus.msg"
     "msg/ODriveStatus.msg"
     "srv/AxisState.srv"
+    "msg/PublishData.msg"
     DEPENDENCIES std_msgs geometry_msgs diagnostic_msgs builtin_interfaces
 )
 ament_export_include_directories(shared/include)
@@ -123,6 +124,21 @@ add_executable(imu_logger_node src/imu_logger.cpp)
 ament_target_dependencies(imu_logger_node rclcpp sensor_msgs)
 install(TARGETS imu_logger_node DESTINATION lib/${PROJECT_NAME})
 
+add_executable(torque_logger_node src/torque_logger.cpp)
+rosidl_get_typesupport_target(cpp_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_cpp")
+target_link_libraries(torque_logger_node "${cpp_typesupport_target}")
+ament_target_dependencies(torque_logger_node
+    rclcpp
+    sensor_msgs
+    geometry_msgs
+    nav_msgs
+    diagnostic_msgs
+    #icarus_arm_control  # Add icarus_arm_control as a dependency
+    std_srvs
+)
+target_link_libraries(torque_logger_node  Matplot++::matplot InertialSenseSDK ${YAML_CPP_LIBRARIES} pthread)
+
+
 
 add_executable(controller_listener_node 
     src/controller.cpp
@@ -144,6 +160,7 @@ ament_target_dependencies(talker rclcpp std_msgs)
 
 add_executable(listener src/test_subscriber.cpp)
 ament_target_dependencies(listener rclcpp std_msgs)
+
 
 add_executable(odrive_can_node 
   shared/src/epoll_event_loop.cpp
@@ -191,6 +208,7 @@ install(TARGETS
     controller_listener_node
     odrive_can_node
     ins_imu_node
+    torque_logger_node
     DESTINATION lib/${PROJECT_NAME})
 
 install(DIRECTORY launch

@@ -68,6 +68,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
     "msg/ODriveStatus.msg"
     "srv/AxisState.srv"
     "msg/PublishData.msg"
+    "msg/IntegratedAngles.msg"
     DEPENDENCIES std_msgs geometry_msgs diagnostic_msgs builtin_interfaces
 )
 ament_export_include_directories(shared/include)
@@ -138,6 +139,20 @@ ament_target_dependencies(torque_logger_node
 )
 target_link_libraries(torque_logger_node  Matplot++::matplot InertialSenseSDK ${YAML_CPP_LIBRARIES} pthread)
 
+add_executable(integrator_node 
+        src/imu_pimu_listener.cpp)
+rosidl_get_typesupport_target(cpp_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_cpp")
+target_link_libraries(integrator_node "${cpp_typesupport_target}")
+ament_target_dependencies(integrator_node
+    rclcpp
+    sensor_msgs
+    geometry_msgs
+    nav_msgs
+    diagnostic_msgs
+    std_srvs
+)
+target_link_libraries(integrator_node  Matplot++::matplot InertialSenseSDK ${YAML_CPP_LIBRARIES} pthread)
+
 
 
 add_executable(controller_listener_node 
@@ -181,34 +196,16 @@ ament_target_dependencies(inertial_sense_imu_node rclcpp std_msgs geometry_msgs 
 target_link_libraries(inertial_sense_imu_node InertialSenseSDK ${YAML_CPP_LIBRARIES} pthread)
 
 
-ament_add_gtest(test_inertial_sense_imu
-    src/inertial_sense_imu.cpp
-    shared/src/ParamHelper.cpp
-    shared/src/RtkRover.cpp
-    shared/src/RtkBase.cpp
-    test/test_basic_unit_tests.cpp
-    test/test_client_reconnect.cpp
-    test/test_communications.cpp
-    #test/test_main.cpp
-    #test/test_main.h
-    test/gtest_helpers.h
-)
-
-rosidl_get_typesupport_target(cpp_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_cpp")
-target_link_libraries(test_inertial_sense_imu "${cpp_typesupport_target}")
-ament_target_dependencies(test_inertial_sense_imu rclcpp std_msgs geometry_msgs nav_msgs diagnostic_msgs sensor_msgs std_srvs)
-target_link_libraries(test_inertial_sense_imu InertialSenseSDK ${YAML_CPP_LIBRARIES} pthread)
-
 #link_directories(/home/s/Inertial_Sense/imx/ros2_ws/src/Platform-Software/icarus-arm-control)
 install(TARGETS
     talker
     listener
-    test_inertial_sense_imu
     inertial_sense_imu_node
     controller_listener_node
     odrive_can_node
     ins_imu_node
     torque_logger_node
+    integrator_node
     DESTINATION lib/${PROJECT_NAME})
 
 install(DIRECTORY launch

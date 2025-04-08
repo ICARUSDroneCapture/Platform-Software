@@ -9,7 +9,7 @@
  #define IMU_PIMU_LISTENER_HPP
  #include "sensor_msgs/msg/imu.hpp"  // Include the IMU message header
 #include "icarus_arm_control/msg/pimu.hpp"
-#include "icarus-arm-control/msg/IntegratedAngles.msg"
+#include "icarus_arm_control/msg/integrated_angles.hpp"
 
 class ImuPimuListener : public rclcpp::Node
 {
@@ -21,7 +21,7 @@ public:
     //const icarus_arm_control::msg::PIMU pimu;
     //const sensor_msgs::msg::Imu::SharedPtr imu
 
-    icarus_arm_control::msg::IntegratedAngles integrated_angles;
+    icarus_arm_control::msg::IntegratedAngles integrated_angles_;
 
 private:
     void imu_callback(const sensor_msgs::msg::Imu &imu);

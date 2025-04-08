@@ -73,7 +73,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
 )
 ament_export_include_directories(shared/include)
 ament_export_libraries(icarus_arm_control)
-ament_export_dependencies(rclcpp sensor_msgs geometry_msgs std_msgs diagnostic_msgs rosidl_default_runtime)
+ament_export_dependencies(rclcpp sensor_msgs geometry_msgs std_msgs diagnostic_msgs rosidl_default_runtime icarus_arm_control)
 
 # We don't need the example projects
 set(IGNORE_EXAMPLE_PROJECTS 1)

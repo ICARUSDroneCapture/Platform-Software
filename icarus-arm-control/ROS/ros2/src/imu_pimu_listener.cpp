@@ -42,8 +42,8 @@ void ImuPimuListener::integrate()
     prev_phi_   = integrated_phi_;
     prev_psi_   = integrated_psi_;
 
-    integrated_angles.integrated_angles = {integrated_theta_,integrated_phi_,integrated_psi_};
-    pub_int_->publish(integrated_angles);
+    integrated_angles_.integrated_angles = {integrated_theta_,integrated_phi_,integrated_psi_};
+    pub_int_->publish(integrated_angles_);
 }
 
 int main(int argc, char *argv[])

@@ -139,10 +139,11 @@ ament_target_dependencies(torque_logger_node
 )
 target_link_libraries(torque_logger_node  Matplot++::matplot InertialSenseSDK ${YAML_CPP_LIBRARIES} pthread)
 
-add_executable(integrator_node 
-        src/imu_pimu_listener.cpp)
+add_executable(integrator_node src/imu_pimu_listener.cpp)
+
 rosidl_get_typesupport_target(cpp_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_cpp")
 target_link_libraries(integrator_node "${cpp_typesupport_target}")
+
 ament_target_dependencies(integrator_node
     rclcpp
     sensor_msgs
@@ -151,9 +152,8 @@ ament_target_dependencies(integrator_node
     diagnostic_msgs
     std_srvs
 )
+
 target_link_libraries(integrator_node  Matplot++::matplot InertialSenseSDK ${YAML_CPP_LIBRARIES} pthread)
-
-
 
 add_executable(controller_listener_node 
     src/controller.cpp

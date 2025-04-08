@@ -67,6 +67,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
     "msg/ControllerStatus.msg"
     "msg/ODriveStatus.msg"
     "srv/AxisState.srv"
+    "msg/PublishData.msg"
     DEPENDENCIES std_msgs geometry_msgs diagnostic_msgs builtin_interfaces
 )
 ament_export_include_directories(shared/include)
@@ -106,6 +107,9 @@ add_executable(inertial_sense_imu_node
     shared/src/RtkBase.cpp
 )
 
+rosidl_get_typesupport_target(cpp_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_cpp")
+
+# Custom controller node
 add_executable(controller_listener_node 
     src/controller.cpp
     src/main.cpp
@@ -121,11 +125,20 @@ target_link_libraries(controller_listener_node "${cpp_typesupport_target}")
 ament_target_dependencies(controller_listener_node rclcpp std_msgs geometry_msgs nav_msgs diagnostic_msgs sensor_msgs std_srvs)
 target_link_libraries(controller_listener_node Matplot++::matplot InertialSenseSDK ${YAML_CPP_LIBRARIES} pthread)
 
-add_executable(talker src/test_publisher.cpp)
-ament_target_dependencies(talker rclcpp std_msgs)
+# Data logging node
+add_executable(logger_node 
+    src/logger.cpp
+    shared/src/ControlHelper.cpp
+    src/inertial_sense_imu.cpp
+    shared/src/ParamHelper.cpp
+    shared/src/RtkRover.cpp
+    shared/src/RtkBase.cpp
+)
 
-add_executable(listener src/test_subscriber.cpp)
-ament_target_dependencies(listener rclcpp std_msgs)
+target_link_libraries(logger_node "${cpp_typesupport_target}")
+ament_target_dependencies(logger_node rclcpp std_msgs geometry_msgs nav_msgs diagnostic_msgs sensor_msgs std_srvs)
+target_link_libraries(logger_node Matplot++::matplot InertialSenseSDK ${YAML_CPP_LIBRARIES} pthread)
+
 
 add_executable(odrive_can_node 
   shared/src/epoll_event_loop.cpp
@@ -166,12 +179,11 @@ target_link_libraries(test_inertial_sense_imu InertialSenseSDK ${YAML_CPP_LIBRAR
 
 #link_directories(/home/s/Inertial_Sense/imx/ros2_ws/src/Platform-Software/icarus-arm-control)
 install(TARGETS
-    talker
-    listener
-    test_inertial_sense_imu
+    # test_inertial_sense_imu
     inertial_sense_imu_node
     controller_listener_node
     odrive_can_node
+    logger_node
     DESTINATION lib/${PROJECT_NAME})
 
 install(DIRECTORY launch

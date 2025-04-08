@@ -37,8 +37,11 @@
                        "baudrate: 921600\n"
                        "\n"
                        "ins:\n"
-                       "  navigation_dt_ms: 16                          # EKF update period.  uINS-3: 4  default, 1 max.  Use `msg/ins.../period` to reduce INS output data rate."
-                       "\n"
+                       "  navigation_dt_ms: 16                          # EKF update period.  uINS-3: 4  default, 1 max.  Use `msg/ins.../period` to reduce INS output data rate.\n"
+                       "  messages:\n"
+                       "    did_ins1:\n"
+                       "      topic: \"ins_eul_uvw_ned\"\n"
+                       "      enable: true\n"
                        "sensors:\n"
                        "  messages:  \n"
                        "    pimu:             # Publish preintegrated IMU delta theta and delta velocity\n"
@@ -66,27 +69,34 @@
             break;
         } else {
             // check regularly, but don't print regularly..
-            SLEEP_MS(200);
+            SLEEP_MS(14);
             if (prevTimeMs / 1000 != nowTimeMs / 1000) {
                 RCLCPP_INFO(rclcpp::get_logger("init"),"waiting...  (time: %u)\n", nowTimeMs);
                 prevTimeMs = nowTimeMs;
+                controller_node->print_data();
             }
         }
     }
 
     ASSERT_EX(success, std::cout << "IMU RX fail.\n");
 
-    double startTime = static_cast<double>( current_timeMs() );
+    controller_node->nodeStartTime = static_cast<double>( current_timeMs() );
+    
+    int data_points = 5000;
+    int i = 0;
+    while (i <= data_points) {
 
-    if (ok()) {
+        std::cout << "Calibrating... " << std::to_string(i) << "/" << std::to_string(data_points) << std::endl;
+        
         isROS.update();
         rclcpp::spin_some(controller_node);
-        controller_node->imu_configure();
-    } else {
-        RCLCPP_INFO(rclcpp::get_logger("error"),"\n\n");
-        success = false;
-        ASSERT_EX(success, std::cout << "imu ready, ROS failure... exiting.\n");
+        controller_node->imu_configure(i);
+        i += 1;
     }
+
+    rclcpp::spin_some(controller_node);
+    controller_node->bias_calibrate();
+    
 
     while (ok())
     {
@@ -99,7 +109,7 @@
         SLEEP_MS(500);
         if (prevTimeMs / 1000 != nowTimeMs / 1000) {
             if (!controller_node->plot_quiet) {
-                controller_node->plot(startTime);
+                controller_node->plot(controller_node->nodeStartTime);
             }
             RCLCPP_INFO(rclcpp::get_logger("controller"),"running...  (time: %u)\n\n", nowTimeMs);
             prevTimeMs = nowTimeMs;

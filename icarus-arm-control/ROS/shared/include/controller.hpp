@@ -5,38 +5,72 @@
  *
  */
 
- #ifndef CONTROLLER_H
- #define CONTROLLER_H
- 
- // #define DOF3_CONTROL
- #define DOF1_CONTROL
- 
- // #define RK4_INTEGRATION
- #define EULER_INTEGRATION
- 
- #define GRAVITY 9.81
- #define DESIRED_DISTANCE 0.5
- 
- #include <stdio.h>
- #include <iostream>
- #include <algorithm>
- #include <string>
- #include <cstdlib>
- #include <yaml-cpp/yaml.h>
- #include <termios.h>
- #include <unistd.h>
- #include <cmath>
- #include <thread>
- #include <sys/eventfd.h>
- #include <chrono>
- #include <memory>
- #include <cassert>
- #include <mutex>
- #include <condition_variable>
- #include <array>
- #include <algorithm>
- #include <linux/can.h>
- #include <linux/can/raw.h>
+#ifndef CONTROLLER_H
+#define CONTROLLER_H
+
+// #define DOF3_CONTROL
+#define DOF1_CONTROL
+
+// #define RK4_INTEGRATION
+#define EULER_INTEGRATION
+
+#define GRAVITY 9.81
+
+#include <stdio.h>
+#include <iostream>
+#include <algorithm>
+#include <string>
+#include <cstdlib>
+#include <yaml-cpp/yaml.h>
+#include <termios.h>
+#include <unistd.h>
+#include <cmath>
+#include <array>
+
+#include <matplot/matplot.h>
+
+#include "data_sets.h"
+#include "InertialSense.h"
+
+#include "TopicHelper.h"
+
+#include <chrono>
+#include <memory>
+#include <cassert>
+#include "rclcpp/rclcpp/rclcpp.hpp"
+#include "rclcpp/rclcpp/timer.hpp"
+#include "rclcpp/rclcpp/time.hpp"
+#include "rclcpp/rclcpp/publisher.hpp"
+#include "std_msgs/std_msgs/msg/string.hpp"
+#include "sensor_msgs/msg/imu.hpp"
+#include "sensor_msgs/msg/magnetic_field.hpp"
+#include "sensor_msgs/msg/fluid_pressure.hpp"
+#include "sensor_msgs/msg/joint_state.hpp"
+#include "sensor_msgs/msg/nav_sat_fix.hpp"
+#include "icarus_arm_control/msg/gps.hpp"
+#include "icarus_arm_control/msg/gps_info.hpp"
+#include "icarus_arm_control/msg/pimu.hpp"
+#include "icarus_arm_control/srv/firmware_update.hpp"
+#include "icarus_arm_control/srv/ref_lla_update.hpp"
+#include "icarus_arm_control/msg/rtk_rel.hpp"
+#include "icarus_arm_control/msg/rtk_info.hpp"
+#include "icarus_arm_control/msg/gnss_ephemeris.hpp"
+#include "icarus_arm_control/msg/glonass_ephemeris.hpp"
+#include "icarus_arm_control/msg/gnss_observation.hpp"
+#include "icarus_arm_control/msg/gnss_obs_vec.hpp"
+#include "icarus_arm_control/msg/inl2_states.hpp"
+#include "icarus_arm_control/msg/didins2.hpp"
+#include "icarus_arm_control/msg/didins1.hpp"
+#include "icarus_arm_control/msg/didins4.hpp"
+#include "nav_msgs/nav_msgs/msg/odometry.hpp"
+#include "std_srvs/std_srvs/srv/trigger.hpp"
+#include "std_msgs/std_msgs/msg/header.hpp"
+#include "geometry_msgs/geometry_msgs/msg/vector3_stamped.hpp"
+#include "geometry_msgs/geometry_msgs/msg/pose_with_covariance_stamped.hpp"
+#include "diagnostic_msgs/diagnostic_msgs/msg/diagnostic_array.hpp"
+
+#include "ControlHelper.hpp"
+
  
  #include <std_srvs/srv/empty.hpp>
  
@@ -52,45 +86,17 @@
  
  #include "TopicHelper.h"
  
- #include "rclcpp/rclcpp/rclcpp.hpp"
- #include "rclcpp/rclcpp/timer.hpp"
- #include "rclcpp/rclcpp/time.hpp"
- #include "rclcpp/rclcpp/publisher.hpp"
- #include "std_msgs/std_msgs/msg/string.hpp"
- #include "sensor_msgs/msg/imu.hpp"
- #include "sensor_msgs/msg/magnetic_field.hpp"
- #include "sensor_msgs/msg/fluid_pressure.hpp"
- #include "sensor_msgs/msg/joint_state.hpp"
- #include "sensor_msgs/msg/nav_sat_fix.hpp"
- #include "icarus_arm_control/msg/gps.hpp"
- #include "icarus_arm_control/msg/gps_info.hpp"
- #include "icarus_arm_control/msg/pimu.hpp"
- #include "icarus_arm_control/srv/firmware_update.hpp"
- #include "icarus_arm_control/srv/ref_lla_update.hpp"
- #include "icarus_arm_control/msg/rtk_rel.hpp"
- #include "icarus_arm_control/msg/rtk_info.hpp"
- #include "icarus_arm_control/msg/gnss_ephemeris.hpp"
- #include "icarus_arm_control/msg/glonass_ephemeris.hpp"
- #include "icarus_arm_control/msg/gnss_observation.hpp"
- #include "icarus_arm_control/msg/gnss_obs_vec.hpp"
- #include "icarus_arm_control/msg/inl2_states.hpp"
- #include "icarus_arm_control/msg/didins2.hpp"
- #include "icarus_arm_control/msg/didins1.hpp"
- #include "icarus_arm_control/msg/didins4.hpp"
- #include "nav_msgs/nav_msgs/msg/odometry.hpp"
- #include "std_srvs/std_srvs/srv/trigger.hpp"
- #include "std_msgs/std_msgs/msg/header.hpp"
- #include "geometry_msgs/geometry_msgs/msg/vector3_stamped.hpp"
- #include "geometry_msgs/geometry_msgs/msg/pose_with_covariance_stamped.hpp"
- #include "diagnostic_msgs/diagnostic_msgs/msg/diagnostic_array.hpp"
  
  #include "icarus_arm_control/msg/o_drive_status.hpp"
  #include "icarus_arm_control/msg/controller_status.hpp"
  #include "icarus_arm_control/msg/control_message.hpp"
  #include "icarus_arm_control/srv/axis_state.hpp"
+ 
+ #include "icarus_arm_control/msg/publish_data.hpp"
+
  //#include "std_srvs/std_srvs/srv/emtpy.hpp"
  
- #include "ControlHelper.hpp"
+
  
  using std::placeholders::_1;
  using std::placeholders::_2;
@@ -117,21 +123,25 @@
     void init();
     void step();
     void plot(double startTime);
-
-    void imu_configure();
+    void bias_calibrate();
+    void imu_configure(int);
     void imu_error_correction();
     void integrate();
+    void print_data();
     void remove_gravity();
+    void control_testing(double iter_val);
     void control_1dof();
     void control_3dof();
     void insert_front(double *a, const int n, double val);
 
+    void cbINS(const  icarus_arm_control::msg::DIDINS1::SharedPtr ins);
     void cbWheelEncoder(const sensor_msgs::msg::JointState &msg);
     void cbPIMU(const icarus_arm_control::msg::PIMU::SharedPtr pimu);
     void cbIMU(const sensor_msgs::msg::Imu &imu);
     void cbCtrlStatus(const  icarus_arm_control::msg::ControllerStatus::SharedPtr ctrl_stat_);
     void cbODrvStatus(const  icarus_arm_control::msg::ODriveStatus::SharedPtr odrv_stat_);
     void SendControlMessage(double control_torque);
+    void publish_imu();
 
     int get_deviations(std::vector<double> &a, std::vector<double> &b, std::vector<double> &out);
     double get_avg_deviation(std::vector<double> &a, std::vector<double> &b);
@@ -163,7 +173,13 @@
     float angular_velocity_x = 0.0;
     float angular_velocity_y = 0.0;
     float angular_velocity_z = 0.0;
+
+    //INS Values
     
+    float theta_ins = 0.0;
+    float phi_ins = 0.0;
+    float psi_ins = 0.0;
+
     // Integrated angle values from IMU Values
     float integrated_theta;
     float integrated_phi;
@@ -174,14 +190,34 @@
     float a_y_g_corrected;
     float a_z_g_corrected;
 
+    float theta_rg;
+    float phi_rg;
+    float psi_rg;
+
+    //Bias Values
+    float offset_and_turnon_bias_x;
+    float offset_and_turnon_bias_y;
+    float offset_and_turnon_bias_z;
+
+    float bias_ins_theta;
+    float bias_ins_phi;
+    float bias_ins_psi;
+
+    float angular_velocity_bias_u;
+    float angular_velocity_bias_v;
+    float angular_velocity_bias_w;
     // Motor Encoder Controller Status Values
     float encoder_position;
     float encoder_velocity;
 
     float motor_temperature;
 
+    double iter_val = 0.0;
+
     // Message for Motor Control
     icarus_arm_control::msg::ControlMessage msg_ctrl;
+    // Message for Publish Data
+    icarus_arm_control::msg::PublishData publish_data;
 
     // dt value retrieved from pimu
     double imu_dt;
@@ -224,9 +260,22 @@
     std::vector<double> plot_a_z = {0, 0};
 
     // Error Correction: make struct/class for imu correction stuff, too tired rn lolol
-    double a_x_misalignment;
-    double a_y_misalignment;
-    double a_z_misalignment;
+    static const int data_points = 5000;
+
+    std::array<double, data_points> a_x_misalignment = {};
+    std::array<double, data_points> a_y_misalignment = {};
+    std::array<double, data_points> a_z_misalignment = {};
+
+    std::array<double, data_points> calibrate_theta = {};
+    std::array<double, data_points> calibrate_phi = {};
+    std::array<double, data_points> calibrate_psi = {};
+
+    std::array<double, data_points> calibrate_u = {};
+    std::array<double, data_points> calibrate_v = {};
+    std::array<double, data_points> calibrate_w = {};
+
+    // Node Start Time, set on start of main mode activity
+    double nodeStartTime;
 
     // ----------------------------- 1DOF Control Law Related Parameters -----------------------------
 
@@ -248,6 +297,7 @@ private:
     rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr sub_wheel_encoder_;
     rclcpp::Subscription<icarus_arm_control::msg::PIMU>::SharedPtr sub_pimu_;
     rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr sub_imu_;
+    rclcpp::Subscription<icarus_arm_control::msg::DIDINS1>::SharedPtr sub_ins_;
 
     // Motor encoder subscriber
     rclcpp::Subscription<icarus_arm_control::msg::ControllerStatus>::SharedPtr sub_motor_cntr_stat_;
@@ -255,6 +305,7 @@ private:
     
     //  Motor control message publisher
     rclcpp::Publisher<icarus_arm_control::msg::ControlMessage>::SharedPtr pub_motor_cntr_msg_;
+    rclcpp::Publisher<icarus_arm_control::msg::PublishData>::SharedPtr pub_imu_ins_;
  
  };
  

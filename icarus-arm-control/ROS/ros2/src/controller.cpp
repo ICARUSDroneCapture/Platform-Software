@@ -14,6 +14,7 @@
     sub_wheel_encoder_      = this->create_subscription<sensor_msgs::msg::JointState>("msg_wheel_encoder", 1, std::bind(&Controller::cbWheelEncoder, this, std::placeholders::_1));
     sub_pimu_               = this->create_subscription<icarus_arm_control::msg::PIMU>("pimu", 1, std::bind(&Controller::cbPIMU, this, std::placeholders::_1));
     sub_imu_                = this->create_subscription<sensor_msgs::msg::Imu>("imu", 1, std::bind(&Controller::cbIMU, this, std::placeholders::_1));
+    sub_ins_                = this->create_subscription<icarus_arm_control::msg::DIDINS1>("ins_eul_uvw_ned", 1, std::bind(&Controller::cbINS, this, std::placeholders::_1));
 
     sub_motor_cntr_stat_    = this->create_subscription<icarus_arm_control::msg::ControllerStatus>("controller_status", 1, std::bind(&Controller::cbCtrlStatus, this, std::placeholders::_1));
     sub_odrv_stat_     = this->create_subscription<icarus_arm_control::msg::ODriveStatus>("odrive_status", 1, std::bind(&Controller::cbODrvStatus, this, std::placeholders::_1));
@@ -21,51 +22,37 @@
     msg_ctrl.control_mode = 1;
     msg_ctrl.input_mode = 1;
     pub_motor_cntr_msg_     = this->create_publisher<icarus_arm_control::msg::ControlMessage>("control_message", 1);
+    pub_imu_ins_            = this->create_publisher<icarus_arm_control::msg::PublishData>("publish_data", 1);
 
     
 }
 
 void Controller::step()
 {
-  if (!quiet) {
-    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\t----------------------------------\n");
 
-    RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\tdt: [%f]\n", imu_dt);
 
-    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tLinear Velocity: [%f; %f; %f]\n", linear_velocity_S_x, linear_velocity_S_y, linear_velocity_S_z);
-    
-    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tAngle: [%f; %f; %f]\n", theta, phi, psi);
-
-    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tLinear Acceleration: [%f; %f; %f]\n", linear_acceleration_S_x, linear_acceleration_S_y, linear_acceleration_S_z);
-    
-    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tAngular Velocity: [%f; %f; %f]\n", angular_velocity_x, angular_velocity_y, angular_velocity_z);
-  }
-
-  // quiet = false;
-    if (!quiet) {
-      RCLCPP_INFO(rclcpp::get_logger("data"),"\t\t----------------------------------\n");
-      
-      RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tEncoder Position and Velocity: [%f; %f]\n", encoder_position, encoder_velocity);
-    }
-  quiet = true;
 
   // Correct for imu sensor errors
   imu_error_correction();
 
   // Integrate IMU angular velocity
-  integrate();
+  //integrate();
 
   // Remove gravity from acceleration values
   remove_gravity();
   
   // Perform 1DOF control law
-  #ifdef DOF1_CONTROL
-    control_1dof();
-  #endif
 
-  #ifdef DOF3_CONTROL
-    control_3dof();
-  #endif
+  iter_val = iter_val + 0.01;
+  control_testing(iter_val);
+  // control_1dof();
+
+  //Print
+   // print_data();
+
+
+
+  publish_imu();
 
 }
 
@@ -110,23 +97,116 @@ void Controller::plot(double startTime)
   
 }
 
-void Controller::imu_configure()
+void Controller::print_data(){
+
+
+  quiet = true;
+  if (!quiet) {
+    RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\t----------------------------------\n");
+
+    RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\tIntegrated Angle: [%f; %f; %f]\n", integrated_theta, integrated_phi, integrated_psi);
+
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tINS Corrected: [%f; %f; %f]\n", theta_ins, phi_ins, psi_ins);
+
+  }
+  quiet = false;
+  if (!quiet) {
+    RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\t----------------------------------\n");
+
+    RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\tAccelerometer Data: [%f; %f; %f]\n", linear_acceleration_S_x,linear_acceleration_S_y,linear_acceleration_S_z);
+
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tINS Corrected: [%f; %f; %f]\n", theta_ins, phi_ins, psi_ins);
+
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tGravity Corrected: [%f; %f; %f]\n", a_x_g_corrected,a_y_g_corrected,a_z_g_corrected);
+
+  }
+
+
+}
+
+void Controller::imu_configure(int index)
 {
   // !!NOTICE!! THIS IS ASSUMING IMU IS LEVEL AT START
   // CORRECT THIS ONCE WE HAVE PREDICATBLE MISSALIGNMENT VALUES
 
-  double a_x_misalignment = linear_acceleration_S_x;
-  double a_y_misalignment = linear_acceleration_S_y;
-  double a_z_misalignment = linear_acceleration_S_z;
+   a_x_misalignment[index] = linear_acceleration_S_x;
+   a_y_misalignment[index] = linear_acceleration_S_y;
+   a_z_misalignment[index] = linear_acceleration_S_z + GRAVITY;
+
+  calibrate_theta[index] = theta_ins;
+  calibrate_psi[index] = psi_ins;
+  calibrate_phi[index] = phi_ins;
+
+  calibrate_u[index] = angular_velocity_x;
+  calibrate_v[index] = angular_velocity_y;
+  calibrate_w[index] = angular_velocity_z;
+
+}
+
+void Controller::bias_calibrate()
+{
+  if (a_x_misalignment.size() == 0 || a_y_misalignment.size() == 0 || a_z_misalignment.size() == 0) {
+      std::cerr << "Bias could not be calculated: Misalignment arrays are empty!" << std::endl;
+      return;
+  }
+
+  // Accumulate sums of the arrays
+  double sum_x = std::accumulate(a_x_misalignment.begin(), a_x_misalignment.end(), 0.0);
+  double sum_y = std::accumulate(a_y_misalignment.begin(), a_y_misalignment.end(), 0.0);
+  double sum_z = std::accumulate(a_z_misalignment.begin(), a_z_misalignment.end(), 0.0);
+
+  double sum_theta = std::accumulate(calibrate_theta.begin(), calibrate_theta.end(), 0.0);
+  double sum_psi = std::accumulate(calibrate_psi.begin(), calibrate_psi.end(), 0.0);
+  double sum_phi = std::accumulate(calibrate_phi.begin(), calibrate_phi.end(), 0.0);
+
+  double sum_u = std::accumulate(calibrate_u.begin(), calibrate_u.end(), 0.0);
+  double sum_v = std::accumulate(calibrate_v.begin(), calibrate_v.end(), 0.0);
+  double sum_w = std::accumulate(calibrate_w.begin(), calibrate_w.end(), 0.0);
+
+  // Calculate the biases
+  offset_and_turnon_bias_x = sum_x / a_x_misalignment.size();  // Ensure you're dividing by the actual size of the array
+  offset_and_turnon_bias_y = sum_y / a_y_misalignment.size();
+  offset_and_turnon_bias_z = sum_z / a_z_misalignment.size();
+
+  angular_velocity_bias_u = sum_u / calibrate_u.size();
+  angular_velocity_bias_v = sum_v / calibrate_v.size();
+  angular_velocity_bias_w = sum_w / calibrate_w.size();
+
+  bias_ins_theta = sum_theta / calibrate_theta.size();
+  bias_ins_phi = sum_phi / calibrate_phi.size();
+  bias_ins_psi = sum_psi / calibrate_psi.size();
+
+  publish_data.accel_bias = {offset_and_turnon_bias_x,offset_and_turnon_bias_y,offset_and_turnon_bias_z};
+  publish_data.gyro_bias = {angular_velocity_bias_u,angular_velocity_bias_v,angular_velocity_bias_w};
+  publish_data.ins_bias = {bias_ins_theta,bias_ins_phi,bias_ins_psi};
+
+
 }
 
 void Controller::imu_error_correction()
 {
-  linear_acceleration_S_x = linear_acceleration_S_x - a_x_misalignment;
-  linear_acceleration_S_y = linear_acceleration_S_y - a_y_misalignment;
-  linear_acceleration_S_z = linear_acceleration_S_z - a_z_misalignment;
-}
 
+  
+  linear_acceleration_S_x = linear_acceleration_S_x - offset_and_turnon_bias_x;
+  linear_acceleration_S_y = linear_acceleration_S_y - offset_and_turnon_bias_y;
+  linear_acceleration_S_z = linear_acceleration_S_z - offset_and_turnon_bias_z;
+
+  angular_velocity_x = angular_velocity_x - angular_velocity_bias_u;
+  angular_velocity_y = angular_velocity_y - angular_velocity_bias_v;
+  angular_velocity_z = angular_velocity_z - angular_velocity_bias_w;
+
+  theta_ins = theta_ins - bias_ins_theta;
+  phi_ins = phi_ins - bias_ins_phi;
+  psi_ins = psi_ins - bias_ins_psi;
+
+  publish_data.accel_bias_rem = {linear_acceleration_S_x,linear_acceleration_S_y,linear_acceleration_S_z};
+  publish_data.gyro_bias_rem = {angular_velocity_x,angular_velocity_y,angular_velocity_z};
+  publish_data.ins_bias_rem = {theta_ins,phi_ins,psi_ins};
+
+
+
+}
+         
 void Controller::integrate()
 {
 
@@ -134,61 +214,42 @@ void Controller::integrate()
 
   integrated_theta = prev_theta + (imu_dt * angular_velocity_x);
   integrated_phi = prev_phi + (imu_dt * angular_velocity_y);
-  integrated_psi = prev_theta + (imu_dt * angular_velocity_z);
+  integrated_psi = prev_psi + (imu_dt * angular_velocity_z);
 
-  // quiet = false;
-  // if (!quiet) {
-  //   RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\t----------------------------------\n");
+  prev_theta = integrated_theta;
+  prev_phi = integrated_phi;
+  prev_psi = integrated_psi;
 
-  //   RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\tIntegrated Angle: [%f; %f; %f]\n", integrated_theta, integrated_phi, integrated_psi);
-  // }
-  // quiet = true;
-
-  #endif
-
-  #ifdef RK4_INTEGRATION
-  // timestep array usage: [now, now-dt, oldest + dt, oldest]
-
-  // // only the front of the array can point to data (up-to-date), rest of the array needs to be shifted with copy
-  // arr_x_ptr = &imu.angular_velocity.x;
-  // arr_y_ptr = &imu.angular_velocity.y;
-  // arr_z_ptr = &imu.angular_velocity.z;
-
-  // arr_x_ptr++;
-  // arr_y_ptr++;
-  // arr_z_ptr++;
-
-  // *ts_ptr = pimu->dt;
-  // // // *ts_ptr = 2.0;
-
-  // // // Copy the value of source_double to the memory location pointed to by destination_ptr
-  // // std::memcpy(ts_ptr, &imu.header.stamp.sec, sizeof(double));
-
-  // RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\tTimestamp: [%f]\n", *ts_ptr);
   #endif
   
 }
 
 void Controller::remove_gravity()
 {
-  // TODO: Add check to make sure angle is getting integrated
 
+  bool using_ins = true;
+
+  if (using_ins = false){
   // angle is in radians (i think? check!!! the numbers were just smol)
-  a_x_g_corrected = linear_acceleration_S_x / cos(integrated_theta);
-  a_y_g_corrected = linear_acceleration_S_y / cos(integrated_phi);
-  a_z_g_corrected = linear_acceleration_S_z / cos(integrated_psi) + GRAVITY;
-
-  // quiet = false;
-  if (!quiet) {
-    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\t----------------------------------\n");
-    
-    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tIntegrated Angle: [%f; %f; %f]\n", integrated_theta, integrated_phi, integrated_psi);
-
-    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tLinear Acceleration: [%f; %f; %f]\n", linear_acceleration_S_x, linear_acceleration_S_y, linear_acceleration_S_z);
-
-    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tCorrected Acceleration: [%f; %f; %f]\n", a_x_g_corrected, a_x_g_corrected, a_x_g_corrected);
+    theta_rg = integrated_theta;
+    phi_rg   = integrated_phi;
+    psi_rg   = integrated_psi;
+ 
   }
-  quiet = true;
+  else {
+
+    theta_rg = theta_ins;
+    phi_rg   = phi_ins;
+    psi_rg   = psi_ins;
+
+  }
+
+  a_x_g_corrected = linear_acceleration_S_x - cos(theta_rg) * sin(phi_rg) * GRAVITY;
+  a_y_g_corrected = linear_acceleration_S_y + sin(theta_rg) * GRAVITY;
+  a_z_g_corrected = linear_acceleration_S_z + cos(theta_rg) * cos(phi_rg) * GRAVITY;
+
+  publish_data.accel_g_corr = {a_x_g_corrected, a_y_g_corrected, a_z_g_corrected};
+
 }
 
 void Controller::control_1dof()
@@ -234,6 +295,23 @@ void Controller::control_1dof()
   SendControlMessage(control_torque);
 }
 
+void Controller::control_testing(double iter_val)
+{
+  double bar_length = 0.639; // bar length, meters
+  double bar_mass = 0.39; // bar mass, kg
+  
+  double alpha = 0.2;
+  double beta = 2*M_PI / (7.5 / 1);
+  double test_angle = atan(beta * alpha * cos(beta*iter_val));
+  double test_accel = -std::pow(beta, 2) * alpha * sin(beta*iter_val);
+
+  f_i = -ka*test_accel;
+
+  control_torque = bar_length * f_i * sin(test_angle);
+
+  SendControlMessage(8*control_torque);
+}
+
 void Controller::control_3dof()
 {
   // insert 3dof control law stuff at this timestep
@@ -255,6 +333,7 @@ void Controller::cbWheelEncoder(const sensor_msgs::msg::JointState &msg)
 
 void Controller::cbPIMU(const icarus_arm_control::msg::PIMU::SharedPtr pimu)
 {
+  quiet = true;
     if (!quiet)
         std::cout << "Rx PIMU : " << std::fixed << std::setw(11) << std::setprecision(6) << pimu->header.stamp.sec << std::endl;
     if (got_gps_tow)
@@ -277,6 +356,7 @@ void Controller::cbPIMU(const icarus_arm_control::msg::PIMU::SharedPtr pimu)
 
 void Controller::cbIMU(const  sensor_msgs::msg::Imu &imu)
 {
+  quiet = true;
     if (!quiet)
         std::cout << "Rx IMU : " << std::fixed << std::setw(11) << std::setprecision(6) << imu.header.stamp.sec << std::endl;
     if (got_gps_tow)
@@ -294,6 +374,14 @@ void Controller::cbIMU(const  sensor_msgs::msg::Imu &imu)
     linear_acceleration_S_z = imu.linear_acceleration.z;
 }
 
+void Controller::cbINS(const  icarus_arm_control::msg::DIDINS1::SharedPtr did_ins1)
+{
+    // Store angular velocity values into class members
+    theta_ins = did_ins1->theta[0];
+    phi_ins = did_ins1->theta[1];
+    psi_ins = did_ins1->theta[2];
+}
+   
 void Controller::cbCtrlStatus(const  icarus_arm_control::msg::ControllerStatus::SharedPtr ctrl_stat_)
 {
     encoder_position = ctrl_stat_->pos_estimate;
@@ -309,6 +397,11 @@ void Controller::SendControlMessage(double control_torque)
 {
   msg_ctrl.input_torque = control_torque;
   pub_motor_cntr_msg_->publish(msg_ctrl);
+}
+
+void Controller::publish_imu()
+{
+  pub_imu_ins_->publish(publish_data);
 }
 
 int Controller::get_deviations(std::vector<double> &a, std::vector<double> &b, std::vector<double> &out) 

@@ -47,11 +47,12 @@ rosidl_generate_interfaces(${PROJECT_NAME}
     "msg/ODriveStatus.msg"
     "srv/AxisState.srv"
     "msg/PublishData.msg"
+    "msg/IntegratedAngles.msg"
     DEPENDENCIES std_msgs geometry_msgs diagnostic_msgs builtin_interfaces
 )
 
 ament_export_include_directories(include)
-ament_export_dependencies(rclcpp sensor_msgs geometry_msgs std_msgs diagnostic_msgs rosidl_default_runtime)
+ament_export_dependencies(rclcpp sensor_msgs geometry_msgs std_msgs diagnostic_msgs rosidl_default_runtime icarus_arm_control)
 
 # We don't need the example projects
 set(IGNORE_EXAMPLE_PROJECTS 1)
@@ -90,9 +91,27 @@ target_link_libraries(logger_node Matplot++::matplot ${YAML_CPP_LIBRARIES} pthre
 
 rosidl_get_typesupport_target(cpp_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_cpp")
 
+add_executable(integrator_node src/imu_pimu_listener.cpp)
+
+rosidl_get_typesupport_target(cpp_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_cpp")
+
+target_link_libraries(integrator_node "${cpp_typesupport_target}")
+
+ament_target_dependencies(integrator_node
+    rclcpp
+    sensor_msgs
+    geometry_msgs
+    nav_msgs
+    diagnostic_msgs
+    std_srvs
+)
+
+target_link_libraries(integrator_node  Matplot++::matplot ${YAML_CPP_LIBRARIES} pthread)
+
 install(TARGETS
     controller_node
     logger_node
+    integrator_node
     DESTINATION lib/${PROJECT_NAME})
 
 rosidl_get_typesupport_target(cpp_typesupport_target

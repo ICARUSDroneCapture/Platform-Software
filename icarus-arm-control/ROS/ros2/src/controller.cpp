@@ -7,11 +7,22 @@
 
 #include "controller.hpp"
 
+//  #include "byte_swap.hpp"
+
  void Controller::init()
  {
     sub_wheel_encoder_      = this->create_subscription<sensor_msgs::msg::JointState>("msg_wheel_encoder", 1, std::bind(&Controller::cbWheelEncoder, this, std::placeholders::_1));
     sub_pimu_               = this->create_subscription<icarus_arm_control::msg::PIMU>("pimu", 1, std::bind(&Controller::cbPIMU, this, std::placeholders::_1));
     sub_imu_                = this->create_subscription<sensor_msgs::msg::Imu>("imu", 1, std::bind(&Controller::cbIMU, this, std::placeholders::_1));
+
+    sub_motor_cntr_stat_    = this->create_subscription<icarus_arm_control::msg::ControllerStatus>("controller_status", 1, std::bind(&Controller::cbCtrlStatus, this, std::placeholders::_1));
+    sub_odrv_stat_     = this->create_subscription<icarus_arm_control::msg::ODriveStatus>("odrive_status", 1, std::bind(&Controller::cbODrvStatus, this, std::placeholders::_1));
+
+    msg_ctrl.control_mode = 1;
+    msg_ctrl.input_mode = 1;
+    pub_motor_cntr_msg_     = this->create_publisher<icarus_arm_control::msg::ControlMessage>("control_message", 1);
+
+    
 }
 
 void Controller::step()
@@ -30,10 +41,24 @@ void Controller::step()
     RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tAngular Velocity: [%f; %f; %f]\n", angular_velocity_x, angular_velocity_y, angular_velocity_z);
   }
 
+  // quiet = false;
+    if (!quiet) {
+      RCLCPP_INFO(rclcpp::get_logger("data"),"\t\t----------------------------------\n");
+      
+      RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tEncoder Position and Velocity: [%f; %f]\n", encoder_position, encoder_velocity);
+    }
+  quiet = true;
 
+  // Correct for imu sensor errors
   imu_error_correction();
+
+  // Integrate IMU angular velocity
   integrate();
 
+  // Remove gravity from acceleration values
+  remove_gravity();
+  
+  // Perform 1DOF control law
   #ifdef DOF1_CONTROL
     control_1dof();
   #endif
@@ -42,7 +67,6 @@ void Controller::step()
     control_3dof();
   #endif
 
-  remove_gravity();
 }
 
 void Controller::plot(double startTime)
@@ -154,7 +178,7 @@ void Controller::remove_gravity()
   a_y_g_corrected = linear_acceleration_S_y / cos(integrated_phi);
   a_z_g_corrected = linear_acceleration_S_z / cos(integrated_psi) + GRAVITY;
 
-  quiet = false;
+  // quiet = false;
   if (!quiet) {
     RCLCPP_INFO(rclcpp::get_logger("data"),"\t\t----------------------------------\n");
     
@@ -169,8 +193,45 @@ void Controller::remove_gravity()
 
 void Controller::control_1dof()
 {
-  // insert 1dof control law stuff at this timestep
-  printf("Controller debug placeholder.\n");
+  // 1DOF circular arm test
+
+  double bar_length = 0.639; // bar length, meters
+  double bar_mass = 0.39; // bar mass, kg
+
+  // Implement proportion of gains for inertial stabilizing vs relative positional control
+  
+  // // measured position of imu from where torque is being applied
+  // pm = bar_length; 
+
+  // desired_location = 0.0; // DESIRED_DISTANCE is normally 0.5 m for 3D, here we want norm around 0 change in Z
+
+  // angle  = encoder_position / (2*M_PI);
+
+  // z_dev = pm * sin(angle); // Change in z-position
+
+  // pr_err = z_dev - desired_location;
+
+  f_i = -ka*a_z_g_corrected;
+
+  control_torque = (bar_length * f_i) / 50;
+
+  quiet = false;
+  if (!quiet) {
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\t----------------------------------\n");
+    
+    // RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tEncoder Position: %f\n", encoder_position);
+    
+    // RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tZ Axis Deviation: %f\n", z_dev);
+    
+    // RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tCorrective Distance: %f\n", pr_err);
+
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tNecessary Applied Force: %f\n", f_i);
+
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tInputed Torque: %f\n", control_torque);
+  }
+  quiet = true;
+
+  SendControlMessage(control_torque);
 }
 
 void Controller::control_3dof()
@@ -231,6 +292,23 @@ void Controller::cbIMU(const  sensor_msgs::msg::Imu &imu)
     linear_acceleration_S_x = imu.linear_acceleration.x;
     linear_acceleration_S_y = imu.linear_acceleration.y;
     linear_acceleration_S_z = imu.linear_acceleration.z;
+}
+
+void Controller::cbCtrlStatus(const  icarus_arm_control::msg::ControllerStatus::SharedPtr ctrl_stat_)
+{
+    encoder_position = ctrl_stat_->pos_estimate;
+    encoder_velocity = ctrl_stat_->vel_estimate;
+}
+
+void Controller::cbODrvStatus(const  icarus_arm_control::msg::ODriveStatus::SharedPtr odrv_stat_)
+{
+    motor_temperature = odrv_stat_->motor_temperature;
+}
+
+void Controller::SendControlMessage(double control_torque)
+{
+  msg_ctrl.input_torque = control_torque;
+  pub_motor_cntr_msg_->publish(msg_ctrl);
 }
 
 int Controller::get_deviations(std::vector<double> &a, std::vector<double> &b, std::vector<double> &out) 

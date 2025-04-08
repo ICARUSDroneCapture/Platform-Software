@@ -248,7 +248,7 @@ void Controller::remove_gravity()
   a_y_g_corrected = linear_acceleration_S_y + sin(theta_rg) * GRAVITY;
   a_z_g_corrected = linear_acceleration_S_z + cos(theta_rg) * cos(phi_rg) * GRAVITY;
 
-  publish_data.accel_g_corr = [a_x_g_corrected,a_y_g_corrected,a_z_g_corrected];
+  publish_data.accel_g_corr = {a_x_g_corrected, a_y_g_corrected, a_z_g_corrected};
 
 }
 

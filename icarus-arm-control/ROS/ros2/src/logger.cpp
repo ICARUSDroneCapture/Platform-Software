@@ -15,7 +15,7 @@ class LoggerNode : public rclcpp::Node
 {
 public:
     LoggerNode()
-        : Node("logger_node"),
+        : Node("logger_node")
     {
         // Open CSV file and write headers
         file_.open("logged_data.csv", std::ios::out);
@@ -34,9 +34,9 @@ public:
         sub_motor_cntr_msg_     = this->create_subscription<icarus_arm_control::msg::ControlMessage>("control_message", 1, std::bind(&LoggerNode::cbCtrlMessageData, this, std::placeholders::_1));
 
         // IMU subscriptions
-        sub_pimu_               = this->create_subscription<icarus_arm_control::msg::PIMU>("pimu", 1, std::bind(&ImuLoggerNode::cbPIMUData, this, std::placeholders::_1));
-        sub_imu_                = this->create_subscription<sensor_msgs::msg::Imu>("imu", 1, std::bind(&ImuLoggerNode::cbIMUData, this, std::placeholders::_1));
-        sub_ins_                = this->create_subscription<icarus_arm_control::msg::DIDINS1>("ins_eul_uvw_ned", 1, std::bind(&ImuLoggerNode::cbINSData, this, std::placeholders::_1));
+        sub_pimu_               = this->create_subscription<icarus_arm_control::msg::PIMU>("pimu", 1, std::bind(&LoggerNode::cbPIMUData, this, std::placeholders::_1));
+        sub_imu_                = this->create_subscription<sensor_msgs::msg::Imu>("imu", 1, std::bind(&LoggerNode::cbIMUData, this, std::placeholders::_1));
+        sub_ins_                = this->create_subscription<icarus_arm_control::msg::DIDINS1>("ins_eul_uvw_ned", 1, std::bind(&LoggerNode::cbINSData, this, std::placeholders::_1));
     }
 
     ~LoggerNode()
@@ -52,7 +52,7 @@ public:
         currTime = static_cast<double>( current_timeMs() ) - startTime;
 
         // Write to CSV
-        file_ << timestamp_stream.str() << ","
+        file_ << currTime << ","
               << commanded_torque << "," << encoder_torque << "," << encoder_torque_target << "," << encoder_position << "," << encoder_velocity << ","
               << dt << "," << dtheta_x << "," << dtheta_y << "," << dtheta_z << "," << dvel_x << "," << dvel_y << "," << dvel_z << ","
               << ang_vel_x << "," << ang_vel_y << "," << ang_vel_z << "," << lin_accel_x << "," << lin_accel_y << "," << lin_accel_z << ","
@@ -61,8 +61,6 @@ public:
     }
 
     icarus_arm_control::msg::ControlMessage msg_ctrl;
-
-private:
 
     void cbCtrlStatusData(const icarus_arm_control::msg::ControllerStatus::SharedPtr ctrl_stat)
     {
@@ -122,7 +120,8 @@ private:
 
     std::ofstream file_;
 
-    // Timestamp variable
+    // Timestamp variables
+    double nodeStartTime;
     double currTime;
 
     // Variables to store encoder and torque data

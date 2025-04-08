@@ -1,4 +1,5 @@
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 cmake_minimum_required(VERSION 3.10.0)
 project(icarus_arm_control)
 
@@ -20,6 +21,7 @@ find_package(diagnostic_msgs REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(std_srvs REQUIRED)
 find_package(ament_cmake_gtest REQUIRED)
+find_package(Matplot++ REQUIRED)
 find_package(Threads)
 
 add_definitions(-DROS2)
@@ -65,6 +67,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
     "msg/ControllerStatus.msg"
     "msg/ODriveStatus.msg"
     "srv/AxisState.srv"
+    "msg/PublishData.msg"
     DEPENDENCIES std_msgs geometry_msgs diagnostic_msgs builtin_interfaces
 )
 ament_export_include_directories(shared/include)
@@ -87,7 +90,6 @@ include_directories(
     /opt/ros/jazzy/include/sensor_msgs
 )
 
-include_directories(include)
 include_directories(shared/include)
 
 # Build using C11 and CXX20
@@ -97,23 +99,52 @@ set_property(TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fms-extensions -Wl,--no-as-needed -DPLATFORM_IS_LINUX" )
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fms-extensions -Wl,--no-as-needed -DPLATFORM_IS_LINUX")
 
-add_executable(${PROJECT_NAME}_node
-    src/imu_publisher.cpp
+add_executable(inertial_sense_imu_node
+    src/inertial_sense_imu.cpp
     shared/src/inertial_sense_node.cpp
     shared/src/ParamHelper.cpp
     shared/src/RtkRover.cpp
     shared/src/RtkBase.cpp
 )
 
-add_executable(controller_listener src/controller_listener.cpp)
-ament_target_dependencies(controller_listener rclcpp std_msgs)
+rosidl_get_typesupport_target(cpp_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_cpp")
+
+# Custom controller node
+add_executable(controller_listener_node 
+    src/controller.cpp
+    src/main.cpp
+    shared/src/ControlHelper.cpp
+    src/inertial_sense_imu.cpp
+    shared/src/ParamHelper.cpp
+    shared/src/RtkRover.cpp
+    shared/src/RtkBase.cpp
+)
+
+rosidl_get_typesupport_target(cpp_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_cpp")
+target_link_libraries(controller_listener_node "${cpp_typesupport_target}")
+ament_target_dependencies(controller_listener_node rclcpp std_msgs geometry_msgs nav_msgs diagnostic_msgs sensor_msgs std_srvs)
+target_link_libraries(controller_listener_node Matplot++::matplot InertialSenseSDK ${YAML_CPP_LIBRARIES} pthread)
+
+# Data logging node
+add_executable(logger_node 
+    src/logger.cpp
+    shared/src/ControlHelper.cpp
+    src/inertial_sense_imu.cpp
+    shared/src/ParamHelper.cpp
+    shared/src/RtkRover.cpp
+    shared/src/RtkBase.cpp
+)
+
+target_link_libraries(logger_node "${cpp_typesupport_target}")
+ament_target_dependencies(logger_node rclcpp std_msgs geometry_msgs nav_msgs diagnostic_msgs sensor_msgs std_srvs)
+target_link_libraries(logger_node Matplot++::matplot InertialSenseSDK ${YAML_CPP_LIBRARIES} pthread)
+
 
 add_executable(odrive_can_node 
   shared/src/epoll_event_loop.cpp
   shared/src/socket_can.cpp
-  src/odrive_can_node.cpp
-  src/main.cpp
-  include/odrive_can_node.hpp)
+  shared/include/odrive_can_node.hpp
+  src/odrive_motor.cpp)
 
 ament_target_dependencies(odrive_can_node
   rclcpp
@@ -123,13 +154,13 @@ ament_target_dependencies(odrive_can_node
 target_compile_features(odrive_can_node PRIVATE cxx_std_20)
 
 rosidl_get_typesupport_target(cpp_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_cpp")
-target_link_libraries(${PROJECT_NAME}_node "${cpp_typesupport_target}")
-ament_target_dependencies(${PROJECT_NAME}_node rclcpp std_msgs geometry_msgs nav_msgs diagnostic_msgs sensor_msgs std_srvs)
-target_link_libraries(${PROJECT_NAME}_node InertialSenseSDK ${YAML_CPP_LIBRARIES} pthread)
+target_link_libraries(inertial_sense_imu_node "${cpp_typesupport_target}")
+ament_target_dependencies(inertial_sense_imu_node rclcpp std_msgs geometry_msgs nav_msgs diagnostic_msgs sensor_msgs std_srvs)
+target_link_libraries(inertial_sense_imu_node InertialSenseSDK ${YAML_CPP_LIBRARIES} pthread)
 
 
 ament_add_gtest(test_inertial_sense_imu
-    src/imu_publisher.cpp
+    src/inertial_sense_imu.cpp
     shared/src/ParamHelper.cpp
     shared/src/RtkRover.cpp
     shared/src/RtkBase.cpp
@@ -148,9 +179,11 @@ target_link_libraries(test_inertial_sense_imu InertialSenseSDK ${YAML_CPP_LIBRAR
 
 #link_directories(/home/s/Inertial_Sense/imx/ros2_ws/src/Platform-Software/icarus-arm-control)
 install(TARGETS
-    test_inertial_sense_imu
-    controller_listener
+    # test_inertial_sense_imu
+    inertial_sense_imu_node
+    controller_listener_node
     odrive_can_node
+    logger_node
     DESTINATION lib/${PROJECT_NAME})
 
 install(DIRECTORY launch

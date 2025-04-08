@@ -6,5 +6,8 @@ test-scripts/output-csv-data
 # inertial-sense-sdk/ROS/ros2/COLCON_IGNORE
 # icarus-arm-control/ROS/ros2/COLCON_IGNORE
 # test-control/COLCON_IGNORE
+icarus-arm-control/build
+icarus-arm-control/scripts
+icarus-arm-control/src/libusb
 motor_venv
 .vscode/

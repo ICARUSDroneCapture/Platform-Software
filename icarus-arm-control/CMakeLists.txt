@@ -66,7 +66,7 @@ SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fms-extensions -Wl,--no-as-needed -DPLATFOR
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fms-extensions -Wl,--no-as-needed -DPLATFORM_IS_LINUX")
 
 # Custom controller node
-add_executable(controller_nose 
+add_executable(controller_node 
     src/controller.cpp
     src/main.cpp
     src/ControlHelper.cpp
@@ -74,9 +74,9 @@ add_executable(controller_nose
 )
 
 rosidl_get_typesupport_target(cpp_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_cpp")
-target_link_libraries(controller_nose "${cpp_typesupport_target}")
-ament_target_dependencies(controller_nose rclcpp std_msgs geometry_msgs nav_msgs diagnostic_msgs sensor_msgs std_srvs)
-target_link_libraries(controller_nose Matplot++::matplot ${YAML_CPP_LIBRARIES} pthread)
+target_link_libraries(controller_node "${cpp_typesupport_target}")
+ament_target_dependencies(controller_node rclcpp std_msgs geometry_msgs nav_msgs diagnostic_msgs sensor_msgs std_srvs)
+target_link_libraries(controller_node Matplot++::matplot ${YAML_CPP_LIBRARIES} pthread)
 
 # Data logging node
 add_executable(logger_node 
@@ -91,7 +91,7 @@ target_link_libraries(logger_node Matplot++::matplot ${YAML_CPP_LIBRARIES} pthre
 rosidl_get_typesupport_target(cpp_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_cpp")
 
 install(TARGETS
-    controller_nose
+    controller_node
     logger_node
     DESTINATION lib/${PROJECT_NAME})
 

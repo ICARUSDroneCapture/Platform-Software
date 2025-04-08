@@ -80,8 +80,7 @@
 
     ASSERT_EX(success, std::cout << "IMU RX fail.\n");
 
-    double startTime = static_cast<double>( current_timeMs() );
-
+    controller_node->nodeStartTime = static_cast<double>( current_timeMs() );
     
     int data_points = 5000;
     int i = 0;
@@ -110,7 +109,7 @@
         SLEEP_MS(20);
         if (prevTimeMs / 1000 != nowTimeMs / 1000) {
             if (!controller_node->plot_quiet) {
-                controller_node->plot(startTime);
+                controller_node->plot(controller_node->nodeStartTime);
             }
             RCLCPP_INFO(rclcpp::get_logger("controller"),"running...  (time: %u)\n\n", nowTimeMs);
             prevTimeMs = nowTimeMs;

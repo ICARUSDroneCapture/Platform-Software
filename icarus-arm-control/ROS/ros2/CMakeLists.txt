@@ -107,39 +107,9 @@ add_executable(inertial_sense_imu_node
     shared/src/RtkBase.cpp
 )
 
-add_executable(ins_imu_node
-    src/ins_imu.cpp
-    shared/src/inertial_sense_node.cpp
-    shared/src/ParamHelper.cpp
-    shared/src/RtkRover.cpp
-    shared/src/RtkBase.cpp
-)
-
 rosidl_get_typesupport_target(cpp_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_cpp")
-target_link_libraries(ins_imu_node "${cpp_typesupport_target}")
-ament_target_dependencies(ins_imu_node rclcpp std_msgs geometry_msgs nav_msgs diagnostic_msgs sensor_msgs std_srvs)
-target_link_libraries(ins_imu_node Matplot++::matplot InertialSenseSDK ${YAML_CPP_LIBRARIES} pthread)
 
-add_executable(imu_logger_node src/imu_logger.cpp)
-ament_target_dependencies(imu_logger_node rclcpp sensor_msgs)
-install(TARGETS imu_logger_node DESTINATION lib/${PROJECT_NAME})
-
-add_executable(torque_logger_node src/torque_logger.cpp)
-rosidl_get_typesupport_target(cpp_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_cpp")
-target_link_libraries(torque_logger_node "${cpp_typesupport_target}")
-ament_target_dependencies(torque_logger_node
-    rclcpp
-    sensor_msgs
-    geometry_msgs
-    nav_msgs
-    diagnostic_msgs
-    #icarus_arm_control  # Add icarus_arm_control as a dependency
-    std_srvs
-)
-target_link_libraries(torque_logger_node  Matplot++::matplot InertialSenseSDK ${YAML_CPP_LIBRARIES} pthread)
-
-
-
+# Custom controller node
 add_executable(controller_listener_node 
     src/controller.cpp
     src/main.cpp
@@ -155,11 +125,19 @@ target_link_libraries(controller_listener_node "${cpp_typesupport_target}")
 ament_target_dependencies(controller_listener_node rclcpp std_msgs geometry_msgs nav_msgs diagnostic_msgs sensor_msgs std_srvs)
 target_link_libraries(controller_listener_node Matplot++::matplot InertialSenseSDK ${YAML_CPP_LIBRARIES} pthread)
 
-add_executable(talker src/test_publisher.cpp)
-ament_target_dependencies(talker rclcpp std_msgs)
+# Data logging node
+add_executable(logger_node 
+    src/logger.cpp
+    shared/src/ControlHelper.cpp
+    src/inertial_sense_imu.cpp
+    shared/src/ParamHelper.cpp
+    shared/src/RtkRover.cpp
+    shared/src/RtkBase.cpp
+)
 
-add_executable(listener src/test_subscriber.cpp)
-ament_target_dependencies(listener rclcpp std_msgs)
+target_link_libraries(logger_node "${cpp_typesupport_target}")
+ament_target_dependencies(logger_node rclcpp std_msgs geometry_msgs nav_msgs diagnostic_msgs sensor_msgs std_srvs)
+target_link_libraries(logger_node Matplot++::matplot InertialSenseSDK ${YAML_CPP_LIBRARIES} pthread)
 
 
 add_executable(odrive_can_node 
@@ -201,14 +179,11 @@ target_link_libraries(test_inertial_sense_imu InertialSenseSDK ${YAML_CPP_LIBRAR
 
 #link_directories(/home/s/Inertial_Sense/imx/ros2_ws/src/Platform-Software/icarus-arm-control)
 install(TARGETS
-    talker
-    listener
-    test_inertial_sense_imu
+    # test_inertial_sense_imu
     inertial_sense_imu_node
     controller_listener_node
     odrive_can_node
-    ins_imu_node
-    torque_logger_node
+    logger_node
     DESTINATION lib/${PROJECT_NAME})
 
 install(DIRECTORY launch

@@ -274,6 +274,8 @@
     std::array<double, data_points> calibrate_v = {};
     std::array<double, data_points> calibrate_w = {};
 
+    // Node Start Time, set on start of main mode activity
+    double nodeStartTime;
 
     // ----------------------------- 1DOF Control Law Related Parameters -----------------------------
 

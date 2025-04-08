@@ -1,96 +1,106 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.10.0)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+cmake_minimum_required(VERSION 3.10.0)
+project(icarus_arm_control)
 
-project(InertialSenseSDK)
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
 
-file(GLOB SOURCES_SDK
-    "src/*.c"
-    "src/*.cpp"
-    "src/*.h"
-    "src/protocol/*.cpp"
-    "src/protocol/*.h"
-    "src/util/*.cpp"
-    "src/util/*.h"
-    "hw-libs/bootloader/bootloaderShared.c"
-    "tests/runtime/*.cpp"
-    "tests/runtime/*.h"
-    "src/yaml-cpp/*.cpp"
-    "src/yaml-cpp/*.h"
-    "src/yaml-cpp/contrib/*.cpp"
-    "src/yaml-cpp/contrib/*.h"
-    "src/yaml-cpp/node/*.cpp"
-    "src/yaml-cpp/node/*.h"
+#find_package(rosidl_typesupport_c REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(std_srvs REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(yaml-cpp REQUIRED)
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(rclpy REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(nav_msgs REQUIRED)
+find_package(diagnostic_msgs REQUIRED)
+find_package(rosidl_default_generators REQUIRED)
+find_package(std_srvs REQUIRED)
+find_package(ament_cmake_gtest REQUIRED)
+find_package(Matplot++ REQUIRED)
+find_package(Threads)
+
+rosidl_generate_interfaces(${PROJECT_NAME}
+    "msg/GTime.msg"
+    "msg/SatInfo.msg"
+    "msg/GPS.msg"
+    "msg/GPSInfo.msg"
+    "msg/PIMU.msg"
+    "msg/RTKInfo.msg"
+    "msg/RTKRel.msg"
+    "msg/GlonassEphemeris.msg"
+    "msg/GNSSEphemeris.msg"
+    "msg/GNSSObservation.msg"
+    "msg/GNSSObsVec.msg"
+    "msg/INL2States.msg"
+    "msg/DIDINS2.msg"
+    "msg/DIDINS1.msg"
+    "msg/DIDINS4.msg"
+    "srv/FirmwareUpdate.srv"
+    "srv/RefLLAUpdate.srv"
+    "msg/ControlMessage.msg"
+    "msg/ControllerStatus.msg"
+    "msg/ODriveStatus.msg"
+    "srv/AxisState.srv"
+    "msg/PublishData.msg"
+    DEPENDENCIES std_msgs geometry_msgs diagnostic_msgs builtin_interfaces
 )
 
-# Compile libusb from source
-if (WIN32)
-    file(GLOB SOURCES_LIB_USB
-        "src/libusb/libusb/*.h"
-        "src/libusb/libusb/*.c"
-        "src/libusb/libusb/os/*windows*"
-    )
-else ()
-    file(GLOB SOURCES_LIB_USB
-        "src/libusb/libusb/*.h"
-        "src/libusb/libusb/*.c"
-        "src/libusb/libusb/os/*linux*"
-        "src/libusb/libusb/os/*posix*"
-    )
-endif ()
+ament_export_include_directories(include)
+ament_export_dependencies(rclcpp sensor_msgs geometry_msgs std_msgs diagnostic_msgs rosidl_default_runtime)
 
-# Ignore bootloader files
-# list(FILTER SOURCES_SDK EXCLUDE REGEX "ISBootloader.*")
-list(FILTER SOURCES_SDK EXCLUDE REGEX "ISBootloaderSony.*")
-list(FILTER SOURCES_SDK EXCLUDE REGEX "ISBootloaderSTM32.*")
+# We don't need the example projects
+set(IGNORE_EXAMPLE_PROJECTS 1)
 
-list(APPEND SOURCES_SDK ${SOURCES_LIB_USB})
-
-# find_package(udev)
-find_library(UDEV_LIB udev)
-
-add_library(${PROJECT_NAME} STATIC ${SOURCES_SDK})
-
-# Include paths
-target_include_directories(${PROJECT_NAME} PUBLIC
-    src
-    src/util
-    src/protocol
-    src/libusb
-    src/libusb/libusb
-    src/yaml-cpp
-    tests/runtime
-    external
-)
+include_directories(include)
 
 # Build using C11 and CXX20
 set_property(TARGET ${PROJECT_NAME} PROPERTY C_STANDARD 11)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)
 set_property(TARGET ${PROJECT_NAME} PROPERTY POSITION_INDEPENDENT_CODE ON)
+SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fms-extensions -Wl,--no-as-needed -DPLATFORM_IS_LINUX" )
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fms-extensions -Wl,--no-as-needed -DPLATFORM_IS_LINUX")
 
-# Other settings
-if (WIN32)
-    # yamlcpp needs to know it's a static lib.
-    add_definitions(-DYAML_CPP_STATIC_DEFINE)
+# Custom controller node
+add_executable(controller_nose 
+    src/controller.cpp
+    src/main.cpp
+    src/ControlHelper.cpp
+    src/ISUtilities.cpp
+)
 
-    # Windows specific include dir
-    target_include_directories(${PROJECT_NAME} PUBLIC
-        ${CMAKE_CURRENT_LIST_DIR}/src/libusb/msvc
-    )
+rosidl_get_typesupport_target(cpp_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_cpp")
+target_link_libraries(controller_nose "${cpp_typesupport_target}")
+ament_target_dependencies(controller_nose rclcpp std_msgs geometry_msgs nav_msgs diagnostic_msgs sensor_msgs std_srvs)
+target_link_libraries(controller_nose Matplot++::matplot ${YAML_CPP_LIBRARIES} pthread)
 
-    # We need to ensure windows static libs are found
-    target_link_libraries(${PROJECT_NAME} Ws2_32.lib)
-else ()
-    # Linux specific include dir
-    target_include_directories(${PROJECT_NAME} PUBLIC
-        ${CMAKE_CURRENT_LIST_DIR}/src/libusb/linux
-    )
+# Data logging node
+add_executable(logger_node 
+    src/logger.cpp
+    src/ISUtilities.cpp
+)
 
-    # Linux compiler flags
-    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -Wno-unused-function -Wno-unused-parameter -Wno-missing-field-initializers")
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-unused-function -Wno-unused-parameter -Wno-missing-field-initializers")
+target_link_libraries(logger_node "${cpp_typesupport_target}")
+ament_target_dependencies(logger_node rclcpp std_msgs geometry_msgs nav_msgs diagnostic_msgs sensor_msgs std_srvs)
+target_link_libraries(logger_node Matplot++::matplot ${YAML_CPP_LIBRARIES} pthread)
 
-    # Set Linux compiler linker flag
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
+rosidl_get_typesupport_target(cpp_typesupport_target "${PROJECT_NAME}" "rosidl_typesupport_cpp")
 
-    # Link in Linux specific packages
-    target_link_libraries(${PROJECT_NAME} udev m)
-endif ()
+install(TARGETS
+    controller_nose
+    logger_node
+    DESTINATION lib/${PROJECT_NAME})
+
+install(DIRECTORY launch
+    DESTINATION share/${PROJECT_NAME}
+)
+
+rosidl_get_typesupport_target(cpp_typesupport_target
+  ${PROJECT_NAME} rosidl_typesupport_cpp)
+
+
+ament_package()

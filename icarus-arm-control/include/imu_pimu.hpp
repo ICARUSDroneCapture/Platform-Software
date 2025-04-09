@@ -5,10 +5,10 @@
  *
  */
 
- #ifndef IMU_PIMU_LISTENER_HPP
- #define IMU_PIMU_LISTENER_HPP
- #include "sensor_msgs/msg/imu.hpp"  // Include the IMU message header
-#include "icarus_arm_control/msg/pimu.hpp"
+#ifndef IMU_PIMU_LISTENER_HPP
+#define IMU_PIMU_LISTENER_HPP
+#include "sensor_msgs/msg/imu.hpp"  // Include the IMU message header
+#include "inertial_sense_ros2/msg/pimu.hpp"
 #include "icarus_arm_control/msg/integrated_angles.hpp"
 
 class ImuPimuListener : public rclcpp::Node
@@ -25,10 +25,10 @@ public:
 
 private:
     void imu_callback(const sensor_msgs::msg::Imu &imu);
-    void pimu_callback(const icarus_arm_control::msg::PIMU::SharedPtr pimu);
+    void pimu_callback(const inertial_sense_ros2::msg::PIMU::SharedPtr pimu);
     
     // Subscriptions
-    rclcpp::Subscription<icarus_arm_control::msg::PIMU>::SharedPtr sub_pimu_;
+    rclcpp::Subscription<inertial_sense_ros2::msg::PIMU>::SharedPtr sub_pimu_;
     rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr sub_imu_;
 
     //Publishers

@@ -44,21 +44,21 @@
 #include "sensor_msgs/msg/fluid_pressure.hpp"
 #include "sensor_msgs/msg/joint_state.hpp"
 #include "sensor_msgs/msg/nav_sat_fix.hpp"
-#include "icarus_arm_control/msg/gps.hpp"
-#include "icarus_arm_control/msg/gps_info.hpp"
-#include "icarus_arm_control/msg/pimu.hpp"
-#include "icarus_arm_control/srv/firmware_update.hpp"
-#include "icarus_arm_control/srv/ref_lla_update.hpp"
-#include "icarus_arm_control/msg/rtk_rel.hpp"
-#include "icarus_arm_control/msg/rtk_info.hpp"
-#include "icarus_arm_control/msg/gnss_ephemeris.hpp"
-#include "icarus_arm_control/msg/glonass_ephemeris.hpp"
-#include "icarus_arm_control/msg/gnss_observation.hpp"
-#include "icarus_arm_control/msg/gnss_obs_vec.hpp"
-#include "icarus_arm_control/msg/inl2_states.hpp"
-#include "icarus_arm_control/msg/didins2.hpp"
-#include "icarus_arm_control/msg/didins1.hpp"
-#include "icarus_arm_control/msg/didins4.hpp"
+#include "inertial_sense_ros2/msg/gps.hpp"
+#include "inertial_sense_ros2/msg/gps_info.hpp"
+#include "inertial_sense_ros2/msg/pimu.hpp"
+#include "inertial_sense_ros2/srv/firmware_update.hpp"
+#include "inertial_sense_ros2/srv/ref_lla_update.hpp"
+#include "inertial_sense_ros2/msg/rtk_rel.hpp"
+#include "inertial_sense_ros2/msg/rtk_info.hpp"
+#include "inertial_sense_ros2/msg/gnss_ephemeris.hpp"
+#include "inertial_sense_ros2/msg/glonass_ephemeris.hpp"
+#include "inertial_sense_ros2/msg/gnss_observation.hpp"
+#include "inertial_sense_ros2/msg/gnss_obs_vec.hpp"
+#include "inertial_sense_ros2/msg/inl2_states.hpp"
+#include "inertial_sense_ros2/msg/didins2.hpp"
+#include "inertial_sense_ros2/msg/didins1.hpp"
+#include "inertial_sense_ros2/msg/didins4.hpp"
 #include "nav_msgs/msg/odometry.hpp"
 #include "std_srvs/srv/trigger.hpp"
 #include "std_msgs/msg/header.hpp"
@@ -119,9 +119,9 @@
     void control_3dof();
     void insert_front(double *a, const int n, double val);
 
-    void cbINS(const  icarus_arm_control::msg::DIDINS1::SharedPtr ins);
+    void cbINS(const  inertial_sense_ros2::msg::DIDINS1::SharedPtr ins);
     void cbWheelEncoder(const sensor_msgs::msg::JointState &msg);
-    void cbPIMU(const icarus_arm_control::msg::PIMU::SharedPtr pimu);
+    void cbPIMU(const inertial_sense_ros2::msg::PIMU::SharedPtr pimu);
     void cbIMU(const sensor_msgs::msg::Imu &imu);
     void cbCtrlStatus(const  odrive_can::msg::ControllerStatus::SharedPtr ctrl_stat_);
     void cbODrvStatus(const  odrive_can::msg::ODriveStatus::SharedPtr odrv_stat_);
@@ -138,7 +138,7 @@
     bool got_gps_tow = false;
     bool did_rx_pimu_ = false;
 
-    icarus_arm_control::msg::PIMU::SharedPtr pimu;
+    inertial_sense_ros2::msg::PIMU::SharedPtr pimu;
     sensor_msgs::msg::Imu imu;
 
     // IMU Pre-integrated Values
@@ -200,7 +200,7 @@
     double iter_val = 0.0;
 
     // Message for Motor Control
-    icarus_arm_control::msg::ControlMessage msg_ctrl;
+    odrive_can::msg::ControlMessage msg_ctrl;
     // Message for Publish Data
     icarus_arm_control::msg::PublishData publish_data;
 
@@ -280,16 +280,16 @@ private:
 
     // IMU subscribers
     rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr sub_wheel_encoder_;
-    rclcpp::Subscription<icarus_arm_control::msg::PIMU>::SharedPtr sub_pimu_;
+    rclcpp::Subscription<inertial_sense_ros2::msg::PIMU>::SharedPtr sub_pimu_;
     rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr sub_imu_;
-    rclcpp::Subscription<icarus_arm_control::msg::DIDINS1>::SharedPtr sub_ins_;
+    rclcpp::Subscription<inertial_sense_ros2::msg::DIDINS1>::SharedPtr sub_ins_;
 
     // Motor encoder subscriber
-    rclcpp::Subscription<icarus_arm_control::msg::ControllerStatus>::SharedPtr sub_motor_cntr_stat_;
-    rclcpp::Subscription<icarus_arm_control::msg::ODriveStatus>::SharedPtr sub_odrv_stat_;
+    rclcpp::Subscription<odrive_can::msg::ControllerStatus>::SharedPtr sub_motor_cntr_stat_;
+    rclcpp::Subscription<odrive_can::msg::ODriveStatus>::SharedPtr sub_odrv_stat_;
     
     //  Motor control message publisher
-    rclcpp::Publisher<icarus_arm_control::msg::ControlMessage>::SharedPtr pub_motor_cntr_msg_;
+    rclcpp::Publisher<odrive_can::msg::ControlMessage>::SharedPtr pub_motor_cntr_msg_;
     rclcpp::Publisher<icarus_arm_control::msg::PublishData>::SharedPtr pub_imu_ins_;
  
  };

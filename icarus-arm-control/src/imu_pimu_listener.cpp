@@ -5,7 +5,7 @@
 ImuPimuListener::ImuPimuListener()
 : Node("integrator_node")
 {
-    sub_pimu_= this->create_subscription<icarus_arm_control::msg::PIMU>("pimu", 1, std::bind(&ImuPimuListener::pimu_callback, this, std::placeholders::_1));
+    sub_pimu_= this->create_subscription<inertial_sense_ros2::msg::PIMU>("pimu", 1, std::bind(&ImuPimuListener::pimu_callback, this, std::placeholders::_1));
     sub_imu_ = this->create_subscription<sensor_msgs::msg::Imu>("imu", 1, std::bind(&ImuPimuListener::imu_callback, this, std::placeholders::_1));
     
     pub_int_ = this->create_publisher<icarus_arm_control::msg::IntegratedAngles>("integrated_angles", 1);
@@ -27,7 +27,7 @@ void ImuPimuListener::imu_callback(const sensor_msgs::msg::Imu &imu)
     angular_velocity_z_ = imu.angular_velocity.z;
 }
 
-void ImuPimuListener::pimu_callback(const icarus_arm_control::msg::PIMU::SharedPtr pimu)
+void ImuPimuListener::pimu_callback(const inertial_sense_ros2::msg::PIMU::SharedPtr pimu)
 {
     imu_dt_ = pimu->dt;
 }

@@ -12,9 +12,9 @@
  void Controller::init()
  {
     sub_wheel_encoder_      = this->create_subscription<sensor_msgs::msg::JointState>("msg_wheel_encoder", 1, std::bind(&Controller::cbWheelEncoder, this, std::placeholders::_1));
-    sub_pimu_               = this->create_subscription<icarus_arm_control::msg::PIMU>("pimu", 1, std::bind(&Controller::cbPIMU, this, std::placeholders::_1));
+    sub_pimu_               = this->create_subscription<inertial_sense_ros2::msg::PIMU>("pimu", 1, std::bind(&Controller::cbPIMU, this, std::placeholders::_1));
     sub_imu_                = this->create_subscription<sensor_msgs::msg::Imu>("imu", 1, std::bind(&Controller::cbIMU, this, std::placeholders::_1));
-    sub_ins_                = this->create_subscription<icarus_arm_control::msg::DIDINS1>("ins_eul_uvw_ned", 1, std::bind(&Controller::cbINS, this, std::placeholders::_1));
+    sub_ins_                = this->create_subscription<inertial_sense_ros2::msg::DIDINS1>("ins_eul_uvw_ned", 1, std::bind(&Controller::cbINS, this, std::placeholders::_1));
 
     sub_motor_cntr_stat_    = this->create_subscription<odrive_can::msg::ControllerStatus>("controller_status", 1, std::bind(&Controller::cbCtrlStatus, this, std::placeholders::_1));
     sub_odrv_stat_     = this->create_subscription<odrive_can::msg::ODriveStatus>("odrive_status", 1, std::bind(&Controller::cbODrvStatus, this, std::placeholders::_1));
@@ -330,7 +330,7 @@ void Controller::cbWheelEncoder(const sensor_msgs::msg::JointState &msg)
         std::cout << "Rx wheel encoder : " << std::fixed << std::setw(11) << std::setprecision(6) << msg.header.stamp.sec << std::endl;
 }
 
-void Controller::cbPIMU(const icarus_arm_control::msg::PIMU::SharedPtr pimu)
+void Controller::cbPIMU(const inertial_sense_ros2::msg::PIMU::SharedPtr pimu)
 {
   quiet = true;
     if (!quiet)
@@ -373,7 +373,7 @@ void Controller::cbIMU(const  sensor_msgs::msg::Imu &imu)
     linear_acceleration_S_z = imu.linear_acceleration.z;
 }
 
-void Controller::cbINS(const  icarus_arm_control::msg::DIDINS1::SharedPtr did_ins1)
+void Controller::cbINS(const  inertial_sense_ros2::msg::DIDINS1::SharedPtr did_ins1)
 {
     // Store angular velocity values into class members
     theta_ins = did_ins1->theta[0];

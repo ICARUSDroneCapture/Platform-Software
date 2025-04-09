@@ -29,13 +29,13 @@ public:
               <<  std::endl;
         
         // Motor subscriptions
-        sub_motor_cntr_stat_    = this->create_subscription<icarus_arm_control::msg::ControllerStatus>("controller_status", 1, std::bind(&LoggerNode::cbCtrlStatusData, this, std::placeholders::_1));
-        sub_motor_cntr_msg_     = this->create_subscription<icarus_arm_control::msg::ControlMessage>("control_message", 1, std::bind(&LoggerNode::cbCtrlMessageData, this, std::placeholders::_1));
+        sub_motor_cntr_stat_    = this->create_subscription<odrive_can::msg::ControllerStatus>("controller_status", 1, std::bind(&LoggerNode::cbCtrlStatusData, this, std::placeholders::_1));
+        sub_motor_cntr_msg_     = this->create_subscription<odrive_can::msg::ControlMessage>("control_message", 1, std::bind(&LoggerNode::cbCtrlMessageData, this, std::placeholders::_1));
 
         // IMU subscriptions
-        sub_pimu_               = this->create_subscription<icarus_arm_control::msg::PIMU>("pimu", 1, std::bind(&LoggerNode::cbPIMUData, this, std::placeholders::_1));
+        sub_pimu_               = this->create_subscription<inertial_sense_ros2::msg::PIMU>("pimu", 1, std::bind(&LoggerNode::cbPIMUData, this, std::placeholders::_1));
         sub_imu_                = this->create_subscription<sensor_msgs::msg::Imu>("imu", 1, std::bind(&LoggerNode::cbIMUData, this, std::placeholders::_1));
-        sub_ins_                = this->create_subscription<icarus_arm_control::msg::DIDINS1>("ins_eul_uvw_ned", 1, std::bind(&LoggerNode::cbINSData, this, std::placeholders::_1));
+        sub_ins_                = this->create_subscription<inertial_sense_ros2::msg::DIDINS1>("ins_eul_uvw_ned", 1, std::bind(&LoggerNode::cbINSData, this, std::placeholders::_1));
     }
 
     ~LoggerNode()
@@ -59,9 +59,9 @@ public:
               << std::endl;
     }
 
-    icarus_arm_control::msg::ControlMessage msg_ctrl;
+    odrive_can::msg::ControlMessage msg_ctrl;
 
-    void cbCtrlStatusData(const icarus_arm_control::msg::ControllerStatus::SharedPtr ctrl_stat)
+    void cbCtrlStatusData(const odrive_can::msg::ControllerStatus::SharedPtr ctrl_stat)
     {
         encoder_position = ctrl_stat->pos_estimate;
         encoder_velocity = ctrl_stat->vel_estimate;
@@ -69,12 +69,12 @@ public:
         encoder_torque_target = ctrl_stat->torque_target;
     }
 
-    void cbCtrlMessageData(const icarus_arm_control::msg::ControlMessage::SharedPtr msg_ctrl)
+    void cbCtrlMessageData(const odrive_can::msg::ControlMessage::SharedPtr msg_ctrl)
     {
         commanded_torque = msg_ctrl->input_torque;
     }
 
-    void cbPIMUData(const icarus_arm_control::msg::PIMU::SharedPtr pimu)
+    void cbPIMUData(const inertial_sense_ros2::msg::PIMU::SharedPtr pimu)
     {
         dt = pimu->dt;
 
@@ -103,19 +103,19 @@ public:
         lin_accel_z = imu.linear_acceleration.z;
     }
 
-    void cbINSData(const icarus_arm_control::msg::DIDINS1::SharedPtr did_ins1)
+    void cbINSData(const inertial_sense_ros2::msg::DIDINS1::SharedPtr did_ins1)
     {
         theta_ins = did_ins1->theta[0];
         phi_ins = did_ins1->theta[1];
         psi_ins = did_ins1->theta[2];
     }
 
-    rclcpp::Subscription<icarus_arm_control::msg::PIMU>::SharedPtr sub_pimu_;
+    rclcpp::Subscription<inertial_sense_ros2::msg::PIMU>::SharedPtr sub_pimu_;
     rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr sub_imu_;
-    rclcpp::Subscription<icarus_arm_control::msg::DIDINS1>::SharedPtr sub_ins_;
+    rclcpp::Subscription<inertial_sense_ros2::msg::DIDINS1>::SharedPtr sub_ins_;
 
-    rclcpp::Subscription<icarus_arm_control::msg::ControlMessage>::SharedPtr sub_motor_cntr_msg_;
-    rclcpp::Subscription<icarus_arm_control::msg::ControllerStatus>::SharedPtr sub_motor_cntr_stat_;
+    rclcpp::Subscription<odrive_can::msg::ControlMessage>::SharedPtr sub_motor_cntr_msg_;
+    rclcpp::Subscription<odrive_can::msg::ControllerStatus>::SharedPtr sub_motor_cntr_stat_;
 
     std::ofstream file_;
 

@@ -16,12 +16,12 @@
     sub_imu_                = this->create_subscription<sensor_msgs::msg::Imu>("imu", 1, std::bind(&Controller::cbIMU, this, std::placeholders::_1));
     sub_ins_                = this->create_subscription<icarus_arm_control::msg::DIDINS1>("ins_eul_uvw_ned", 1, std::bind(&Controller::cbINS, this, std::placeholders::_1));
 
-    sub_motor_cntr_stat_    = this->create_subscription<icarus_arm_control::msg::ControllerStatus>("controller_status", 1, std::bind(&Controller::cbCtrlStatus, this, std::placeholders::_1));
-    sub_odrv_stat_     = this->create_subscription<icarus_arm_control::msg::ODriveStatus>("odrive_status", 1, std::bind(&Controller::cbODrvStatus, this, std::placeholders::_1));
+    sub_motor_cntr_stat_    = this->create_subscription<odrive_can::msg::ControllerStatus>("controller_status", 1, std::bind(&Controller::cbCtrlStatus, this, std::placeholders::_1));
+    sub_odrv_stat_     = this->create_subscription<odrive_can::msg::ODriveStatus>("odrive_status", 1, std::bind(&Controller::cbODrvStatus, this, std::placeholders::_1));
 
     msg_ctrl.control_mode = 1;
     msg_ctrl.input_mode = 1;
-    pub_motor_cntr_msg_     = this->create_publisher<icarus_arm_control::msg::ControlMessage>("control_message", 1);
+    pub_motor_cntr_msg_     = this->create_publisher<odrive_can::msg::ControlMessage>("control_message", 1);
     pub_imu_ins_            = this->create_publisher<icarus_arm_control::msg::PublishData>("publish_data", 1);
 
     
@@ -43,9 +43,10 @@ void Controller::step()
   
   // Perform 1DOF control law
 
-  iter_val = iter_val + 0.01;
-  control_testing(iter_val);
-  // control_1dof();
+  // iter_val = iter_val + 0.01;
+  // control_testing(iter_val);
+
+  control_1dof();
 
   //Print
    // print_data();
@@ -259,32 +260,30 @@ void Controller::control_1dof()
   double bar_length = 0.639; // bar length, meters
   double bar_mass = 0.39; // bar mass, kg
 
-  // Implement proportion of gains for inertial stabilizing vs relative positional control
+  // // Implement proportion of gains for inertial stabilizing vs relative positional control
   
   // // measured position of imu from where torque is being applied
   // pm = bar_length; 
 
   // desired_location = 0.0; // DESIRED_DISTANCE is normally 0.5 m for 3D, here we want norm around 0 change in Z
 
-  // angle  = encoder_position / (2*M_PI);
-
-  // z_dev = pm * sin(angle); // Change in z-position
+  // z_dev = pm * sin(phi_rg); // Change in z-position
 
   // pr_err = z_dev - desired_location;
 
   f_i = -ka*a_z_g_corrected;
 
-  control_torque = (bar_length * f_i) / 50;
+  control_torque = (bar_length * f_i) / 2 / GEAR_RATIO;
 
   quiet = false;
   if (!quiet) {
     RCLCPP_INFO(rclcpp::get_logger("data"),"\t\t----------------------------------\n");
     
-    // RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tEncoder Position: %f\n", encoder_position);
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tEncoder Position: %f\n", encoder_position);
     
-    // RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tZ Axis Deviation: %f\n", z_dev);
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tZ Axis Deviation: %f\n", z_dev);
     
-    // RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tCorrective Distance: %f\n", pr_err);
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tCorrective Distance: %f\n", pr_err);
 
     RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tNecessary Applied Force: %f\n", f_i);
 
@@ -382,13 +381,13 @@ void Controller::cbINS(const  icarus_arm_control::msg::DIDINS1::SharedPtr did_in
     psi_ins = did_ins1->theta[2];
 }
    
-void Controller::cbCtrlStatus(const  icarus_arm_control::msg::ControllerStatus::SharedPtr ctrl_stat_)
+void Controller::cbCtrlStatus(const  odrive_can::msg::ControllerStatus::SharedPtr ctrl_stat_)
 {
     encoder_position = ctrl_stat_->pos_estimate;
     encoder_velocity = ctrl_stat_->vel_estimate;
 }
 
-void Controller::cbODrvStatus(const  icarus_arm_control::msg::ODriveStatus::SharedPtr odrv_stat_)
+void Controller::cbODrvStatus(const  odrive_can::msg::ODriveStatus::SharedPtr odrv_stat_)
 {
     motor_temperature = odrv_stat_->motor_temperature;
 }

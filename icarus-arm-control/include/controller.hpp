@@ -16,6 +16,8 @@
 
 #define GRAVITY 9.81
 
+#define GEAR_RATIO 50
+
 #include <stdio.h>
 #include <iostream>
 #include <algorithm>
@@ -68,12 +70,12 @@
 
 #include <std_srvs/srv/empty.hpp>
 
-#include "icarus_arm_control/msg/o_drive_status.hpp"
-#include "icarus_arm_control/msg/controller_status.hpp"
-#include "icarus_arm_control/msg/control_message.hpp"
-#include "icarus_arm_control/srv/axis_state.hpp"
+#include "odrive_can/msg/o_drive_status.hpp"
+#include "odrive_can/msg/controller_status.hpp"
+#include "odrive_can/msg/control_message.hpp"
+#include "odrive_can/srv/axis_state.hpp"
 
-#include "icarus_arm_control/msg/publish_data.hpp"
+#include "odrive_can/msg/publish_data.hpp"
 
 #include "ISUtilities.h"
 
@@ -121,8 +123,8 @@
     void cbWheelEncoder(const sensor_msgs::msg::JointState &msg);
     void cbPIMU(const icarus_arm_control::msg::PIMU::SharedPtr pimu);
     void cbIMU(const sensor_msgs::msg::Imu &imu);
-    void cbCtrlStatus(const  icarus_arm_control::msg::ControllerStatus::SharedPtr ctrl_stat_);
-    void cbODrvStatus(const  icarus_arm_control::msg::ODriveStatus::SharedPtr odrv_stat_);
+    void cbCtrlStatus(const  odrive_can::msg::ControllerStatus::SharedPtr ctrl_stat_);
+    void cbODrvStatus(const  odrive_can::msg::ODriveStatus::SharedPtr odrv_stat_);
     void SendControlMessage(double control_torque);
     void publish_imu();
 
@@ -268,7 +270,7 @@
     double ki = 0;  // Integral [N/ms]
     
     // Inertial Stabilization Control
-    double ka =  3.4;  // Acceleration Control [kg]
+    double ka =  30;  // Acceleration Control [kg]
     double kv = 12;  // Velocity Control [kg/s]
     double ks = 0;  // Position Control [kg*s^-2]
 

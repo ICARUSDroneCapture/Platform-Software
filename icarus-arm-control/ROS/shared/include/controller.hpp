@@ -15,6 +15,7 @@
 #define EULER_INTEGRATION
 
 #define GRAVITY 9.81
+#define GEAR_RATIO 50
 
 #include <stdio.h>
 #include <iostream>
@@ -285,7 +286,7 @@
     double ki = 0;  // Integral [N/ms]
     
     // Inertial Stabilization Control
-    double ka =  3.4;  // Acceleration Control [kg]
+    double ka =  9;  // Acceleration Control [kg] // no motion at 6, too much at 15
     double kv = 12;  // Velocity Control [kg/s]
     double ks = 0;  // Position Control [kg*s^-2]
 

@@ -62,8 +62,6 @@
         isROS.update();
 	    rclcpp::spin_some(controller_node);
 
-        controller_node->step();
-
         if (controller_node->did_rx_pimu_) {
             success = true;
             break;
@@ -106,7 +104,7 @@
         controller_node->step();
 
         // periodic print, add update function
-        SLEEP_MS(500);
+        SLEEP_MS(100);
         if (prevTimeMs / 1000 != nowTimeMs / 1000) {
             if (!controller_node->plot_quiet) {
                 controller_node->plot(controller_node->nodeStartTime);

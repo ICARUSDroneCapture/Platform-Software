@@ -22,6 +22,8 @@
   <depend>std_srvs</depend>
   <depend>std_msgs</depend>
   <depend>sensor_msgs</depend>
+  <depend>inertial_sense_ros2</depend>
+  <depend>odrive_can</depend>
   <depend>geometry_msgs</depend>
   <depend>tf2</depend>
   <depend>diagnostic_msgs</depend>

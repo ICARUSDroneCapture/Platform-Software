@@ -33,9 +33,18 @@ add_custom_command(OUTPUT ${RESOLVED_ROS_DIR}/../../build/libInertialSenseSDK.a
 
 add_custom_target(build_InertialSenseSDK DEPENDS ${RESOLVED_ROS_DIR}/../../build/libInertialSenseSDK.a)
 
+# Resolve the absolute path
+get_filename_component(LIB_PATH "${RESOLVED_ROS_DIR}/../../build/libInertialSenseSDK.a" ABSOLUTE)
+message(STATUS "Absolute InertialSenseSDK library path: ${LIB_PATH}")
+
 add_library(InertialSenseSDK STATIC IMPORTED GLOBAL)
 add_dependencies(InertialSenseSDK build_InertialSenseSDK)
-set_target_properties(InertialSenseSDK PROPERTIES IMPORTED_LOCATION ${RESOLVED_ROS_DIR}/../../build/libInertialSenseSDK.a)
+set_target_properties(InertialSenseSDK PROPERTIES 
+  IMPORTED_LOCATION "${LIB_PATH}"
+  IMPORTED_LOCATION_DEBUG "${LIB_PATH}"
+  IMPORTED_LOCATION_RELEASE "${LIB_PATH}"
+  INTERFACE_LINK_LIBRARIES "${LIB_PATH}"
+)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
     "msg/GTime.msg"
@@ -57,8 +66,8 @@ rosidl_generate_interfaces(${PROJECT_NAME}
     "srv/RefLLAUpdate.srv"
     DEPENDENCIES std_msgs geometry_msgs diagnostic_msgs builtin_interfaces
 )
-ament_export_include_directories(shared/include)
-ament_export_libraries(inertial_sense_ros2)
+ament_export_include_directories(${CMAKE_CURRENT_SOURCE_DIR}/shared/include)
+ament_export_libraries(InertialSenseSDK)
 ament_export_dependencies(rclcpp sensor_msgs geometry_msgs std_msgs diagnostic_msgs)
 
 # We don't need the example projects

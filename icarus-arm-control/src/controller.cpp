@@ -59,42 +59,42 @@ void Controller::step()
 
 void Controller::plot(double startTime)
 {
-  double currTime = static_cast<double>( current_timeMs() ) - startTime;
-  plot_ts.push_back(currTime / 1000.0);
+  // double currTime = static_cast<double>( current_timeMs() ) - startTime;
+  // plot_ts.push_back(currTime / 1000.0);
 
-  plot_a_x.push_back(linear_acceleration_S_x);
-  plot_a_y.push_back(linear_acceleration_S_y);
-  plot_a_z.push_back(linear_acceleration_S_z);
+  // plot_a_x.push_back(linear_acceleration_S_x);
+  // plot_a_y.push_back(linear_acceleration_S_y);
+  // plot_a_z.push_back(linear_acceleration_S_z);
 
-  plot_ts.erase(plot_ts.begin());
+  // plot_ts.erase(plot_ts.begin());
 
-  plot_a_x.erase(plot_a_x.begin());
-  plot_a_y.erase(plot_a_y.begin());
-  plot_a_z.erase(plot_a_z.begin());
+  // plot_a_x.erase(plot_a_x.begin());
+  // plot_a_y.erase(plot_a_y.begin());
+  // plot_a_z.erase(plot_a_z.begin());
 
-  auto ax1 = matplot::nexttile();
-  auto ax2 = matplot::nexttile();
-  auto ax3 = matplot::nexttile();
+  // auto ax1 = matplot::nexttile();
+  // auto ax2 = matplot::nexttile();
+  // auto ax3 = matplot::nexttile();
 
-  auto l1 = matplot::scatter(ax1, plot_ts, plot_a_x);  
-  auto l2 = matplot::scatter(ax2, plot_ts, plot_a_y);
-  auto l3 = matplot::scatter(ax3, plot_ts, plot_a_z);
+  // auto l1 = matplot::scatter(ax1, plot_ts, plot_a_x);  
+  // auto l2 = matplot::scatter(ax2, plot_ts, plot_a_y);
+  // auto l3 = matplot::scatter(ax3, plot_ts, plot_a_z);
 
-  xlim(ax1, {0, 180});
-  xlim(ax2, {0, 180});
-  xlim(ax3, {0, 180});
+  // xlim(ax1, {0, 180});
+  // xlim(ax2, {0, 180});
+  // xlim(ax3, {0, 180});
 
-  ylim(ax1, {-2, 2});
-  ylim(ax2, {-2, 2});
-  ylim(ax3, {-12, -8});
+  // ylim(ax1, {-2, 2});
+  // ylim(ax2, {-2, 2});
+  // ylim(ax3, {-12, -8});
 
-  l1->marker_face(true);
-  l2->marker_face(true);
-  l3->marker_face(true);
+  // l1->marker_face(true);
+  // l2->marker_face(true);
+  // l3->marker_face(true);
 
-  matplot::hold({ax1, ax2, ax3}, matplot::on);
+  // matplot::hold({ax1, ax2, ax3}, matplot::on);
 
-  matplot::show();
+  // matplot::show();
   
 }
 

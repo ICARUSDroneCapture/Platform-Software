@@ -259,22 +259,27 @@ void Controller::control_1dof()
   double bar_length = 0.639; // bar length, meters
   double bar_mass = 0.39; // bar mass, kg
 
-  // // Implement proportion of gains for inertial stabilizing vs relative positional control
+  // Implement proportion of gains for inertial stabilizing vs relative positional control
   
-  // // measured position of imu from where torque is being applied
-  // pm = bar_length; 
+  // measured position of imu from where torque is being applied
+  pm = bar_length; 
 
-  // desired_location = 0.0; // DESIRED_DISTANCE is normally 0.5 m for 3D, here we want norm around 0 change in Z
+  desired_angle = 45; // degrees
+  desired_pos = pm * sin(desired_angle / 180 * M_PI); // DESIRED_DISTANCE is normally 0.5 m for 3D, here we want norm around 0 change in Z
 
-  // z_dev = pm * sin(phi_rg); // Change in z-position
+  z_dev = pm * sin(encoder_angle); // Change in z-position
 
-  // pr_err = z_dev - desired_location;
+  pr_err = z_dev - desired_pos;
 
   f_i = -ka*a_z_g_corrected;
 
-  // f_pr = -(kp*pr_err + ki*pr_err_accum + kd*)
+  // f_pr = -(kp*pr_err + ki*pr_err_accum + kd*encoder_velocity);
+  f_pr = -(kp*pr_err);
 
-  control_torque = (bar_length * f_i) / 2 / GEAR_RATIO;
+  // control_force = f_i + f_pr;
+  control_force = f_pr;
+
+  control_torque = (bar_length * control_force) / 2 / GEAR_RATIO;
 
   quiet = false;
   if (!quiet) {

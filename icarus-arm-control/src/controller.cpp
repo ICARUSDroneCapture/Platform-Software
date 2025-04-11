@@ -260,30 +260,51 @@ void Controller::control_1dof()
   double bar_length = 0.639; // bar length, meters
   double bar_mass = 0.39; // bar mass, kg
 
-  // // Implement proportion of gains for inertial stabilizing vs relative positional control
+  // Account for gearbox
+  scaled_position = encoder_position / 50;
+
+  // Implement proportion of gains for inertial stabilizing vs relative positional control
   
-  // // measured position of imu from where torque is being applied
-  // pm = bar_length; 
+  // measured position of imu from where torque is being applied
+  pm = bar_length; 
 
-  // desired_location = 0.0; // DESIRED_DISTANCE is normally 0.5 m for 3D, here we want norm around 0 change in Z
+  // desired_pos = pm * sin(desired_angle); // DESIRED_DISTANCE is normally 0.5 m for 3D, here we want norm around 0 change in Z
 
-  // z_dev = pm * sin(phi_rg); // Change in z-position
+  // z_dev = pm * sin(scaled_position); // Change in z-position
 
-  // pr_err = z_dev - desired_location;
+  pr_err = scaled_position * 2*M_PI - desired_angle;
 
   f_i = -ka*a_z_g_corrected;
 
-  control_torque = (bar_length * f_i) / 2 / GEAR_RATIO;
+  // f_pr = -(kp*pr_err + ki*pr_err_accum + kd*encoder_velocity);
+  f_pr = -(kp*pr_err);
+
+  
+
+  // control_force = f_i + f_pr;
+  control_force = f_pr;
+
+  control_torque = (bar_length * control_force) / 2 / GEAR_RATIO;
+
+  // Sticktion force
+  torque_stick = 0.08;
+  torque_comp = torque_stick * control_torque / abs(control_torque);
+
+  control_torque = control_torque + torque_comp;
 
   quiet = false;
   if (!quiet) {
     RCLCPP_INFO(rclcpp::get_logger("data"),"\t\t----------------------------------\n");
     
-    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tEncoder Position: %f\n", encoder_position);
-    
-    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tZ Axis Deviation: %f\n", z_dev);
-    
-    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tCorrective Distance: %f\n", pr_err);
+    // RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tDesired Angle: %f (degrees) \n", (desired_angle / M_PI * 180));
+
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tRaw Encoder Reading: %f (revs) \n", encoder_position);
+
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tScaled Angle: %f (degrees) \n", (scaled_position * 360));
+
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tPosition Error Correction: %f (degrees) \n", (pr_err / M_PI * 180));
+
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tEncoder Angle: %f (degrees) \n", (encoder_position / 50 * 360));
 
     RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tNecessary Applied Force: %f\n", f_i);
 

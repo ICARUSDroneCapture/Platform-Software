@@ -265,16 +265,22 @@
     // ----------------------------- 1DOF Control Law Related Parameters -----------------------------
 
     // Relative Position Control
-    double kp = 1.2;  // Proportional [N/m]
+    double kp = 90;  // Proportional [N/m]
     double kd = 0.4;  // Derivative [Ns/m]    
     double ki = 0;  // Integral [N/ms]
     
     // Inertial Stabilization Control
-    double ka =  30;  // Acceleration Control [kg]
+    double ka =  1.2;  // Acceleration Control [kg]
     double kv = 12;  // Velocity Control [kg/s]
     double ks = 0;  // Position Control [kg*s^-2]
 
-    double pm, desired_change, angle, z_dev, pr_err, f_i, control_torque;
+    // static const double desired_angle = 45 / 180 * M_PI; // radians
+
+    double desired_angle = -45.0 / 180 * M_PI;
+
+    double pm, scaled_position, desired_pos, z_dev, pr_err, f_i, f_pr, control_force, control_torque;
+
+    double torque_stick, torque_comp;
  
 private:
 

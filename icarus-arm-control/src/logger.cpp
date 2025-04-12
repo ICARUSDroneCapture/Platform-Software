@@ -23,8 +23,8 @@ public:
             return;
         }
 
-        file_ << "timestamp,motor_commanded_torque,motor_encoder_torque,motor_encoder_torque_target,motor_encoder_angle,motor_encoder_velocity"
-              << "imu_dt,imu_dthetax,imu_dthetay,imu_dthetaz,imu_dvelx,imu_dvely,imu_dvelz,imu_ang_velx,imu_ang_vely,imu_ang_velz,imu_lin_accelx,imu_lin_accely,imu_lin_accelz"
+        file_ << "timestamp,motor_commanded_torque,motor_encoder_torque,motor_encoder_torque_target,motor_encoder_angle,motor_encoder_velocity,"
+              << "imu_dt,imu_dthetax,imu_dthetay,imu_dthetaz,imu_dvelx,imu_dvely,imu_dvelz,imu_ang_velx,imu_ang_vely,imu_ang_velz,imu_lin_accelx,imu_lin_accely,imu_lin_accelz,"
               << "ins_theta,ins_phi,ins_psi"
               <<  std::endl;
         

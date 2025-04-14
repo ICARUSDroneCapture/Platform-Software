@@ -76,11 +76,18 @@ add_executable(integrator_node src/imu_pimu_listener.cpp)
 ament_target_dependencies(integrator_node rclcpp sensor_msgs inertial_sense_ros2 odrive_can geometry_msgs nav_msgs diagnostic_msgs std_srvs)
 target_link_libraries(integrator_node "${cpp_typesupport_target}" Matplot++::matplot ${INERTIAL_LIB_PATH} ${YAML_CPP_LIBRARIES} pthread)
 
+#Gain input node
+add_executable(gain_input_node src/gain_input.cpp)
+ament_target_dependencies(gain_input_node rclcpp std_msgs)
+target_link_libraries(gain_input_node "${cpp_typesupport_target}" Matplot++::matplot ${INERTIAL_LIB_PATH} ${YAML_CPP_LIBRARIES} pthread)
+
+
 # Install targets
 install(TARGETS
     controller_node
     logger_node
     integrator_node
+    gain_input_node
     DESTINATION lib/${PROJECT_NAME})
 
 ament_package()

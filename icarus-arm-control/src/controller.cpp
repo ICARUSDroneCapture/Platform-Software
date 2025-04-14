@@ -19,6 +19,8 @@
     sub_motor_cntr_stat_    = this->create_subscription<odrive_can::msg::ControllerStatus>("controller_status", 1, std::bind(&Controller::cbCtrlStatus, this, std::placeholders::_1));
     sub_odrv_stat_     = this->create_subscription<odrive_can::msg::ODriveStatus>("odrive_status", 1, std::bind(&Controller::cbODrvStatus, this, std::placeholders::_1));
 
+    sub_gain_ = this->create_subscription<std_msgs::msg::Float64MultiArray>("gain_topic", 10,std::bind(&Controller::cbGain, this, std::placeholders::_1));
+
     msg_ctrl.control_mode = 1;
     msg_ctrl.input_mode = 1;
     pub_motor_cntr_msg_     = this->create_publisher<odrive_can::msg::ControlMessage>("control_message", 1);
@@ -411,6 +413,25 @@ void Controller::cbCtrlStatus(const  odrive_can::msg::ControllerStatus::SharedPt
 void Controller::cbODrvStatus(const  odrive_can::msg::ODriveStatus::SharedPtr odrv_stat_)
 {
     motor_temperature = odrv_stat_->motor_temperature;
+}
+
+void Controller::cbGain(const std_msgs::msg::Float64MultiArray::SharedPtr msg)
+{
+    if (msg->data.size() >= 6) {
+        // Update the dynamic gains
+        kp = msg->data[0];
+        ka = msg->data[1];
+        ki = msg->data[2];
+        kd = msg->data[3];
+        kv = msg->data[4];
+        ks = msg->data[5];
+
+        RCLCPP_INFO(this->get_logger(),
+                    "Dynamic Gains updated: kp = %f, ka = %f, ki = %f, kd = %f, kv = %f, ks = %f",
+                    kp, ka, ki, kd, kv, ks);
+    } else {
+        RCLCPP_WARN(this->get_logger(), "Received gain message with insufficient elements.");
+    }
 }
 
 void Controller::SendControlMessage(double control_torque)

@@ -22,49 +22,65 @@ public:
     this->declare_parameter<double>("ki", ki_);
 
     this->declare_parameter<double>("ka", ka_);
-    // this->declare_parameter<double>("kv", kv_);
-    // this->declare_parameter<double>("ks", ks_);
+    this->declare_parameter<double>("kv", kv_);
+    this->declare_parameter<double>("ks", ks_);
 
     // Set a parameter callback so that whenever parameters change,
     // the internal variables are updated live.
-    auto param_callback = [this](const std::vector<rclcpp::Parameter>& params) -> rcl_interfaces::msg::SetParametersResult {
-      for (const auto & param : params) {
-        if (param.get_name() == "kp") {
-          kp_ = param.as_double();
-        } else if (param.get_name() == "kd") {
-          kd_ = param.as_double();
-        } else if (param.get_name() == "ki") {
-          ki_ = param.as_double();
-        } else if (param.get_name() == "ka") {
-          ka_ = param.as_double();
-        } else if (param.get_name() == "kv") {
-          kv_ = param.as_double();
-        } else if (param.get_name() == "ks") {
-          ks_ = param.as_double();
-        }
+    auto param_callback = [this](const std::vector<rclcpp::Parameter>& params)
+    -> rcl_interfaces::msg::SetParametersResult {
+    for (const auto & param : params) {
+      if (param.get_name() == "kp") {
+        kp_ = param.as_double();
+        RCLCPP_INFO(this->get_logger(), "Updated kp to: %f", kp_);
+      } else if (param.get_name() == "kd") {
+        kd_ = param.as_double();
+        RCLCPP_INFO(this->get_logger(), "Updated kd to: %f", kd_);
+      } else if (param.get_name() == "ki") {
+        ki_ = param.as_double();
+        RCLCPP_INFO(this->get_logger(), "Updated ki to: %f", ki_);
+      } else if (param.get_name() == "ka") {
+        ka_ = param.as_double();
+        RCLCPP_INFO(this->get_logger(), "Updated ka to: %f", ka_);
+      } else if (param.get_name() == "kv") {
+        kv_ = param.as_double();
+        RCLCPP_INFO(this->get_logger(), "Updated kv to: %f", kv_);
+      } else if (param.get_name() == "ks") {
+        ks_ = param.as_double();
+        RCLCPP_INFO(this->get_logger(), "Updated ks to: %f", ks_);
       }
-      rcl_interfaces::msg::SetParametersResult result;
-      result.successful = true;
-      result.reason = "Gains updated successfully";
-      return result;
-    };
-    this->set_on_parameters_set_callback(param_callback);
+    }
+    rcl_interfaces::msg::SetParametersResult result;
+    result.successful = true;
+    result.reason = "Gains updated successfully";
+    return result;
+  };
+  
+    this->add_on_set_parameters_callback(param_callback);
 
     // Create a publisher to send the current gains
     gain_pub_ = this->create_publisher<std_msgs::msg::Float64MultiArray>("gain_topic", 10);
 
-    // Timer to publish gains (here set to 10 Hz)
     timer_ = this->create_wall_timer(100ms, [this]() {
+        // Optionally refresh the parameters
+    this->get_parameter("kp", kp_);
+    this->get_parameter("ka", ka_);
+    this->get_parameter("ki", ki_);
+    this->get_parameter("kd", kd_);
+    this->get_parameter("kv", kv_);
+    this->get_parameter("ks", ks_);
+
       std_msgs::msg::Float64MultiArray msg;
-      // Order: kp, ka, ki, kd
-      msg.data = {kp_, ka_, ki_, kd_};
+      // Order: kp, ka, ki, kd, kv, ks
+      msg.data = { kp_, ka_, ki_, kd_, kv_, ks_ };
       gain_pub_->publish(msg);
     });
+    
   }
 
 private:
   // Internal storage for gains
-  double kp_, ka_;
+  double kp_,ka_,ki_,kd_,kv_,ks_;
 
   // Publisher and timer for publishing the gains
   rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr gain_pub_;

@@ -227,7 +227,7 @@ void Controller::integrate()
   
 }
 
-void Controller::remove_gravity()
+void Controller::rotate_S_I()
 {
 
   bool using_ins = true;
@@ -247,9 +247,16 @@ void Controller::remove_gravity()
 
   }
 
-  a_x_g_corrected = linear_acceleration_S_x - cos(theta_rg) * sin(phi_rg) * GRAVITY;
-  a_y_g_corrected = linear_acceleration_S_y + sin(theta_rg) * GRAVITY;
-  a_z_g_corrected = linear_acceleration_S_z + cos(theta_rg) * cos(phi_rg) * GRAVITY;
+  a_x_g_corrected = linear_acceleration_S_x * (cos(theta_rg)*cos(psi_rg) + sin(theta_rg)*sin(psi_rg)*sin(phi_rg))
+                    + linear_acceleration_S_y * (sin(psi_rg)*-cos(phi_rg))
+                    + linear_acceleration_S_z * (cos(theta_rg)*sin(psi_rg)*sin(phi_rg) - sin(theta_rg)*cos(psi_rg));
+  a_y_g_corrected = linear_acceleration_S_x * (cos(theta_rg)*sin(psi_rg) - sin(theta_rg)*cos(psi_rg)*sin(phi_rg))
+                    + linear_acceleration_S_y * (cos(psi_rg)*cos(phi_rg))
+                    + linear_acceleration_S_z * (-sin(theta_rg)*sin(psi_rg) - cos(theta_rg)*cos(psi_rg)*sin(phi_rg));
+  a_z_g_corrected = linear_acceleration_S_x * (sin(theta_rg)*cos(phi_rg))
+                    + linear_acceleration_S_y * (sin(phi_rg)) 
+                    + linear_acceleration_S_z * (cos(theta_rg)*cos(phi_rg)) 
+                    + GRAVITY;
 
   publish_data.accel_g_corr = {a_x_g_corrected, a_y_g_corrected, a_z_g_corrected};
 

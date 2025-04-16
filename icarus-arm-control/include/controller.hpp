@@ -114,7 +114,7 @@
      void imu_error_correction();
      void integrate();
      void print_data();
-     void remove_gravity();
+     void rotate_S_I();
      void control_testing(double iter_val);
      void control_1dof();
      void control_3dof();
@@ -271,8 +271,8 @@
      double ki = 0;   // Integral [N/ms]
      
      // Inertial Stabilization Control
-     double ka = 1.2; // Acceleration Control [kg]
-     double kv = 12;  // Velocity Control [kg/s]
+     double ka = 0; // Acceleration Control [kg]
+     double kv = 0;  // Velocity Control [kg/s]
      double ks = 0;   // Position Control [kg*s^-2]
  
      double desired_angle = -45.0 / 180 * M_PI;

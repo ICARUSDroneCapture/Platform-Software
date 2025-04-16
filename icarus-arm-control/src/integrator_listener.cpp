@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
     rclcpp::init(argc, argv);
     auto node = std::make_shared<ImuPimuListener>();
 
-    rclcpp::Rate loop_rate(10); // 10 Hz
+    rclcpp::Rate loop_rate(250); // 10 Hz
     while (rclcpp::ok()) {
         rclcpp::spin_some(node);
         node->step();

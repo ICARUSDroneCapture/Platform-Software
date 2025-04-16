@@ -72,7 +72,7 @@ ament_target_dependencies(logger_node rclcpp inertial_sense_ros2 odrive_can std_
 target_link_libraries(logger_node "${cpp_typesupport_target}" Matplot++::matplot ${INERTIAL_LIB_PATH} ${YAML_CPP_LIBRARIES} pthread)
 
 # Integrator node
-add_executable(integrator_node src/imu_pimu_listener.cpp)
+add_executable(integrator_node src/integrator_listener.cpp)
 ament_target_dependencies(integrator_node rclcpp sensor_msgs inertial_sense_ros2 odrive_can geometry_msgs nav_msgs diagnostic_msgs std_srvs)
 target_link_libraries(integrator_node "${cpp_typesupport_target}" Matplot++::matplot ${INERTIAL_LIB_PATH} ${YAML_CPP_LIBRARIES} pthread)
 

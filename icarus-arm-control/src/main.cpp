@@ -56,19 +56,19 @@
 
     controller_node->nodeStartTime = static_cast<double>( current_timeMs() );
     
-    int data_points = 5000;
-    int i = 0;
-    while (i <= data_points) {
+    // int data_points = 5000;
+    // int i = 0;
+    // while (i <= data_points) {
 
-        std::cout << "Calibrating... " << std::to_string(i) << "/" << std::to_string(data_points) << std::endl;
+    //     std::cout << "Calibrating... " << std::to_string(i) << "/" << std::to_string(data_points) << std::endl;
 
-        rclcpp::spin_some(controller_node);
-        controller_node->imu_configure(i);
-        i += 1;
-    }
+    //     rclcpp::spin_some(controller_node);
+    //     controller_node->imu_configure(i);
+    //     i += 1;
+    // }
 
-    rclcpp::spin_some(controller_node);
-    controller_node->bias_calibrate();
+    // rclcpp::spin_some(controller_node);
+    // controller_node->bias_calibrate();
     
 
     while (ok())

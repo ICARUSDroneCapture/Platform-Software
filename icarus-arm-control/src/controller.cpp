@@ -35,13 +35,13 @@ void Controller::step()
 
 
   // Correct for imu sensor errors
-  imu_error_correction();
+  //imu_error_correction();
 
   // Integrate IMU angular velocity
   //integrate();
 
   // Remove gravity from acceleration values
-  remove_gravity();
+  rotate_S_I();
   
   // Perform 1DOF control law
 
@@ -230,33 +230,72 @@ void Controller::integrate()
 void Controller::rotate_S_I()
 {
 
-  bool using_ins = true;
 
-  if (using_ins = false){
-  // angle is in radians (i think? check!!! the numbers were just smol)
-    theta_rg = integrated_theta;
-    phi_rg   = integrated_phi;
-    psi_rg   = integrated_psi;
- 
-  }
-  else {
 
     theta_rg = theta_ins;
     phi_rg   = phi_ins;
     psi_rg   = psi_ins;
 
-  }
 
-  a_x_g_corrected = linear_acceleration_S_x * (cos(theta_rg)*cos(psi_rg) + sin(theta_rg)*sin(psi_rg)*sin(phi_rg))
-                    + linear_acceleration_S_y * (sin(psi_rg)*-cos(phi_rg))
-                    + linear_acceleration_S_z * (cos(theta_rg)*sin(psi_rg)*sin(phi_rg) - sin(theta_rg)*cos(psi_rg));
-  a_y_g_corrected = linear_acceleration_S_x * (cos(theta_rg)*sin(psi_rg) - sin(theta_rg)*cos(psi_rg)*sin(phi_rg))
-                    + linear_acceleration_S_y * (cos(psi_rg)*cos(phi_rg))
-                    + linear_acceleration_S_z * (-sin(theta_rg)*sin(psi_rg) - cos(theta_rg)*cos(psi_rg)*sin(phi_rg));
-  a_z_g_corrected = linear_acceleration_S_x * (sin(theta_rg)*cos(phi_rg))
-                    + linear_acceleration_S_y * (sin(phi_rg)) 
-                    + linear_acceleration_S_z * (cos(theta_rg)*cos(phi_rg)) 
-                    + GRAVITY;
+  // a_x_g_corrected = linear_acceleration_S_x * (cos(theta_rg)*cos(psi_rg) + sin(theta_rg)*sin(psi_rg)*sin(phi_rg))
+  //                 + linear_acceleration_S_y * (sin(psi_rg)*-cos(phi_rg))
+  //                 + linear_acceleration_S_z * (cos(theta_rg)*sin(psi_rg)*sin(phi_rg) - sin(theta_rg)*cos(psi_rg));
+  //a_y_g_corrected = linear_acceleration_S_x * (cos(theta_rg)*sin(psi_rg) - sin(theta_rg)*cos(psi_rg)*sin(phi_rg))
+  //                 + linear_acceleration_S_y * (cos(psi_rg)*cos(phi_rg))
+  //                 + linear_acceleration_S_z * (-sin(theta_rg)*sin(psi_rg) - cos(theta_rg)*cos(psi_rg)*sin(phi_rg));
+  //a_z_g_corrected = linear_acceleration_S_x * (sin(theta_rg)*cos(phi_rg))
+  //                 + linear_acceleration_S_y * (sin(phi_rg)) 
+  //                 + linear_acceleration_S_z * (cos(theta_rg)*cos(phi_rg)) + GRAVITY;
+
+  // Standard 3-2-1 Euler Rotations
+
+  // Precompute sines and cosines
+  double cphi   = std::cos(phi_rg);
+  double sphi   = std::sin(phi_rg);
+  double ctheta = std::cos(theta_rg);
+  double stheta = std::sin(theta_rg);
+  double cpsi   = std::cos(psi_rg);
+  double spsi   = std::sin(psi_rg);
+
+  // ----------------------------------------------------------------
+  // Rotation Matrix R = Rz(psi) * Ry(theta) * Rx(phi)
+  // That is, apply heading first (about Z), pitch second (about Y),
+  // roll last (about X). This transforms sensor-frame vectors
+  // into the INS-output frame (Intermediate output frame).
+  // ----------------------------------------------------------------
+
+  // [Row 0]
+  double r00 =  cpsi * ctheta;
+  double r01 =  cpsi * stheta * sphi - spsi * cphi;
+  double r02 =  cpsi * stheta * cphi + spsi * sphi;
+
+  // [Row 1]
+  double r10 =  spsi * ctheta;
+  double r11 =  spsi * stheta * sphi + cpsi * cphi;
+  double r12 =  spsi * stheta * cphi - cpsi * sphi;
+
+  // [Row 2]
+  double r20 = -stheta;
+  double r21 =  ctheta * sphi;
+  double r22 =  ctheta * cphi;
+
+  // Multiply the rotation matrix by the sensor-frame acceleration
+  double ax_i = r00 * linear_acceleration_S_x
+              + r01 * linear_acceleration_S_y
+              + r02 * linear_acceleration_S_z;
+
+  double ay_i = r10 * linear_acceleration_S_x
+              + r11 * linear_acceleration_S_y
+              + r12 * linear_acceleration_S_z;
+
+  double az_i = r20 * linear_acceleration_S_x
+              + r21 * linear_acceleration_S_y
+              + r22 * linear_acceleration_S_z;
+
+  // Output
+  a_x_g_corrected = ax_i;
+  a_y_g_corrected = ay_i;
+  a_z_g_corrected = az_i + GRAVITY;
 
   publish_data.accel_g_corr = {a_x_g_corrected, a_y_g_corrected, a_z_g_corrected};
 
@@ -288,12 +327,11 @@ void Controller::control_1dof()
   // f_pr = -(kp*pr_err + ki*pr_err_accum + kd*encoder_velocity);
   f_pr = -(kp*pr_err);
 
-  
-
   // control_force = f_i + f_pr;
-  control_force = f_pr;
+  control_force = f_i;
+  // control_force = f_pr;
 
-  control_torque = (bar_length * control_force) / 2 / GEAR_RATIO;
+  control_torque = (bar_length * control_force) / GEAR_RATIO;
 
   // Sticktion force
   torque_stick = 0.08;
@@ -406,8 +444,8 @@ void Controller::cbIMU(const  sensor_msgs::msg::Imu &imu)
 void Controller::cbINS(const  inertial_sense_ros2::msg::DIDINS1::SharedPtr did_ins1)
 {
     // Store angular velocity values into class members
-    theta_ins = did_ins1->theta[0];
-    phi_ins = did_ins1->theta[1];
+    theta_ins = did_ins1->theta[1];
+    phi_ins = did_ins1->theta[0];
     psi_ins = did_ins1->theta[2];
 }
    
@@ -433,9 +471,9 @@ void Controller::cbGain(const std_msgs::msg::Float64MultiArray::SharedPtr msg)
         kv = msg->data[4];
         ks = msg->data[5];
 
-        RCLCPP_INFO(this->get_logger(),
-                    "Dynamic Gains updated: kp = %f, ka = %f, ki = %f, kd = %f, kv = %f, ks = %f",
-                    kp, ka, ki, kd, kv, ks);
+        // RCLCPP_INFO(this->get_logger(),
+        //             "Dynamic Gains updated: kp = %f, ka = %f, ki = %f, kd = %f, kv = %f, ks = %f",
+        //             kp, ka, ki, kd, kv, ks);
     } else {
         RCLCPP_WARN(this->get_logger(), "Received gain message with insufficient elements.");
     }

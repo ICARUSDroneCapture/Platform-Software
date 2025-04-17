@@ -19,6 +19,8 @@
     sub_motor_cntr_stat_    = this->create_subscription<odrive_can::msg::ControllerStatus>("controller_status", 1, std::bind(&Controller::cbCtrlStatus, this, std::placeholders::_1));
     sub_odrv_stat_     = this->create_subscription<odrive_can::msg::ODriveStatus>("odrive_status", 1, std::bind(&Controller::cbODrvStatus, this, std::placeholders::_1));
 
+    sub_int_ = this->create_subscription<icarus_arm_control::msg::IntegratedAngles>("integrated_angles", 1, std::bind(&Controller::cbInt, this, std::placeholders::_1));
+
     sub_gain_ = this->create_subscription<std_msgs::msg::Float64MultiArray>("gain_topic", 10,std::bind(&Controller::cbGain, this, std::placeholders::_1));
 
     msg_ctrl.control_mode = 1;
@@ -35,13 +37,15 @@ void Controller::step()
 
 
   // Correct for imu sensor errors
-  //imu_error_correction();
+  // imu_error_correction();
 
   // Integrate IMU angular velocity
   //integrate();
 
   // Remove gravity from acceleration values
   rotate_S_I();
+
+  integrate_encoder();
   
   // Perform 1DOF control law
 
@@ -51,7 +55,7 @@ void Controller::step()
   control_1dof();
 
   //Print
-   // print_data();
+ print_data();
 
 
 
@@ -122,6 +126,31 @@ void Controller::print_data(){
 
     RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tGravity Corrected: [%f; %f; %f]\n", a_x_g_corrected,a_y_g_corrected,a_z_g_corrected);
 
+  }
+
+  quiet = false;
+  if (!quiet) {
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\t----------------------------------\n");
+    
+    // RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tDesired Angle: %f (degrees) \n", (desired_angle / M_PI * 180));
+
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tRaw Encoder Reading: %f (revs) \n", encoder_position);
+
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tScaled Angle: %f (degrees) \n", (scaled_position * 360));
+
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tPosition Error Correction: %f (degrees) \n", (pr_err / M_PI * 180));
+
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tEncoder Angle: %f (degrees) \n", (encoder_position / 50 * 360));
+
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tController Timestep (ms): %f\n", controller_dt);
+
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tEncoder Error (rad): %f\n", encoder_err);
+
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tIntegrated Encoder (rad): %f\n", integrated_enc_);
+
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tNecessary Applied Force: %f\n", f_i);
+
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tInputed Torque: %f\n", control_torque);
   }
 
 
@@ -227,6 +256,16 @@ void Controller::integrate()
   
 }
 
+void Controller::integrate_encoder()
+{
+
+  encoder_err = desired_angle - (encoder_position * 2 * M_PI);
+
+  integrated_enc_ = prev_enc_ + (controller_dt/1000 * encoder_err);
+  prev_enc_ = integrated_enc_;
+
+}
+
 void Controller::rotate_S_I()
 {
 
@@ -236,16 +275,6 @@ void Controller::rotate_S_I()
     phi_rg   = phi_ins;
     psi_rg   = psi_ins;
 
-
-  // a_x_g_corrected = linear_acceleration_S_x * (cos(theta_rg)*cos(psi_rg) + sin(theta_rg)*sin(psi_rg)*sin(phi_rg))
-  //                 + linear_acceleration_S_y * (sin(psi_rg)*-cos(phi_rg))
-  //                 + linear_acceleration_S_z * (cos(theta_rg)*sin(psi_rg)*sin(phi_rg) - sin(theta_rg)*cos(psi_rg));
-  //a_y_g_corrected = linear_acceleration_S_x * (cos(theta_rg)*sin(psi_rg) - sin(theta_rg)*cos(psi_rg)*sin(phi_rg))
-  //                 + linear_acceleration_S_y * (cos(psi_rg)*cos(phi_rg))
-  //                 + linear_acceleration_S_z * (-sin(theta_rg)*sin(psi_rg) - cos(theta_rg)*cos(psi_rg)*sin(phi_rg));
-  //a_z_g_corrected = linear_acceleration_S_x * (sin(theta_rg)*cos(phi_rg))
-  //                 + linear_acceleration_S_y * (sin(phi_rg)) 
-  //                 + linear_acceleration_S_z * (cos(theta_rg)*cos(phi_rg)) + GRAVITY;
 
   // Standard 3-2-1 Euler Rotations
 
@@ -306,7 +335,7 @@ void Controller::control_1dof()
   // 1DOF circular arm test
 
   double bar_length = 0.639; // bar length, meters
-  double bar_mass = 0.39; // bar mass, kg
+  double bar_mass = 3.08; // bar mass, kg
 
   // Account for gearbox
   scaled_position = encoder_position / 50;
@@ -322,41 +351,28 @@ void Controller::control_1dof()
 
   pr_err = scaled_position * 2*M_PI - desired_angle;
 
-  f_i = -ka*a_z_g_corrected;
 
-  // f_pr = -(kp*pr_err + ki*pr_err_accum + kd*encoder_velocity);
-  f_pr = -(kp*pr_err);
 
-  // control_force = f_i + f_pr;
-  control_force = f_i;
+  f_i = ka*a_z_g_corrected;
+
+  f_pr = -(kp*pr_err + ki*integrated_enc_ + kd*encoder_velocity);
+  // f_pr = -(kp*pr_err);
+
+  control_force = f_i + f_pr;
+  //  control_force = f_i;
   // control_force = f_pr;
 
   control_torque = (bar_length * control_force) / GEAR_RATIO;
 
   // Sticktion force
-  torque_stick = 0.08;
+  torque_stick = 0.075;
   torque_comp = torque_stick * control_torque / abs(control_torque);
 
-  control_torque = control_torque + torque_comp;
+  // double holding_torque = 0.157 * sin(2 * M_PI * encoder_position / GEAR_RATIO);
+  // control_torque = control_torque + holding_torque + torque_stick * control_torque / abs(control_torque);
 
-  quiet = false;
-  if (!quiet) {
-    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\t----------------------------------\n");
-    
-    // RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tDesired Angle: %f (degrees) \n", (desired_angle / M_PI * 180));
+  control_torque = control_torque + torque_stick * control_torque / abs(control_torque);
 
-    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tRaw Encoder Reading: %f (revs) \n", encoder_position);
-
-    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tScaled Angle: %f (degrees) \n", (scaled_position * 360));
-
-    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tPosition Error Correction: %f (degrees) \n", (pr_err / M_PI * 180));
-
-    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tEncoder Angle: %f (degrees) \n", (encoder_position / 50 * 360));
-
-    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tNecessary Applied Force: %f\n", f_i);
-
-    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tInputed Torque: %f\n", control_torque);
-  }
   quiet = true;
 
   SendControlMessage(control_torque);
@@ -364,19 +380,7 @@ void Controller::control_1dof()
 
 void Controller::control_testing(double iter_val)
 {
-  double bar_length = 0.639; // bar length, meters
-  double bar_mass = 0.39; // bar mass, kg
-  
-  double alpha = 0.2;
-  double beta = 2*M_PI / (7.5 / 1);
-  double test_angle = atan(beta * alpha * cos(beta*iter_val));
-  double test_accel = -std::pow(beta, 2) * alpha * sin(beta*iter_val);
 
-  f_i = -ka*test_accel;
-
-  control_torque = bar_length * f_i * sin(test_angle);
-
-  SendControlMessage(8*control_torque);
 }
 
 void Controller::control_3dof()
@@ -458,6 +462,12 @@ void Controller::cbCtrlStatus(const  odrive_can::msg::ControllerStatus::SharedPt
 void Controller::cbODrvStatus(const  odrive_can::msg::ODriveStatus::SharedPtr odrv_stat_)
 {
     motor_temperature = odrv_stat_->motor_temperature;
+}
+
+void Controller::cbInt(const icarus_arm_control::msg::IntegratedAngles::SharedPtr sub_int_)
+{
+    // int_enc = int_->integrated_enc;
+    // place holder
 }
 
 void Controller::cbGain(const std_msgs::msg::Float64MultiArray::SharedPtr msg)

@@ -14,7 +14,7 @@
  // #define RK4_INTEGRATION
  #define EULER_INTEGRATION
  
- #define GRAVITY 9.81
+ #define GRAVITY 9.79689
  
  #define GEAR_RATIO 50
  
@@ -79,6 +79,7 @@
  #include "odrive_can/srv/axis_state.hpp"
  
  #include "icarus_arm_control/msg/publish_data.hpp"
+ #include "icarus_arm_control/msg/integrated_angles.hpp"
  
  #include "ISUtilities.h"
  
@@ -114,6 +115,7 @@
      void imu_error_correction();
      void integrate();
      void print_data();
+     void integrate_encoder();
      void rotate_S_I();
      void control_testing(double iter_val);
      void control_1dof();
@@ -126,6 +128,7 @@
      void cbIMU(const sensor_msgs::msg::Imu &imu);
      void cbCtrlStatus(const odrive_can::msg::ControllerStatus::SharedPtr ctrl_stat_);
      void cbODrvStatus(const odrive_can::msg::ODriveStatus::SharedPtr odrv_stat_);
+     void cbInt(const icarus_arm_control::msg::IntegratedAngles::SharedPtr sub_int_);
      void SendControlMessage(double control_torque);
      void publish_imu();
  
@@ -177,6 +180,8 @@
      float a_x_g_corrected;
      float a_y_g_corrected;
      float a_z_g_corrected;
+
+     float int_enc;
  
      float theta_rg;
      float phi_rg;
@@ -264,16 +269,24 @@
      double nodeStartTime;
  
      // ----------------------------- 1DOF Control Law Related Parameters -----------------------------
+
+     // Control law dt
+     double controller_dt;
+
+     // Integrating encoder variables
+     double integrated_enc_ = 0.0;
+     double encoder_err = 0.0;
+     double prev_enc_ = 0.0;
  
      // Relative Position Control
-     double kp = 90;  // Proportional [N/m]
-     double kd = 0.4; // Derivative [Ns/m]    
-     double ki = 0;   // Integral [N/ms]
+     double kp = 20.0;  // Proportional [N/m]
+     double kd = 1.0; // Derivative [Ns/m]    
+     double ki = 0.5;   // Integral [N/ms]
      
      // Inertial Stabilization Control
-     double ka = 0; // Acceleration Control [kg]
-     double kv = 0;  // Velocity Control [kg/s]
-     double ks = 0;   // Position Control [kg*s^-2]
+     double ka = 5.0; // Acceleration Control [kg]
+     double kv = 0.0;  // Velocity Control [kg/s]
+     double ks = 0.0;   // Position Control [kg*s^-2]
  
      double desired_angle = -45.0 / 180 * M_PI;
  
@@ -290,6 +303,9 @@
      // Motor encoder subscribers
      rclcpp::Subscription<odrive_can::msg::ControllerStatus>::SharedPtr sub_motor_cntr_stat_;
      rclcpp::Subscription<odrive_can::msg::ODriveStatus>::SharedPtr sub_odrv_stat_;
+
+     rclcpp::Subscription<icarus_arm_control::msg::IntegratedAngles>::SharedPtr sub_int_;
+
      
      // *** Add a subscription for dynamic gain updates
      rclcpp::Subscription<std_msgs::msg::Float64MultiArray>::SharedPtr sub_gain_;

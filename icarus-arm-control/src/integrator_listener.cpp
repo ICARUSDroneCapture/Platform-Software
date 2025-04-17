@@ -7,7 +7,7 @@ ImuPimuListener::ImuPimuListener()
 {
     sub_pimu_= this->create_subscription<inertial_sense_ros2::msg::PIMU>("pimu", 1, std::bind(&ImuPimuListener::pimu_callback, this, std::placeholders::_1));
     sub_imu_ = this->create_subscription<sensor_msgs::msg::Imu>("imu", 1, std::bind(&ImuPimuListener::imu_callback, this, std::placeholders::_1));
-    
+
     pub_int_ = this->create_publisher<icarus_arm_control::msg::IntegratedAngles>("integrated_angles", 1);
 }
 
@@ -34,6 +34,7 @@ void ImuPimuListener::pimu_callback(const inertial_sense_ros2::msg::PIMU::Shared
 
 void ImuPimuListener::integrate()
 {
+
     integrated_theta_ = prev_theta_ + (imu_dt_ * angular_velocity_x_);
     integrated_phi_   = prev_phi_   + (imu_dt_ * angular_velocity_y_);
     integrated_psi_   = prev_psi_   + (imu_dt_ * angular_velocity_z_);
@@ -43,7 +44,9 @@ void ImuPimuListener::integrate()
     prev_psi_   = integrated_psi_;
 
     integrated_angles_.integrated_angles = {integrated_theta_,integrated_phi_,integrated_psi_};
+
     pub_int_->publish(integrated_angles_);
+
 }
 
 int main(int argc, char *argv[])

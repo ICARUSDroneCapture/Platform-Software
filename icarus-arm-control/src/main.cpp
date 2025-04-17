@@ -32,53 +32,39 @@
 
     bool success = false;
     unsigned int startTimeMs = current_timeMs(), prevTimeMs = 0, nowTimeMs;
-	while((nowTimeMs = current_timeMs()) - startTimeMs < 5000)
-	{
-	    rclcpp::spin_some(controller_node);
 
-        controller_node->step();
-
-        if (controller_node->did_rx_pimu_) {
-            success = true;
-            break;
-        } else {
-            // check regularly, but don't print regularly..
-            SLEEP_MS(14);
-            if (prevTimeMs / 1000 != nowTimeMs / 1000) {
-                RCLCPP_INFO(rclcpp::get_logger("init"),"waiting...  (time: %u)\n", nowTimeMs);
-                prevTimeMs = nowTimeMs;
-                controller_node->print_data();
-            }
-        }
-    }
 
     ASSERT_EX(success, std::cout << "IMU RX fail.\n");
 
     controller_node->nodeStartTime = static_cast<double>( current_timeMs() );
     
-    // int data_points = 5000;
-    // int i = 0;
-    // while (i <= data_points) {
+    int data_points = 5000;
+    int i = 0;
+    while (i <= data_points) {
 
-    //     std::cout << "Calibrating... " << std::to_string(i) << "/" << std::to_string(data_points) << std::endl;
+        std::cout << "Calibrating... " << std::to_string(i) << "/" << std::to_string(data_points) << std::endl;
 
-    //     rclcpp::spin_some(controller_node);
-    //     controller_node->imu_configure(i);
-    //     i += 1;
-    // }
+        rclcpp::spin_some(controller_node);
+        controller_node->imu_configure(i);
+        i += 1;
+    }
 
-    // rclcpp::spin_some(controller_node);
-    // controller_node->bias_calibrate();
+    rclcpp::spin_some(controller_node);
+    controller_node->bias_calibrate();
+
+    int refresh_wait = 50;
     
 
     while (ok())
     {
         rclcpp::spin_some(controller_node);
 
+        controller_node->controller_dt = refresh_wait;
+
         controller_node->step();
 
         // periodic print, add update function
-        SLEEP_MS(100);
+        SLEEP_MS(refresh_wait);
         if (prevTimeMs / 1000 != nowTimeMs / 1000) {
             if (!controller_node->plot_quiet) {
                 controller_node->plot(controller_node->nodeStartTime);

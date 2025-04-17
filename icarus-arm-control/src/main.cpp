@@ -32,6 +32,8 @@
 
     bool success = false;
     unsigned int startTimeMs = current_timeMs(), prevTimeMs = 0, nowTimeMs;
+    unsigned int control_step_finish = current_timeUs(), control_step_start = 0, control_step_time;
+    unsigned int spin_finish = current_timeUs(), spin_start = 0, spin_time;
 
 
     ASSERT_EX(success, std::cout << "IMU RX fail.\n");
@@ -52,16 +54,29 @@
     rclcpp::spin_some(controller_node);
     controller_node->bias_calibrate();
 
-    int refresh_wait = 50;
+    int refresh_wait = 3;
     
 
     while (ok())
     {
+        spin_start = current_timeUs();
+        
         rclcpp::spin_some(controller_node);
+        
+        spin_finish = current_timeUs();
 
+        spin_time = spin_finish - spin_start;
+        
+        
         controller_node->controller_dt = refresh_wait;
 
+        control_step_start = current_timeUs();
+
         controller_node->step();
+
+        control_step_finish = current_timeUs();
+
+        control_step_time = control_step_finish - control_step_start;
 
         // periodic print, add update function
         SLEEP_MS(refresh_wait);
@@ -70,6 +85,8 @@
                 controller_node->plot(controller_node->nodeStartTime);
             }
             RCLCPP_INFO(rclcpp::get_logger("controller"),"running...  (time: %u)\n\n", nowTimeMs);
+            RCLCPP_INFO(rclcpp::get_logger("controller"),"spin time...  (time: %u Us)\n\n", spin_time);
+            RCLCPP_INFO(rclcpp::get_logger("controller"),"control step time...  (time: %u Us)\n\n", control_step_time);
             prevTimeMs = nowTimeMs;
         }
         nowTimeMs = current_timeMs();

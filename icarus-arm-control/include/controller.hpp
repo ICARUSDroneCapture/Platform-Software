@@ -274,14 +274,14 @@
      double controller_dt;
 
      // Integrating encoder variables
-     double integrated_enc_ = 0.0;
+     double integrated_enc = 0.0;
      double encoder_err = 0.0;
      double prev_enc_ = 0.0;
  
      // Relative Position Control
      double kp = 20.0;  // Proportional [N/m]
      double kd = 1.0; // Derivative [Ns/m]    
-     double ki = 0.5;   // Integral [N/ms]
+     double ki = 0.5;   // Integral [N/ms] // should be ~0.1, set to around 1
      
      // Inertial Stabilization Control
      double ka = 5.0; // Acceleration Control [kg]
@@ -292,6 +292,8 @@
  
      double pm, scaled_position, desired_pos, z_dev, pr_err, f_i, f_pr, control_force, control_torque;
      double torque_stick, torque_comp;
+
+     double control_torque_fi;
   
  private:
      // IMU subscribers

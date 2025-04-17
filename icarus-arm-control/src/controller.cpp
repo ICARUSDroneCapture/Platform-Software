@@ -134,7 +134,15 @@ void Controller::print_data(){
     
     // RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tDesired Angle: %f (degrees) \n", (desired_angle / M_PI * 180));
 
-    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tRaw Encoder Reading: %f (revs) \n", encoder_position);
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tRaw Encoder Position: %f (revs) \n", encoder_position);
+
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tRaw Encoder Velocity: %f (revs) \n", encoder_velocity);
+
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tTheta Angle: %f (rad) \n", theta_rg);
+
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tPhi Angle: %f (rad) \n", phi_rg);
+
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tPsi Angle: %f (rad) \n", psi_rg);
 
     RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tScaled Angle: %f (degrees) \n", (scaled_position * 360));
 
@@ -146,9 +154,9 @@ void Controller::print_data(){
 
     RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tEncoder Error (rad): %f\n", encoder_err);
 
-    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tIntegrated Encoder (rad): %f\n", integrated_enc_);
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tIntegrated Encoder (rad): %f\n", integrated_enc);
 
-    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tNecessary Applied Force: %f\n", f_i);
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tInertially Stabalizing Torque: %f\n", control_torque_fi);
 
     RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tInputed Torque: %f\n", control_torque);
   }
@@ -259,10 +267,10 @@ void Controller::integrate()
 void Controller::integrate_encoder()
 {
 
-  encoder_err = desired_angle - (encoder_position * 2 * M_PI);
+  encoder_err = (scaled_position * 2 * M_PI) - desired_angle;
 
-  integrated_enc_ = prev_enc_ + (controller_dt/1000 * encoder_err);
-  prev_enc_ = integrated_enc_;
+  integrated_enc = prev_enc_ + (controller_dt/1000 * encoder_err);
+  prev_enc_ = integrated_enc;
 
 }
 
@@ -332,6 +340,16 @@ void Controller::rotate_S_I()
 
 void Controller::control_1dof()
 {
+
+  if (a_x_g_corrected == 0.0 && a_y_g_corrected == 0.0 && a_z_g_corrected == 0.0) {
+    f_i = 0.0;
+  } else if (std::isnan(a_x_g_corrected) || std::isnan(a_y_g_corrected) || std::isnan(a_z_g_corrected)) {
+    f_i = 0.0;
+  } else {
+    f_i = ka*a_z_g_corrected;
+  }
+
+
   // 1DOF circular arm test
 
   double bar_length = 0.639; // bar length, meters
@@ -351,27 +369,26 @@ void Controller::control_1dof()
 
   pr_err = scaled_position * 2*M_PI - desired_angle;
 
-
-
-  f_i = ka*a_z_g_corrected;
-
-  f_pr = -(kp*pr_err + ki*integrated_enc_ + kd*encoder_velocity);
+  f_pr = -(kp*pr_err + ki*integrated_enc + kd*encoder_velocity);
   // f_pr = -(kp*pr_err);
 
-  control_force = f_i + f_pr;
+  control_force = f_i;
   //  control_force = f_i;
   // control_force = f_pr;
 
-  control_torque = (bar_length * control_force) / GEAR_RATIO;
+  control_torque_fi = (bar_length * f_i) / GEAR_RATIO;
+
+  control_torque = (bar_length * cos(theta_rg) * control_force) / GEAR_RATIO + f_pr/GEAR_RATIO;
 
   // Sticktion force
-  torque_stick = 0.075;
-  torque_comp = torque_stick * control_torque / abs(control_torque);
+
+  // torque_stick = 0.075;
+  // torque_comp = torque_stick * control_torque / abs(control_torque);
 
   // double holding_torque = 0.157 * sin(2 * M_PI * encoder_position / GEAR_RATIO);
   // control_torque = control_torque + holding_torque + torque_stick * control_torque / abs(control_torque);
 
-  control_torque = control_torque + torque_stick * control_torque / abs(control_torque);
+  // control_torque = control_torque + torque_stick * control_torque / abs(control_torque);
 
   quiet = true;
 

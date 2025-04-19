@@ -1,0 +1,10 @@
+clc; clear; close all;
+
+control_data = csvread('control_logged_data.csv');
+
+timestamps = control_data("timestamp");
+motor_encoder_torque = control_data("motor_encoder_torque");
+
+
+figure
+plot(timestamps., motor_encoder_torque);

@@ -363,7 +363,8 @@ void Controller::control_1dof()
   double c = C(angle, M_PI, desired_angle);
   double b = B(angle, M_PI, desired_angle);
 
-  pr_err = desired_angle - angle;
+  // pr_err = desired_angle - angle;
+  pr_err = desired_angle - scaled_position * 2*M_PI;
 
   if (a_x_g_corrected == 0.0 && a_y_g_corrected == 0.0 && a_z_g_corrected == 0.0) {
     f_i = 0.0;
@@ -371,20 +372,21 @@ void Controller::control_1dof()
     f_i = 0.0;
   } else {
     // f_i = ka*(a_z_g_corrected * 1.17882) + ks;
-    f_i = c*ka*(a_z_g_corrected);
+    // f_i = c*ka*(a_z_g_corrected);
+    f_i = ka*(a_z_g_corrected);
   }
 
-  // f_pr = kp*pr_err + ki*integrated_enc_error + kd*(desired_velocity - encoder_velocity);
-  f_pr = (c*kp + b*kp_b)*pr_err + (c*ki + b*ki_b)*integrated_enc_error + (c*kd + b*kd_b)*(desired_velocity - encoder_velocity);
+  f_pr = kp*pr_err + ki*integrated_enc_error + kd*(desired_velocity - encoder_velocity);
+  // f_pr = (c*kp + b*kp_b)*pr_err + (c*ki + b*ki_b)*integrated_enc_error + (c*kd + b*kd_b)*(desired_velocity - encoder_velocity);
   // f_pr = -(kp*pr_err);
 
   // control_force = f_pr + f_i;
-  //  control_force = f_i;
+   control_force = f_i;
   // control_force = f_pr;
 
   control_torque_fi = (bar_length * cos(theta_rg) * f_i) / GEAR_RATIO;
 
-  control_torque = (bar_length * cos(theta_rg) * f_i) / GEAR_RATIO + f_pr/GEAR_RATIO;
+  control_torque = (bar_length * cos(theta_rg) * control_force) / GEAR_RATIO + f_pr/GEAR_RATIO;
 
   // Sticktion force
 

@@ -139,6 +139,11 @@
      double get_avg_deviation(std::vector<double> &a, std::vector<double> &b);
      double get_min_deviation(std::vector<double> &a, std::vector<double> &b);
      double get_max_deviation(std::vector<double> &a, std::vector<double> &b);
+
+     // Gain mixing definitions
+     double sign(double x);
+     double C(double x, double w, double d);
+     double B(double x, double w, double d);
  
      bool quiet = true;
      bool plot_quiet = true;

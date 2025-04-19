@@ -109,6 +109,8 @@ void Controller::print_data(){
 
   quiet = true;
   if (!quiet) {
+    RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\t=====================================================\n");
+
     RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\t----------------------------------\n");
 
     RCLCPP_INFO(rclcpp::get_logger("debug"),"\t\tIntegrated Angle: [%f; %f; %f]\n", integrated_theta, integrated_phi, integrated_psi);
@@ -155,6 +157,8 @@ void Controller::print_data(){
     RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tEncoder Error (rad): %f\n", encoder_err);
 
     RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tIntegrated Encoder (rad): %f\n", integrated_enc_error);
+
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tRelative Position Controlling Torque (N): %f\n", f_pr);
 
     RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tInertially Stabalizing Torque: %f\n", control_torque_fi);
 

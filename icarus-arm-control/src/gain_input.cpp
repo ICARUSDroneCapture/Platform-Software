@@ -14,7 +14,7 @@ public:
   GainInput()
   : Node("gain_input"),
     kp_(0.0), kd_(0.0), ki_(0.0),
-    kp_b(0.0), kd_b(0.0), ki_b(0.0),
+    kp_b_(0.0), kd_b_(0.0), ki_b_(0.0),
     ka_(0.0), kv_(0.0), ks_(0.0)
   {
     // Declare dynamic parameters for gains

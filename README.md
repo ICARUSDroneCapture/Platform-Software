@@ -55,6 +55,18 @@ export ROS_DOMAIN_ID=0
 alias sourceICARUS="cd ~/ros2_ws; source install/setup.bash"
 alias motorEnv="source ~/motor_venv/bin/activate"
 alias colconClean="sudo rm -rf ~/ros2_ws/log; rm -rf ~/ros2_ws/build; rm -rf ~/ros2_ws/install"
+alias CANstart="sudo ip link set can0 up type can bitrate 250000"
+alias cdStartUp="cd ~/start_up_scripts"
+alias MOTORcalibrate="python3 can_calibrate.py --channel can0 --node-id 0 --save-config"
+alias MOTORenumerate="python3 can_enumerate.py --channel can0 --save-config"
+alias MOTORconfigset="python3 can_restore_config.py --channel can0 --node-id 0 --endpoints-json flat_endpoints.json --config config.json --save-config"
+alias MOTORstop="ros2 topic pub --once /control_message odrive_can/msg/ControlMessage \"{control_mode: 1, input_mode: 1, input_pos: 0.0, input_vel: 0.0, input_torque: 0.0}\" "
+alias MOTORrearm="ros2 service call /request_axis_state odrive_can/srv/AxisState \"{axis_requested_state: 8}\""
+alias MOTORset90="ros2 topic pub --once /control_message odrive_can/msg/ControlMessage \"{control_mode: 3, input_mode: 1, input_pos: -12.5}\""
+alias MOTORset45="ros2 topic pub --once /control_message odrive_can/msg/ControlMessage \"{control_mode: 3, input_mode: 1, input_pos: -6.25}\""
+alias MOTORset0="ros2 topic pub --once /control_message odrive_can/msg/ControlMessage \"{control_mode: 3, input_mode: 1, input_pos: 0.0}\""
+
+export PATH="$PATH:~/bin"
 
 ```
 You may have already put the first two lines (the `source /opt/ros/jazzy/setup.bash` and `export ROS_DOMAIN_ID=0`) into the `.bashrc` file during the ROS2 installation process, in which case they can be ignored.

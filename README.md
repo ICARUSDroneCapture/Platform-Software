@@ -19,10 +19,6 @@ Code is built and run on a Raspberry Pi 5 with 16G of RAM, connected to an Inert
 
 #### Setup
 
-Install the Inertial Sense IMU ros package following their instructions.
-
-Install the ODrive motor ros package following their instructions.
-
 Follow ROS2 installation instructions:
 https://docs.ros.org/en/jazzy/Installation/Ubuntu-Install-Debs.html
 
@@ -32,6 +28,11 @@ mkdir ~/ros2_ws
 cd ~/ros2_ws
 mkdir src
 ```
+
+Install the Inertial Sense IMU ros package following their instructions. You should now have their folder in the `src` directory.
+
+Install the ODrive motor ros package following their instructions. You should now have their folder in the `src` directory.
+
 Clone the Platform Software repo into the `src` direction, and checkout the `arm-control-implementation` branch:
 ```
 cd src
@@ -79,17 +80,20 @@ Once this code has been added to your `~/.bashrc`, either close the terminal ins
 
 ### Building
 
-From the `~/ros2_ws` directory, run `colcon build --packages-select icarus_arm_control`. It will throw many warnings, but the package should finish building:
+From the `~/ros2_ws` directory, run `colcon build --packages-select icarus_arm_control`. It may throw warnings, but the package should finish building:
 ```
 cd ~/ros2_ws
-colcon build
+colcon build --packages-select icarus_arm_control
 ```
 If you want to do a fresh build, run `colconClean` from the `ros2_ws` directory and build again:
 ```
 cd ~/ros2_ws
 colconClean
-colcon build
+colcon build --packages-select icarus_arm_control
 ```
+
+(If you want to rebuild the odrive motor node and the inertial imu node as well, you can just run `colcon build` alone and not specify a package.)
+
 Be careful that you're in the correct directory when you run `colconClean`. It runs a forced recursive directory remove command, which could delete something unwanted if in the wrong place. For that reason, it required sudo privileges.
 
 
@@ -102,7 +106,7 @@ Finished <<< icarus_arm_control [<some_time>s]
 
 #### 1-DOF Test
 
-To run the 1-dof test, the first thing you need to do is calibrate the motor. If the previous setup was done correctly, primarily adding the `~/bin` and `~/start_up_scripts`, the following commands should run without error.
+To run the 1-dof test, the first thing you need to do is calibrate the motor. If the previous setup was done correctly, you should have the following folders `~/bin` and `~/start_up_scripts` in your home directory, and the following commands should run without error.
 
 First, run the following from any location: `icarus_startup.sh`. This initializes CAN communication with the motor.
 
@@ -118,19 +122,31 @@ MOTORrearm
 ```
 
 If you want to set the motor arm to certain locations, there are some aliased commands to do so:
+
 `MOTORset0` sets the motor to its position at 0 degrees, which was set duruing calibration.
+
 `MOTORset45` sets the motor to its position at 45 degrees, which is 45 degrees relative to 0, again set during calibration.
+
 `MOTORset90` sets the motor to its position at 90 degrees, which is 90 degrees relative to 0, again set during calibration.
 
-These are the equivalent of the following ros commands:
+These are the equivalent of the following ros command:
 
-`ros2 topic pub --once /control_message odrive_can/msg/ControlMessage "{control_mode: 3, input_mode: 1, input_pos: -12.5}"`, where the input pos is in revolutions prior to the gearbox. So a total arm revolution is 50, meaning a 90 degree change is 12.5 in input revolutions. Positive position change in the motor is counter clockwise into the motor. (Using the right hand rule).
+`ros2 topic pub --once /control_message odrive_can/msg/ControlMessage "{control_mode: 3, input_mode: 1, input_pos: -12.5}"`, where the input pos is in revolutions prior to the gearbox. So a total arm revolution is 50, meaning a 90 degree change is 12.5 in input revolutions. Positive position change in the motor is counter clockwise into the motor. (Using the right hand rule). So if you want to set the arm to say 180 degrees (or 1/2 a revolution), run the following:
 
-Also start the imu ROS2 node: `ros2 run inertial_sense_imu inertial_sense_imu_node`
+`ros2 topic pub --once /control_message odrive_can/msg/ControlMessage "{control_mode: 3, input_mode: 1, input_pos: -25}"`
+
+The motor should now be setup, and you should see a green like blinking on the motor driver.
+
+Now start the imu ROS2 node: `ros2 run inertial_sense_imu inertial_sense_imu_node`
 
 Optionally, you can run the logger to to print all the data to a csv file: `ros2 run icarus_arm_control logger_node`
 
 If you want to manually set gains during the test, you can run gain input node: `ros2 run icarus_arm_control gain_input`
+
+Gain parameters can be set using the following command:
+`ros2 param set /gain_input ka 1.0`
+
+Be sure the number inputed is a double. You can pick ka, or any other gain input.
 
 #### General
 

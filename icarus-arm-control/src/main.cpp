@@ -56,6 +56,11 @@
 
     int refresh_wait = 3;
 
+    int step_count = 0;
+    unsigned int start_time = current_timeUs();
+    unsigned int total_time = 0;
+    unsigned int step_time_running_average = 0;
+
     while (ok())
     {
         spin_start = current_timeUs();
@@ -86,9 +91,17 @@
             RCLCPP_INFO(rclcpp::get_logger("controller"),"running...  (time: %u)\n\n", nowTimeMs);
             RCLCPP_INFO(rclcpp::get_logger("controller"),"spin time...  (time: %u Us)\n\n", spin_time);
             RCLCPP_INFO(rclcpp::get_logger("controller"),"control step time...  (time: %u Us)\n\n", control_step_time);
+            RCLCPP_INFO(rclcpp::get_logger("controller"),"total step time...  (time: %u Us)\n\n", step_time_running_average);
             prevTimeMs = nowTimeMs;
         }
         nowTimeMs = current_timeMs();
+
+        step_count = step_count + 1;
+        total_time = current_timeUs() - start_time;
+
+        // Microsecond running average of step time
+        step_time_running_average = total_time / step_count;
+
     }
 
     rclcpp::shutdown();

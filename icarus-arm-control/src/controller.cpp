@@ -154,7 +154,7 @@ void Controller::print_data(){
 
     RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tEncoder Error (rad): %f\n", encoder_err);
 
-    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tIntegrated Encoder (rad): %f\n", integrated_enc);
+    RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tIntegrated Encoder (rad): %f\n", integrated_enc_error);
 
     RCLCPP_INFO(rclcpp::get_logger("data"),"\t\tInertially Stabalizing Torque: %f\n", control_torque_fi);
 
@@ -267,10 +267,10 @@ void Controller::integrate()
 void Controller::integrate_encoder()
 {
 
-  encoder_err = (scaled_position * 2 * M_PI) - desired_angle;
+  encoder_err = desired_angle - (scaled_position * 2 * M_PI);
 
-  integrated_enc = prev_enc_ + (controller_dt/1000 * encoder_err);
-  prev_enc_ = integrated_enc;
+  integrated_enc_error = prev_enc_error + (controller_dt/1000 * encoder_err);
+  prev_enc_error = integrated_enc_error;
 
 }
 
@@ -340,16 +340,6 @@ void Controller::rotate_S_I()
 
 void Controller::control_1dof()
 {
-
-  if (a_x_g_corrected == 0.0 && a_y_g_corrected == 0.0 && a_z_g_corrected == 0.0) {
-    f_i = 0.0;
-  } else if (std::isnan(a_x_g_corrected) || std::isnan(a_y_g_corrected) || std::isnan(a_z_g_corrected)) {
-    f_i = 0.0;
-  } else {
-    f_i = ka*a_z_g_corrected;
-  }
-
-
   // 1DOF circular arm test
 
   double bar_length = 0.639; // bar length, meters
@@ -359,36 +349,48 @@ void Controller::control_1dof()
   scaled_position = encoder_position / 50;
 
   // Implement proportion of gains for inertial stabilizing vs relative positional control
-  
   // measured position of imu from where torque is being applied
   pm = bar_length; 
 
   // desired_pos = pm * sin(desired_angle); // DESIRED_DISTANCE is normally 0.5 m for 3D, here we want norm around 0 change in Z
-
   // z_dev = pm * sin(scaled_position); // Change in z-position
 
-  pr_err = scaled_position * 2*M_PI - desired_angle;
+  double angle = scaled_position * 2*M_PI;
+  double c = C(angle, M_PI, desired_angle);
+  double b = B(angle, M_PI, desired_angle);
 
-  f_pr = -(kp*pr_err + ki*integrated_enc + kd*encoder_velocity);
+  pr_err = desired_angle - angle;
+
+  if (a_x_g_corrected == 0.0 && a_y_g_corrected == 0.0 && a_z_g_corrected == 0.0) {
+    f_i = 0.0;
+  } else if (std::isnan(a_x_g_corrected) || std::isnan(a_y_g_corrected) || std::isnan(a_z_g_corrected)) {
+    f_i = 0.0;
+  } else {
+    // f_i = ka*(a_z_g_corrected * 1.17882) + ks;
+    f_i = c*ka*(a_z_g_corrected);
+  }
+
+  // f_pr = kp*pr_err + ki*integrated_enc_error + kd*(desired_velocity - encoder_velocity);
+  f_pr = (c*kp + b*kp_b)*pr_err + (c*ki + b*ki_b)*integrated_enc_error + (c*kd + b*kd_b)*(desired_velocity - encoder_velocity);
   // f_pr = -(kp*pr_err);
 
-  control_force = f_i;
+  // control_force = f_pr + f_i;
   //  control_force = f_i;
   // control_force = f_pr;
 
-  control_torque_fi = (bar_length * f_i) / GEAR_RATIO;
+  control_torque_fi = (bar_length * cos(theta_rg) * f_i) / GEAR_RATIO;
 
-  control_torque = (bar_length * cos(theta_rg) * control_force) / GEAR_RATIO + f_pr/GEAR_RATIO;
+  control_torque = (bar_length * cos(theta_rg) * f_i) / GEAR_RATIO + f_pr/GEAR_RATIO;
 
   // Sticktion force
 
-  // torque_stick = 0.075;
-  // torque_comp = torque_stick * control_torque / abs(control_torque);
+  torque_stick = 0.08;
+  torque_comp = torque_stick * control_torque / abs(control_torque);
 
   // double holding_torque = 0.157 * sin(2 * M_PI * encoder_position / GEAR_RATIO);
   // control_torque = control_torque + holding_torque + torque_stick * control_torque / abs(control_torque);
 
-  // control_torque = control_torque + torque_stick * control_torque / abs(control_torque);
+  control_torque = control_torque + torque_comp;
 
   quiet = true;
 
@@ -489,14 +491,18 @@ void Controller::cbInt(const icarus_arm_control::msg::IntegratedAngles::SharedPt
 
 void Controller::cbGain(const std_msgs::msg::Float64MultiArray::SharedPtr msg)
 {
-    if (msg->data.size() >= 6) {
+    if (msg->data.size() >= 9) {
         // Update the dynamic gains
         kp = msg->data[0];
-        ka = msg->data[1];
+        kd = msg->data[1];
         ki = msg->data[2];
-        kd = msg->data[3];
-        kv = msg->data[4];
-        ks = msg->data[5];
+        kp_b = msg->data[3];
+        kd_b = msg->data[4];
+        ki_b = msg->data[5];
+        ka = msg->data[6];
+        kv = msg->data[7];
+        ks = msg->data[8];
+
 
         // RCLCPP_INFO(this->get_logger(),
         //             "Dynamic Gains updated: kp = %f, ka = %f, ki = %f, kd = %f, kv = %f, ks = %f",

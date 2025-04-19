@@ -279,14 +279,17 @@
      double controller_dt;
 
      // Integrating encoder variables
-     double integrated_enc = 0.0;
+     double integrated_enc_error = 0.0;
      double encoder_err = 0.0;
-     double prev_enc_ = 0.0;
+     double prev_enc_error = 0.0;
  
      // Relative Position Control
      double kp = 20.0;  // Proportional [N/m]
      double kd = 1.0; // Derivative [Ns/m]    
      double ki = 0.5;   // Integral [N/ms] // should be ~0.1, set to around 1
+     double kp_b = 0.0;  // Propotinal gain to be use at boundry [N/m]
+     double kd_b = 0.0;  // Derivative gain to be use at boundry [Ns/m]
+     double ki_b = 0.0;  // Integral gain to be use at boundry [N/ms]
      
      // Inertial Stabilization Control
      double ka = 5.0; // Acceleration Control [kg]
@@ -294,6 +297,7 @@
      double ks = 0.0;   // Position Control [kg*s^-2]
  
      double desired_angle = -45.0 / 180 * M_PI;
+     double desired_velocity = 0.0 / 180 * M_PI;
  
      double pm, scaled_position, desired_pos, z_dev, pr_err, f_i, f_pr, control_force, control_torque;
      double torque_stick, torque_comp;

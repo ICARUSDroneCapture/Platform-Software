@@ -14,12 +14,17 @@ public:
   GainInput()
   : Node("gain_input"),
     kp_(0.0), kd_(0.0), ki_(0.0),
+    kp_b(0.0), kd_b(0.0), ki_b(0.0),
     ka_(0.0), kv_(0.0), ks_(0.0)
   {
     // Declare dynamic parameters for gains
     this->declare_parameter<double>("kp", kp_);
     this->declare_parameter<double>("kd", kd_);
     this->declare_parameter<double>("ki", ki_);
+
+    this->declare_parameter<double>("kp_b", kp_b_);
+    this->declare_parameter<double>("kd_b", kd_b_);
+    this->declare_parameter<double>("ki_b", ki_b_);
 
     this->declare_parameter<double>("ka", ka_);
     this->declare_parameter<double>("kv", kv_);
@@ -38,7 +43,16 @@ public:
         RCLCPP_INFO(this->get_logger(), "Updated kd to: %f", kd_);
       } else if (param.get_name() == "ki") {
         ki_ = param.as_double();
-        RCLCPP_INFO(this->get_logger(), "Updated ki to: %f", ki_);
+        RCLCPP_INFO(this->get_logger(), "Updated kd to: %f", ki_);
+      } else if (param.get_name() == "kp_b") {
+        kp_b_ = param.as_double();
+        RCLCPP_INFO(this->get_logger(), "Updated kd to: %f", kp_b_);
+      } else if (param.get_name() == "kd_b") {
+        kd_b_ = param.as_double();
+        RCLCPP_INFO(this->get_logger(), "Updated kd to: %f", kd_b_);
+      } else if (param.get_name() == "ki_b") {
+        ki_b_ = param.as_double();
+        RCLCPP_INFO(this->get_logger(), "Updated ki to: %f", ki_b_);
       } else if (param.get_name() == "ka") {
         ka_ = param.as_double();
         RCLCPP_INFO(this->get_logger(), "Updated ka to: %f", ka_);
@@ -64,15 +78,18 @@ public:
     timer_ = this->create_wall_timer(100ms, [this]() {
         // Optionally refresh the parameters
     this->get_parameter("kp", kp_);
-    this->get_parameter("ka", ka_);
-    this->get_parameter("ki", ki_);
     this->get_parameter("kd", kd_);
+    this->get_parameter("ki", ki_);
+    this->get_parameter("kp_b", kp_b_);
+    this->get_parameter("kd_b", kd_b_);
+    this->get_parameter("ki_b", ki_b_);
+    this->get_parameter("ka", ka_);
     this->get_parameter("kv", kv_);
     this->get_parameter("ks", ks_);
 
       std_msgs::msg::Float64MultiArray msg;
       // Order: kp, ka, ki, kd, kv, ks
-      msg.data = { kp_, ka_, ki_, kd_, kv_, ks_ };
+      msg.data = { kp_, kd_, ki_, kp_b_, kd_b_, ki_b_, ka_, kv_, ks_ };
       gain_pub_->publish(msg);
     });
     
@@ -80,7 +97,7 @@ public:
 
 private:
   // Internal storage for gains
-  double kp_,ka_,ki_,kd_,kv_,ks_;
+  double kp_,kd_,ki_,kp_b_,kd_b_,ki_b_,ka_,kv_,ks_;
 
   // Publisher and timer for publishing the gains
   rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr gain_pub_;

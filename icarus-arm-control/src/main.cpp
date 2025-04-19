@@ -55,7 +55,6 @@
     controller_node->bias_calibrate();
 
     int refresh_wait = 3;
-    
 
     while (ok())
     {

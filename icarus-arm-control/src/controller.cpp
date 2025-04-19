@@ -572,3 +572,45 @@ double Controller::get_max_deviation(std::vector<double> &a, std::vector<double>
   }
   return max_d;
 }
+
+double Controller::sign(double x) {
+    return (x > 0) - (x < 0);
+}
+
+// Center gain function C(x) — inertial isolation
+double Controller::C(double x, double w, double d) {
+    double c = 0.5;
+    double r_c = w/2 * c;
+    int n = 4;
+    double a_c = -1.0 / std::pow(std::abs(r_c - w / 2.0), n);
+    double k_c = 1.0;
+
+    double abs_xd = std::abs(x - d);
+
+    if (abs_xd <= r_c) {
+        return 1.0;
+    } else if (abs_xd > r_c && abs_xd <= w / 2.0) {
+        return a_c * std::pow(std::abs(x - (d + sign(x - d) * r_c)), n) + k_c;
+    } else {
+        return 0.0;
+    }
+}
+
+// Boundary gain function B(x) — relative position control
+double Controller::B(double x, double w, double d) {
+    double b = 0.5;
+    double r_b = w/2 * b;
+    int n = 4;
+    double a_b = 1.0 / std::pow(std::abs(r_b - w / 2.0), n);
+    double k_b = 0.0;
+
+    double abs_xd = std::abs(x - d);
+
+    if (abs_xd > w / 2.0) {
+        return 1.0;
+    } else if (abs_xd > r_b && abs_xd <= w / 2.0) {
+        return a_b * std::pow(std::abs(x - (d + sign(x - d) * r_b)), n) + k_b;
+    } else {
+        return 0.0;
+    }
+}
